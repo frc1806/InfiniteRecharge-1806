@@ -57,6 +57,12 @@ dependencies {
     // Enable simulation gui support. Must check the box in vscode to enable support
     // upon debugging
     simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
+
+    //Cheesy/Swat dependencies
+    compile 'gov.nist.math:jama:1.0.3'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest:2.1'
+    compile 'org.reflections:reflections:0.9.11'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

@@ -2,7 +2,7 @@ package com.team1806.lib.drivers;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.team1806.frc2019.subsystems.Subsystem;
+import com.team1806.frc2020.subsystems.Subsystem;
 
 import java.util.ArrayList;
 

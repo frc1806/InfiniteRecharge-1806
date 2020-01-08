@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2181f283-78d1-4902-b115-be46f248619e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/AutoModeSelector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/AutoModeSelector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/GamePiece.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/GamePiece.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/Kinematics.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/Kinematics.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/Robot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/RobotState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/RobotState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/SubsystemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/SubsystemManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/AutoModeEndedException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/AutoModeEndedException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/AutoModeExecutor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/AutoModeExecutor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/Action.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/Action.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/CollectAccelerationDataAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/CollectAccelerationDataAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/CollectVelocityDataAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/CollectVelocityDataAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/DriveOpenLoopAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DriveOpenLoopAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/DrivePathAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DrivePathAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/DriveToStall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DriveToStall.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/ForceEndPathAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/ForceEndPathAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/LambdaAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/LambdaAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/NoopAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/NoopAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/OutputTime.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/OutputTime.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/ParallelAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/ParallelAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/RunActionAfterCollision.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/RunActionAfterCollision.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/RunActionAtAngle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/RunActionAtAngle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/RunActionAtAngleRange.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/RunActionAtAngleRange.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/RunActionAtX.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/RunActionAtX.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/RunActionAtY.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/RunActionAtY.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/RunOnceAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/RunOnceAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/SeriesAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/SeriesAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/VibrateControllerForTime.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/VibrateControllerForTime.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/VisionPathExecutor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/VisionPathExecutor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/WaitAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/WaitAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/WaitForPathMarkerAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/WaitForPathMarkerAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/WaitUntilInsideRegion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/WaitUntilInsideRegion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/actions/WaitUntilSeesTargetAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/WaitUntilSeesTargetAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/modes/AutoModeBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/modes/AutoModeBase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/modes/CharacterizeDrivebaseMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/modes/CharacterizeDrivebaseMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/modes/DoNothingMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/modes/DoNothingMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/modes/DriveByCameraMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/modes/DriveByCameraMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/modes/TestControlFlowMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/modes/TestControlFlowMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/auto/modes/VisionMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/modes/VisionMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/controlboard/ControlBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/controlboard/ControlBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/controlboard/GamepadButtonControlBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/controlboard/GamepadButtonControlBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/controlboard/GamepadDriveControlBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/controlboard/GamepadDriveControlBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/controlboard/IButtonControlBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/controlboard/IButtonControlBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/controlboard/IControlBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/controlboard/IControlBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/controlboard/IDriveControlBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/controlboard/IDriveControlBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/controlboard/MainDriveControlBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/controlboard/MainDriveControlBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/controlboard/XboxController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/controlboard/XboxController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/loops/ILooper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/loops/ILooper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/loops/Loop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/loops/Loop.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/loops/Looper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/loops/Looper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/CargoShip1ToCargoShip2Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/CargoShip1ToCargoShip2Path.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/CargoShip1ToFeederPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/CargoShip1ToFeederPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/CargoShip2ToBallPitPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/CargoShip2ToBallPitPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/CargoShip2ToFeederPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/CargoShip2ToFeederPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/CargoShip3ToFeederPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/CargoShip3ToFeederPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/CargoShipFrontToFeederPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/CargoShipFrontToFeederPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/FeederToCargoShip1Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/FeederToCargoShip1Path.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/FeederToCargoShip2Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/FeederToCargoShip2Path.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/FeederToCargoShip3Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/FeederToCargoShip3Path.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/FeederToRocketFarPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/FeederToRocketFarPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/FeederToRocketFarScoringPositionPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/FeederToRocketFarScoringPositionPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/FeederToRocketNearPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/FeederToRocketNearPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/GetOffHab2Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/GetOffHab2Path.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/Hab1ToCargoShip1Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/Hab1ToCargoShip1Path.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/Hab1ToCargoShip3Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/Hab1ToCargoShip3Path.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/Hab1ToCargoShipFrontPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/Hab1ToCargoShipFrontPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/Hab1ToRocketFarPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/Hab1ToRocketFarPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/Hab1ToRocketNearPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/Hab1ToRocketNearPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/PathBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/PathBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/PathContainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/PathContainer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/RocketFarToCargo1Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/RocketFarToCargo1Path.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/RocketFarToFeederPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/RocketFarToFeederPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/RocketNearToCargo1Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/RocketNearToCargo1Path.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/RocketNearToFeederPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/RocketNearToFeederPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/paths/VisionPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/paths/VisionPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/subsystems/Drive.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/subsystems/Drive.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/subsystems/Infrastructure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/subsystems/Infrastructure.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/subsystems/RobotStateEstimator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/subsystems/RobotStateEstimator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/subsystems/Subsystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/subsystems/Subsystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/frc2019/subsystems/Superstructure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/subsystems/Superstructure.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/control/Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/lib/control/Path.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/control/PathSegment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/lib/control/PathSegment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/MotorChecker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/MotorChecker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxChecker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxChecker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/TalonSRXChecker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/TalonSRXChecker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/util/CheesyDriveHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/lib/util/CheesyDriveHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/vision/GoalTrack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/lib/vision/GoalTrack.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/vision/GoalTracker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team1806/lib/vision/GoalTracker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/wpilib/IterativeRobotBase.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team1806/lib/wpilib/TimedRobot.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/team1806/frc2020/TestSystemTest.java" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view />
+      </state>
+    </system>
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/CollectAccelerationDataAction.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="28" selection-start-column="28" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1020">
+              <caret line="60" column="30" selection-start-line="60" selection-start-column="30" selection-end-line="60" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/Robot.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="11" column="28" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxUtil.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="11" column="9" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxFactory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="333">
+              <caret line="49" column="9" lean-forward="true" selection-start-line="49" selection-start-column="9" selection-end-line="49" selection-end-column="9" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/CollectVelocityDataAction.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="28" selection-start-column="28" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DriveOpenLoopAction.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="28" selection-start-column="28" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DrivePathAction.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="28" selection-start-column="28" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DriveToStall.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="28" selection-start-column="28" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/ForceEndPathAction.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="28" selection-start-column="28" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/Action.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/CollectAccelerationDataAction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/CollectVelocityDataAction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DriveOpenLoopAction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DrivePathAction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DriveToStall.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/ForceEndPathAction.java" />
+        <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team1806/frc2020/Robot.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxUtil.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxFactory.java" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-7" />
+    <option name="width" value="974" />
+    <option name="height" value="1047" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="InfiniteRecharge-1806" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InfiniteRecharge-1806" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="InfiniteRecharge-1806" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InfiniteRecharge-1806" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="InfiniteRecharge-1806" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InfiniteRecharge-1806" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="InfiniteRecharge-1806" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InfiniteRecharge-1806" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="InfiniteRecharge-1806" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InfiniteRecharge-1806" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="InfiniteRecharge-1806" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InfiniteRecharge-1806" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="team1806" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="InfiniteRecharge-1806" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InfiniteRecharge-1806" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="team1806" type="462c0819:PsiDirectoryNode" />
+              <item name="frc2020" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="InfiniteRecharge-1806" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InfiniteRecharge-1806" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="team1806" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="InfiniteRecharge-1806" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InfiniteRecharge-1806" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="team1806" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="drivers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="InfiniteRecharge-1806" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InfiniteRecharge-1806" type="462c0819:PsiDirectoryNode" />
+              <item name="vendordeps" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1578450592470" />
+    <property name="external.system.task.project.file.to.start" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="C:/Users/SWAT/InfiniteRecharge-1806 [build deploy]" type="GradleRunConfiguration" factoryName="Gradle" nameIsGenerated="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+            <option value="deploy" />
+          </list>
+        </option>
+        <option name="vmOptions" value="" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2181f283-78d1-4902-b115-be46f248619e" name="Default Changelist" comment="" />
+      <created>1578444116158</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1578444116158</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Image Layers" />
+      <window_info id="Designer" />
+      <window_info id="UI Designer" />
+      <window_info id="Build Variants" side_tool="true" />
+      <window_info id="Capture Tool" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32936078" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Palette" />
+      <window_info anchor="right" id="Theme Preview" />
+      <window_info anchor="right" id="Maven" />
+      <window_info anchor="right" id="Capture Analysis" />
+      <window_info anchor="right" id="Palette&#9;" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/GamePiece.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/subsystems/Drive.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/RobotState.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/Action.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="28" selection-start-column="28" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/CollectVelocityDataAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="28" selection-start-column="28" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DriveOpenLoopAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="28" selection-start-column="28" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DrivePathAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="28" selection-start-column="28" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/DriveToStall.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="28" selection-start-column="28" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/ForceEndPathAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="28" selection-start-column="28" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/auto/actions/CollectAccelerationDataAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="28" selection-start-column="28" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1020">
+          <caret line="60" column="30" selection-start-line="60" selection-start-column="30" selection-end-line="60" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/lib/wpilib/TimedRobot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="697">
+          <caret line="43" column="7" lean-forward="true" selection-start-line="43" selection-start-column="7" selection-end-line="43" selection-end-column="7" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/frc2020/Robot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="28" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="9" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team1806/lib/drivers/SparkMaxFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="333">
+          <caret line="49" column="9" lean-forward="true" selection-start-line="49" selection-start-column="9" selection-end-line="49" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>11</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

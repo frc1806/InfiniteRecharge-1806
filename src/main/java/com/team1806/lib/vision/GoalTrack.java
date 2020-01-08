@@ -1,6 +1,6 @@
 package com.team1806.lib.vision;
 
-import com.team1806.frc2019.Constants;
+import com.team1806.frc2020.Constants;
 import com.team1806.lib.geometry.Pose2d;
 import com.team1806.lib.geometry.Rotation2d;
 
