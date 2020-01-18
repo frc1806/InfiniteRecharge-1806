@@ -3,8 +3,10 @@ package com.team1806.lib.util;
 import edu.wpi.first.wpilibj.Timer;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Ignore;
 
 public class MultiTriggerTest {
+    @Ignore
     @Test
     public void test() {
         MultiTrigger trigger = new MultiTrigger(0.1);

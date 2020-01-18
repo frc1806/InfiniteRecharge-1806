@@ -74,10 +74,10 @@ public class Constants {
     // https://docs.google.com/spreadsheets/d/1w9V3_tqQ0npdc9U8WPD-6zJkKouunKzHvPXLbHEWwxk/edit#gid=0
 
     // drive
-    public static final int kLeftDriveMasterId = 11;
-    public static final int kLeftDriveSlaveId = 12;
-    public static final int kRightDriveMasterId = 13;
-    public static final int kRightDriveSlaveId = 14;
+    public static final int kLeftDriveMasterId = 4;
+    public static final int kLeftDriveSlaveId = 5;
+    public static final int kRightDriveMasterId = 1;
+    public static final int kRightDriveSlaveId = 2;
 
     public static final int kLeftDriveEncoderA = 0;
     public static final int kLeftDriveEncoderB = 1;
@@ -128,7 +128,7 @@ public class Constants {
     // reset button
     public static final int kResetButtonChannel = 4;
 
-    public static final boolean kUseDriveGamepad = false;
+    public static final boolean kUseDriveGamepad = true;
     public static final int kDriveGamepadPort = 0;
     public static final int kButtonGamepadPort = 2;
     public static final int kMainThrottleJoystickPort = 0;
