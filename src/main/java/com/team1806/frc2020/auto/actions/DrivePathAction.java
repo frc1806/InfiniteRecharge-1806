@@ -1,5 +1,6 @@
 package com.team1806.frc2020.auto.actions;
 
+import com.team1806.frc2020.Kinematics;
 import com.team1806.frc2020.paths.PathContainer;
 import com.team1806.frc2020.subsystems.Drive;
 import com.team1806.lib.control.Path;
@@ -46,7 +47,7 @@ public class DrivePathAction implements Action {
     @Override
     public void done() {
         if (mStopWhenDone) {
-            mDrive.setVelocity(new DriveSignal(0, 0), new DriveSignal(0, 0));
+            mDrive.setVelocity(new Kinematics.DriveVelocity(0, 0));
         }
     }
 }
