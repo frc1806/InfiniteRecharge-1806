@@ -30,12 +30,12 @@ public class SparkMaxFactory {
     }
 
     private static final Configuration kDefaultConfiguration = new Configuration();
-    private static final Configuration kSlaveConfiguration = new Configuration();
+    private static final Configuration kFollowerConfiguration = new Configuration();
 
     static {
-        kSlaveConfiguration.STATUS_FRAME_0_RATE_MS = 1000;
-        kSlaveConfiguration.STATUS_FRAME_1_RATE_MS = 1000;
-        kSlaveConfiguration.STATUS_FRAME_2_RATE_MS = 1000;
+        kFollowerConfiguration.STATUS_FRAME_0_RATE_MS = 1000;
+        kFollowerConfiguration.STATUS_FRAME_1_RATE_MS = 1000;
+        kFollowerConfiguration.STATUS_FRAME_2_RATE_MS = 1000;
     }
 
     // Create a CANTalon with the default (out of the box) configuration.
@@ -50,8 +50,8 @@ public class SparkMaxFactory {
         }
     }
 
-    public static LazySparkMax createPermanentSlaveSparkMax(int id, CANSparkMax master) {
-        final LazySparkMax sparkMax = createSparkMax(id, kSlaveConfiguration);
+    public static LazySparkMax createPermanentFollowerSparkMax(int id, CANSparkMax master) {
+        final LazySparkMax sparkMax = createSparkMax(id, kFollowerConfiguration);
         handleCANError(id, sparkMax.follow(master), "setting follower");
         return sparkMax;
     }

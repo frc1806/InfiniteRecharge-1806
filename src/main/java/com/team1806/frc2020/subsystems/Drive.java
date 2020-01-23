@@ -1,5 +1,6 @@
 package com.team1806.frc2020.subsystems;
 
+import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -87,7 +88,7 @@ public class Drive extends Subsystem {
 
         //initialize configured followers
         for(int i = 0; i < Constants.kDriveMotorsPerSide.getMotorsPerSide() -1; i++){
-            LazySparkMax tempLeftFollower = SparkMaxFactory.createPermanentSlaveSparkMax(Constants.kLeftDriveFollowerIds[i], mLeftLeader);
+            LazySparkMax tempLeftFollower = SparkMaxFactory.createPermanentFollowerSparkMax(Constants.kLeftDriveFollowerIds[i], mLeftLeader);
             configureSpark(tempLeftFollower, true, false);
             mLeftFollowers.add(tempLeftFollower);
         }
@@ -96,7 +97,7 @@ public class Drive extends Subsystem {
         configureSpark(mRightLeader, false, true);
 
         for(int i = 0; i < Constants.kDriveMotorsPerSide.getMotorsPerSide() -1; i++) {
-            LazySparkMax tempRightFollower = SparkMaxFactory.createPermanentSlaveSparkMax(Constants.kRightDriveFollowerIds[i], mRightLeader);
+            LazySparkMax tempRightFollower = SparkMaxFactory.createPermanentFollowerSparkMax(Constants.kRightDriveFollowerIds[i], mRightLeader);
             configureSpark(tempRightFollower, false, false);
             mRightFollowers.add(tempRightFollower);
         }
@@ -107,8 +108,8 @@ public class Drive extends Subsystem {
         // mRightLeader.burnFlash();
         // mRightFollower.burnFlash();
 
-        mLeftEncoder = mLeftLeader.getEncoder();
-        mRightEncoder = mRightLeader.getEncoder();
+        mLeftEncoder = mLeftLeader.getAlternateEncoder(AlternateEncoderType.kQuadrature, 4096);
+        mRightEncoder = mRightLeader.getAlternateEncoder(AlternateEncoderType.kQuadrature, 4096);
 
         mLeftEncoder.setInverted(true);
         mRightEncoder.setInverted(false);

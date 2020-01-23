@@ -72,14 +72,14 @@ public class Constants {
 
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
-    // Port assignments should match up with the spreadsheet here:
+    // Port assignments should match up with the spreadsheet here: TODO Update for 2020
     // https://docs.google.com/spreadsheets/d/1w9V3_tqQ0npdc9U8WPD-6zJkKouunKzHvPXLbHEWwxk/edit#gid=0
 
     // drive
-    public static final int kLeftDriveLeaderId = 0;
+    public static final int kLeftDriveLeaderId = 1;
     public static final int kRightDriveLeaderId = 5;
 
-    public static final Integer[] kLeftDriveFollowerIds = {1, 2, 3};
+    public static final Integer[] kLeftDriveFollowerIds = {2, 3, 4};
     public static final Integer[] kRightDriveFollowerIds = {6, 7, 8};
 
 
@@ -138,6 +138,25 @@ public class Constants {
     // solenoids
     public static final int kPCMId = 1;
     public static final int kShifterSolenoidId = 7;
+
+    // flywheel
+    public static final int kFlywheelSparkMaxLeader = 30;
+    public static final int kFlywheelSparkMaxFollower = 31;
+    public static final double kFlywheelSpeedMultiplier = 1;
+    public static final double kFlywheelSpeedControlkp = 1;
+    public static final double kFlywheelSpeedControlki = 0;
+    public static final double kFlywheelSpeedControlkd = 0;
+    public static final double kFlywheelSpeedControlkf = 0;
+    public static final double kFlywheelAcceptableSpeedRange = 0;
+    public static final double kFlywheelAcceptableAccleration = 0;
+    public static final double kFlywheelGearScalingFactor = 35.0 / 18.0;
+
+
+
+
+
+
+
 
 
 
