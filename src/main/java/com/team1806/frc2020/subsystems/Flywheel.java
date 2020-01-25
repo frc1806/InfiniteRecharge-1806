@@ -36,7 +36,6 @@ public class Flywheel extends Subsystem {
     public static Flywheel FLYWHEEL = new Flywheel();
     private LazySparkMax mSparkMaxLeader;
     private LazySparkMax mSparkMaxFollower;
-    private double mDesiredLauncherWheelSpeed;
     private FlywheelControlState mFlywheelControlState;
     private PeriodicIO mPeriodicIO;
     private ReflectingCSVWriter mCSVWriter;
@@ -157,7 +156,7 @@ public class Flywheel extends Subsystem {
     }
 
     public void stop() {
-        mDesiredLauncherWheelSpeed = 0;
+        mPeriodicIO.wantedRPM = 0;
         setControlState(FlywheelControlState.kIdle);
 
     }
