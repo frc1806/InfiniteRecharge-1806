@@ -38,8 +38,6 @@ public class Flywheel extends Subsystem {
     private LazySparkMax mSparkMaxFollower;
     private double mDesiredLauncherWheelSpeed;
     private FlywheelControlState mFlywheelControlState;
-    private int mLastLauncherWWheelSpeed;
-    private double mLastTimeStamp;
     private PeriodicIO mPeriodicIO;
     private ReflectingCSVWriter mCSVWriter;
 
@@ -125,7 +123,8 @@ public class Flywheel extends Subsystem {
        mPeriodicIO.leaderCurrent = mSparkMaxLeader.getOutputCurrent();
        mPeriodicIO.followerCurrent = mSparkMaxFollower.getOutputCurrent();
        double lastVelocity = mPeriodicIO.launchWheelRPM;
-       mPeriodicIO.launchWheelRPM = //this will be where you convert from NEO RPM to launch wheel
+       mPeriodicIO.launchWheelRPM = convertLauncherSpeedToNEOSpeed(mSparkMaxLeader.getEncoder().getVelocity());
+
 
 
 
