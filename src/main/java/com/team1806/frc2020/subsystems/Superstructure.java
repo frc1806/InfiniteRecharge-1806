@@ -37,6 +37,7 @@ public class Superstructure extends Subsystem {
     private double mCorrectedRangeToTarget = 0.0;
     private boolean mEnforceAutoAimMinDistance = false;
     private double mAutoAimMinDistance = 500;
+    private Flywheel mFlywheel;
 
 
     public synchronized static Superstructure getInstance() {
@@ -47,7 +48,9 @@ public class Superstructure extends Subsystem {
         return mInstance;
     }
 
-    private Superstructure() {}
+    private Superstructure() {
+        mFlywheel = Flywheel.GetInstance();
+    }
 
     @Override
     public void registerEnabledLoops(ILooper mEnabledLooper) {

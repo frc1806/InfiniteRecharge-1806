@@ -1,5 +1,6 @@
 package com.team1806.frc2020;
 
+import com.team1806.lib.drivers.LazySparkMax;
 import com.team1806.lib.geometry.Pose2d;
 import com.team1806.lib.geometry.Rotation2d;
 import com.team1806.lib.geometry.Translation2d;
@@ -8,6 +9,7 @@ import edu.wpi.first.wpilibj.SPI;
 
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 /**
@@ -70,19 +72,17 @@ public class Constants {
 
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
-    // Port assignments should match up with the spreadsheet here:
+    // Port assignments should match up with the spreadsheet here: TODO Update for 2020
     // https://docs.google.com/spreadsheets/d/1w9V3_tqQ0npdc9U8WPD-6zJkKouunKzHvPXLbHEWwxk/edit#gid=0
 
     // drive
-    public static final int kLeftDriveMasterId = 4;
-    public static final int kLeftDriveSlaveId = 5;
-    public static final int kRightDriveMasterId = 1;
-    public static final int kRightDriveSlaveId = 2;
+    public static final int kLeftDriveLeaderId = 1;
+    public static final int kRightDriveLeaderId = 5;
 
-    public static final int kLeftDriveEncoderA = 0;
-    public static final int kLeftDriveEncoderB = 1;
-    public static final int kRightDriveEncoderA = 2;
-    public static final int kRightDriveEncoderB = 3;
+    public static final Integer[] kLeftDriveFollowerIds = {2, 3, 4};
+    public static final Integer[] kRightDriveFollowerIds = {6, 7, 8};
+
+
 
     public static final double kDriveEncoderPPR = 1000.0;
 
@@ -138,6 +138,48 @@ public class Constants {
     // solenoids
     public static final int kPCMId = 1;
     public static final int kShifterSolenoidId = 7;
+
+    // flywheel
+    public static final int kFlywheelSparkMaxLeader = 30;
+    public static final int kFlywheelSparkMaxFollower = 31;
+    public static final double kFlywheelSpeedMultiplier = 1;
+    public static final double kFlywheelSpeedControlkp = 1;
+    public static final double kFlywheelSpeedControlki = 0;
+    public static final double kFlywheelSpeedControlkd = 0;
+    public static final double kFlywheelSpeedControlkf = 0;
+    public static final double kFlywheelAcceptableSpeedRange = 0;
+    public static final double kFlywheelAcceptableAccleration = 0;
+    public static final double kFlywheelGearScalingFactor = 35.0 / 18.0;
+
+
+
+
+
+
+
+
+
+
+    public enum DriveMotorsPerSide{
+
+        ONE(1),
+        TWO(2),
+        THREE(3),
+        FOUR(4),
+        FIVE(5);
+
+        private int mMotorsPerSide;
+
+        private DriveMotorsPerSide(int motorsPerSide){
+            mMotorsPerSide = motorsPerSide;
+        }
+        public int getMotorsPerSide(){
+            return mMotorsPerSide;
+        }
+    };
+
+    public static final DriveMotorsPerSide kDriveMotorsPerSide = DriveMotorsPerSide.TWO;
+
 
     /*
      * @return the MAC address of the robot

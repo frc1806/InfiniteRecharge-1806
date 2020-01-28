@@ -19,9 +19,11 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
         mController = new XboxController(Constants.kDriveGamepadPort);
     }
 
+
+
     @Override
     public double getThrottle() {
-        return mController.getJoystick(XboxController.Side.LEFT, XboxController.Axis.Y);
+        return -mController.getJoystick(XboxController.Side.LEFT, XboxController.Axis.Y);
     }
 
     @Override
@@ -46,6 +48,6 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public boolean getShoot() {
-        return false;
+        return mController.getButton(XboxController.Button.A);
     }
 }

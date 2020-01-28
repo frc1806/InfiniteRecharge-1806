@@ -42,10 +42,27 @@ public class Kinematics {
         return current_pose.transformBy(Pose2d.exp(forward_kinematics));
     }
 
+    public static class DriveVelocity {
+        public final double left;
+        public final double right;
+
+        public DriveVelocity(double left, double right) {
+            this.left = left;
+            this.right = right;
+        }
+    }
+    public static DriveVelocity inverseKinematicsVelo(Twist2d velocity) {
+        if (Math.abs(velocity.dtheta) < kEpsilon) {
+            return new DriveVelocity(velocity.dx, velocity.dx);
+        }
+        double delta_v = Constants.kDriveWheelTrackWidthInches * velocity.dtheta / (2 * Constants.kTrackScrubFactor);
+        return new DriveVelocity(velocity.dx - delta_v, velocity.dx + delta_v);
+    }
+
     /**
      * Uses inverse kinematics to convert a Twist2d into left and right wheel velocities
      */
-    public static DriveSignal inverseKinematics(Twist2d velocity) {
+    public static DriveSignal inverseKinematicsDutyCycle(Twist2d velocity) {
         if (Math.abs(velocity.dtheta) < kEpsilon) {
             return new DriveSignal(velocity.dx, velocity.dx);
         }

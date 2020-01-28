@@ -32,6 +32,7 @@ public class Robot extends TimedRobot {
     private final RobotState mRobotState = RobotState.getInstance();
     private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
     private final Drive mDrive = Drive.getInstance();
+    public Flywheel mFlywheel = Flywheel.GetInstance();
 
 
     // button placed on the robot to allow the drive team to zero the robot right
@@ -69,7 +70,8 @@ public class Robot extends TimedRobot {
             mSubsystemManager.setSubsystems(
                     mRobotStateEstimator,
                     mDrive,
-                    mInfrastructure);
+                    mInfrastructure,
+                    mFlywheel);
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -255,6 +257,13 @@ public class Robot extends TimedRobot {
         // drive
         mDrive.setHighGear(!wantsLowGear);
         mDrive.setCheesyishDrive(throttle, -mControlBoard.getTurn(), mControlBoard.getQuickTurn());
+        if (mControlBoard.getShoot()){
+            mFlywheel.setSpeed(9500);
+        }
+        else{
+            mFlywheel.stop();
+        }
+
     }
 
     @Override

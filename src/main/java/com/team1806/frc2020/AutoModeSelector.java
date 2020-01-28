@@ -19,7 +19,7 @@ public class AutoModeSelector {
 
     public static final String AUTO_OPTIONS_DASHBOARD_KEY = "auto_options";
     public static final String SELECTED_AUTO_MODE_DASHBOARD_KEY = "selected_auto_mode";
-    public static final String AUTO_MODES_PACKAGE = "com.frc.team1806.robot.auto.modes";
+    public static final String AUTO_MODES_PACKAGE = "com.team1806.frc2020.auto.modes";
     
     /**
      * Uses reflection to get every auto mode in the defined auto modes package. The idea being to remove a step from the process of adding an autonomous mode.

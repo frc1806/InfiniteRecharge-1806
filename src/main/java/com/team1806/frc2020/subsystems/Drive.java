@@ -1,8 +1,8 @@
 package com.team1806.frc2020.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
-import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.ControlType;
 import com.team1806.frc2020.Constants;
@@ -23,7 +23,6 @@ import com.team1806.lib.util.*;
 import com.team1806.lib.vision.AimingParameters;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,8 +32,11 @@ import java.util.ArrayList;
 public class Drive extends Subsystem {
     private static Drive mInstance;
     // hardware
-    private final LazySparkMax mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
-    private final Encoder mLeftEncoder, mRightEncoder;
+    private final LazySparkMax mLeftLeader, mRightLeader;
+    ArrayList<LazySparkMax> mLeftFollowers = new ArrayList<>();
+    ArrayList<LazySparkMax> mRightFollowers = new ArrayList<>();
+
+    private final CANEncoder mLeftEncoder, mRightEncoder;
 
     // Controllers
     private PathFollower mPathFollower;
@@ -81,32 +83,46 @@ public class Drive extends Subsystem {
         mPeriodicIO = new PeriodicIO();
 
         // start all Talons in open loop mode
-        mLeftMaster = SparkMaxFactory.createDefaultSparkMax(Constants.kLeftDriveMasterId);
-        configureSpark(mLeftMaster, true, true);
+        mLeftLeader = SparkMaxFactory.createDefaultSparkMax(Constants.kLeftDriveLeaderId);
+        configureSpark(mLeftLeader, true, true);
 
-        mLeftSlave = SparkMaxFactory.createPermanentSlaveSparkMax(Constants.kLeftDriveSlaveId, mLeftMaster);
-        configureSpark(mLeftSlave, true, false);
+        //initialize configured followers
+        for(int i = 0; i < Constants.kDriveMotorsPerSide.getMotorsPerSide() -1; i++){
+            LazySparkMax tempLeftFollower = SparkMaxFactory.createPermanentFollowerSparkMax(Constants.kLeftDriveFollowerIds[i], mLeftLeader);
+            if(tempLeftFollower != null){
+                configureSpark(tempLeftFollower, true, false);
+                mLeftFollowers.add(tempLeftFollower);
+            }
 
-        mRightMaster = SparkMaxFactory.createDefaultSparkMax(Constants.kRightDriveMasterId);
-        configureSpark(mRightMaster, false, true);
+        }
 
-        mRightSlave = SparkMaxFactory.createPermanentSlaveSparkMax(Constants.kRightDriveSlaveId, mRightMaster);
-        configureSpark(mRightSlave, false, false);
+        mRightLeader = SparkMaxFactory.createDefaultSparkMax(Constants.kRightDriveLeaderId);
+        configureSpark(mRightLeader, false, true);
+
+        for(int i = 0; i < Constants.kDriveMotorsPerSide.getMotorsPerSide() -1; i++) {
+            LazySparkMax tempRightFollower = SparkMaxFactory.createPermanentFollowerSparkMax(Constants.kRightDriveFollowerIds[i], mRightLeader);
+            if (tempRightFollower != null){
+                configureSpark(tempRightFollower, false, false);
+                mRightFollowers.add(tempRightFollower);
+            }
+        }
 
         // burn flash so that when spark resets they have the same config
-        // mLeftMaster.burnFlash();
-        // mLeftSlave.burnFlash();
-        // mRightMaster.burnFlash();
-        // mRightSlave.burnFlash();
+        // mLeftLeader.burnFlash();
+        // mLeftFollower.burnFlash();
+        // mRightLeader.burnFlash();
+        // mRightFollower.burnFlash();
 
-        mLeftEncoder = new Encoder(Constants.kLeftDriveEncoderA, Constants.kLeftDriveEncoderB, false);
-        mRightEncoder = new Encoder(Constants.kRightDriveEncoderA, Constants.kRightDriveEncoderB, true);
+        mLeftEncoder = mLeftLeader.getAlternateEncoder(AlternateEncoderType.kQuadrature, 4096);
+        mRightEncoder = mRightLeader.getAlternateEncoder(AlternateEncoderType.kQuadrature, 4096);
 
-        mLeftEncoder.setReverseDirection(true);
-        mRightEncoder.setReverseDirection(false);
+        mLeftEncoder.setInverted(true);
+        mRightEncoder.setInverted(false);
 
-        mLeftEncoder.setDistancePerPulse(Constants.kDriveWheelDiameterInches * Math.PI / Constants.kDriveEncoderPPR);
-        mRightEncoder.setDistancePerPulse(Constants.kDriveWheelDiameterInches * Math.PI / Constants.kDriveEncoderPPR);
+        mLeftEncoder.setPositionConversionFactor(Constants.kDriveWheelDiameterInches * Math.PI / Constants.kDriveEncoderPPR);
+        mLeftEncoder.setVelocityConversionFactor(Constants.kDriveWheelDiameterInches * Math.PI / Constants.kDriveEncoderPPR);
+        mRightEncoder.setPositionConversionFactor(Constants.kDriveWheelDiameterInches * Math.PI / Constants.kDriveEncoderPPR);
+        mRightEncoder.setVelocityConversionFactor(Constants.kDriveWheelDiameterInches * Math.PI / Constants.kDriveEncoderPPR);
 
         mShifter = new Solenoid(Constants.kPCMId, Constants.kShifterSolenoidId);
 
@@ -134,12 +150,12 @@ public class Drive extends Subsystem {
         public double timestamp;
         public double left_voltage;
         public double right_voltage;
-        public int left_position_ticks;
-        public int right_position_ticks;
+        public double left_position_ticks;
+        public double right_position_ticks;
         public double left_distance;
         public double right_distance;
-        public int left_velocity_ticks_per_100ms;
-        public int right_velocity_ticks_per_100ms;
+        public double left_velocity;
+        public double right_velocity;
         public Rotation2d gyro_heading = Rotation2d.identity();
         public Pose2d error = Pose2d.identity();
 
@@ -148,6 +164,8 @@ public class Drive extends Subsystem {
         public double right_demand;
         public double left_accel;
         public double right_accel;
+        public double left_velo;
+        public double right_velo;
         public double left_feedforward;
         public double right_feedforward;
     }
@@ -157,11 +175,11 @@ public class Drive extends Subsystem {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
         double prevLeftTicks = mPeriodicIO.left_position_ticks;
         double prevRightTicks = mPeriodicIO.right_position_ticks;
-        mPeriodicIO.left_voltage = mLeftMaster.getAppliedOutput() * mLeftMaster.getBusVoltage();
-        mPeriodicIO.right_voltage = mRightMaster.getAppliedOutput() * mRightMaster.getBusVoltage();
+        mPeriodicIO.left_voltage = mLeftLeader.getAppliedOutput() * mLeftLeader.getBusVoltage();
+        mPeriodicIO.right_voltage = mRightLeader.getAppliedOutput() * mRightLeader.getBusVoltage();
 
-        mPeriodicIO.left_position_ticks = mLeftEncoder.get();
-        mPeriodicIO.right_position_ticks = mRightEncoder.get();
+        mPeriodicIO.left_position_ticks = mLeftEncoder.getPosition();
+        mPeriodicIO.right_position_ticks = mRightEncoder.getPosition();
         mPeriodicIO.gyro_heading = mNavx.getYaw().rotateBy(mGyroOffset);
 
         double deltaLeftTicks = ((mPeriodicIO.left_position_ticks - prevLeftTicks) / Constants.kDriveEncoderPPR)
@@ -172,10 +190,8 @@ public class Drive extends Subsystem {
                 * Math.PI;
         mPeriodicIO.right_distance += deltaRightTicks * Constants.kDriveWheelDiameterInches;
 
-        mPeriodicIO.left_velocity_ticks_per_100ms = (int) (mLeftEncoder.getRate()
-                / (10 * mLeftEncoder.getDistancePerPulse()));
-        mPeriodicIO.right_velocity_ticks_per_100ms = (int) (mRightEncoder.getRate()
-                / (10 * mRightEncoder.getDistancePerPulse()));
+        mPeriodicIO.left_velocity =mLeftEncoder.getVelocity();
+        mPeriodicIO.right_velocity =mRightEncoder.getVelocity();
 
         if (mCSVWriter != null) {
             mCSVWriter.add(mPeriodicIO);
@@ -185,11 +201,15 @@ public class Drive extends Subsystem {
     @Override
     public synchronized void writePeriodicOutputs() {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-            mLeftMaster.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
-            mRightMaster.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
-        } else {
-            mLeftMaster.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
-            mRightMaster.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
+            mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
+            mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
+        } else if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
+            mLeftLeader.getPIDController().setReference(mPeriodicIO.left_velo, ControlType.kVelocity, 0);
+            mRightLeader.getPIDController().setReference(mPeriodicIO.right_velo, ControlType.kVelocity, 0);
+        }
+        else {
+            mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
+            mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
         }
     }
 
@@ -244,15 +264,20 @@ public class Drive extends Subsystem {
     }
 
     private void handleFaults() {
-        if (mRightSlave.getStickyFault(CANSparkMax.FaultID.kHasReset)) {
-            System.out.println("Right Slave Reset!");
-            mRightSlave.follow(mRightMaster);
-            mRightSlave.clearFaults();
+        for(LazySparkMax rightFollower: mRightFollowers){
+            if (rightFollower.getStickyFault(CANSparkMax.FaultID.kHasReset)) {
+                System.out.println("Right Follower Reset! Id: " + rightFollower.getDeviceId());
+                rightFollower.follow(mRightLeader);
+                rightFollower.clearFaults();
+            }
         }
-        if (mLeftSlave.getStickyFault(CANSparkMax.FaultID.kHasReset)) {
-            System.out.println("Left Slave Reset!");
-            mLeftSlave.follow(mLeftMaster);
-            mLeftSlave.clearFaults();
+
+        for(LazySparkMax leftFollower: mLeftFollowers){
+            if (leftFollower.getStickyFault(CANSparkMax.FaultID.kHasReset)) {
+                System.out.println("Left Follower Reset! Id: " + leftFollower.getDeviceId());
+                leftFollower.follow(mLeftLeader);
+                leftFollower.clearFaults();
+            }
         }
     }
 
@@ -314,7 +339,7 @@ public class Drive extends Subsystem {
         }
 
         wheel *= kWheelGain;
-        DriveSignal signal = Kinematics.inverseKinematics(new Twist2d(throttle, 0.0, wheel));
+        DriveSignal signal = Kinematics.inverseKinematicsDutyCycle(new Twist2d(throttle, 0.0, wheel));
         double scaling_factor = Math.max(1.0, Math.max(Math.abs(signal.getLeft()), Math.abs(signal.getRight())));
         setOpenLoop(new DriveSignal(signal.getLeft() / scaling_factor, signal.getRight() / scaling_factor));
     }
@@ -336,28 +361,26 @@ public class Drive extends Subsystem {
 
         final double kAutosteerKp = 0.05;
         double curvature = (towards_goal ? 1.0 : 0.0) * heading_error_rad * kAutosteerKp;
-        setOpenLoop(Kinematics.inverseKinematics(new Twist2d(throttle, 0.0, curvature * throttle * (reverse ? -1.0 : 1.0))));
+        setVelocity(Kinematics.inverseKinematicsVelo(new Twist2d(throttle, 0.0, curvature * throttle * (reverse ? -1.0 : 1.0))));
         setBrakeMode(true);
     }
 
     /**
      * Configure talons for velocity control
      */
-    public synchronized void setVelocity(DriveSignal signal, DriveSignal feedforward) {
+    public synchronized void setVelocity(Kinematics.DriveVelocity velocity) {
         if (mDriveControlState != DriveControlState.PATH_FOLLOWING) {
             setBrakeMode(true);
+            setHighGear(true);
             System.out.println("switching to path following");
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
-            // mLeftMaster.selectProfileSlot(kLowGearVelocityControlSlot, 0);
-            // mRightMaster.selectProfileSlot(kLowGearVelocityControlSlot, 0);
-            // mLeftMaster.configNeutralDeadband(0.0, 0);
-            // mRightMaster.configNeutralDeadband(0.0, 0);
+            // mLeftLeader.selectProfileSlot(kLowGearVelocityControlSlot, 0);
+            // mRightLeader.selectProfileSlot(kLowGearVelocityControlSlot, 0);
+            // mLeftLeader.configNeutralDeadband(0.0, 0);
+            // mRightLeader.configNeutralDeadband(0.0, 0);
         }
-
-        mPeriodicIO.left_demand = signal.getLeft();
-        mPeriodicIO.right_demand = signal.getRight();
-        mPeriodicIO.left_feedforward = feedforward.getLeft();
-        mPeriodicIO.right_feedforward = feedforward.getRight();
+        mPeriodicIO.left_velo = velocity.left;
+        mPeriodicIO.right_velo = velocity.right;
     }
 
     public boolean isHighGear() {
@@ -380,11 +403,18 @@ public class Drive extends Subsystem {
         if (mIsBrakeMode != shouldEnable) {
             mIsBrakeMode = shouldEnable;
             IdleMode mode = shouldEnable ? IdleMode.kBrake : IdleMode.kCoast;
-            mRightMaster.setIdleMode(mode);
-            mRightSlave.setIdleMode(mode);
+            mRightLeader.setIdleMode(mode);
 
-            mLeftMaster.setIdleMode(mode);
-            mLeftSlave.setIdleMode(mode);
+            for(LazySparkMax leftFollower: mLeftFollowers){
+                leftFollower.setIdleMode(mode);
+            }
+
+            for(LazySparkMax rightFollower: mRightFollowers){
+                rightFollower.setIdleMode(mode);
+            }
+
+
+            mLeftLeader.setIdleMode(mode);
 
         }
     }
@@ -403,8 +433,8 @@ public class Drive extends Subsystem {
     }
 
     public synchronized void resetEncoders() {
-        mLeftEncoder.reset();
-        mRightEncoder.reset();
+        mLeftEncoder.setPosition(0);
+        mRightEncoder.setPosition(0);
         mPeriodicIO = new PeriodicIO();
     }
 
@@ -424,20 +454,17 @@ public class Drive extends Subsystem {
         return rotationsToInches(getRightEncoderRotations());
     }
 
-    public double getRightVelocityNativeUnits() {
-        return mPeriodicIO.right_velocity_ticks_per_100ms;
-    }
-
+    /**
+     * Gets right drive velocity in inches per second.
+     * @return gets right drive velocity.
+     */
     public double getRightLinearVelocity() {
-        return rotationsToInches(getRightVelocityNativeUnits() * 10.0 / Constants.kDriveEncoderPPR);
+        return mPeriodicIO.right_velocity;
     }
 
-    public double getLeftVelocityNativeUnits() {
-        return mPeriodicIO.left_velocity_ticks_per_100ms;
-    }
 
     public double getLeftLinearVelocity() {
-        return rotationsToInches(getLeftVelocityNativeUnits() * 10.0 / Constants.kDriveEncoderPPR);
+        return mPeriodicIO.left_velocity;
     }
 
     public double getLinearVelocity() {
@@ -472,7 +499,7 @@ public class Drive extends Subsystem {
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
             mCurrentPath = path;
         } else {
-            setVelocity(new DriveSignal(0, 0), new DriveSignal(0, 0));
+            setVelocity(new Kinematics.DriveVelocity(0, 0));
         }
     }
 
@@ -500,11 +527,12 @@ public class Drive extends Subsystem {
             Twist2d command = mPathFollower.update(timestamp, field_to_vehicle, robot_state.getDistanceDriven(),
                     robot_state.getPredictedVelocity().dx);
             if (!mPathFollower.isFinished()) {
-                DriveSignal setpoint = Kinematics.inverseKinematics(command);
-                setVelocity(setpoint, new DriveSignal(0, 0));
+
+                Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematicsVelo(command);
+                setVelocity(setpoint);
             } else {
                 if (!mPathFollower.isForceFinished()) {
-                    setVelocity(new DriveSignal(0, 0), new DriveSignal(0, 0));
+                    setVelocity(new Kinematics.DriveVelocity(0, 0));
                 }
             }
         } else {
@@ -522,10 +550,18 @@ public class Drive extends Subsystem {
     }
 
     private void setDriveLimits(int amps) {
-        mRightMaster.setSmartCurrentLimit(amps);
-        mRightSlave.setSmartCurrentLimit(amps);
-        mLeftMaster.setSmartCurrentLimit(amps);
-        mLeftSlave.setSmartCurrentLimit(amps);
+        mRightLeader.setSmartCurrentLimit(amps);
+        mLeftLeader.setSmartCurrentLimit(amps);
+
+
+        for(LazySparkMax leftFollower: mLeftFollowers){
+            leftFollower.setSmartCurrentLimit(amps);
+        }
+
+        for(LazySparkMax rightFollower: mRightFollowers){
+            rightFollower.setSmartCurrentLimit(amps);
+
+        }
     }
 
     private void setDriveCurrentState(DriveCurrentLimitState desiredState, double timestamp) {
@@ -589,16 +625,21 @@ public class Drive extends Subsystem {
                 private static final long serialVersionUID = 3643247888353037677L;
 
                 {
-                    add(new MotorChecker.MotorConfig<>("left_master", mLeftMaster));
-                    add(new MotorChecker.MotorConfig<>("left_slave", mLeftSlave));
+                    add(new MotorChecker.MotorConfig<>("left_leader", mLeftLeader));
+
+                    for(LazySparkMax leftFollower: mLeftFollowers){
+                        add(new MotorChecker.MotorConfig<>("left_follower", leftFollower));
+                    }
+
                 }
+
             }, new MotorChecker.CheckerConfig() {
                 {
                     mCurrentFloor = 3;
                     mRPMFloor = 90;
                     mCurrentEpsilon = 2.0;
                     mRPMEpsilon = 200;
-                    mRPMSupplier = mLeftEncoder::getRate;
+                    mRPMSupplier = mLeftEncoder::getVelocity;
                 }
             });
         boolean rightSide = SparkMaxChecker.checkMotors(this,
@@ -606,8 +647,11 @@ public class Drive extends Subsystem {
                 private static final long serialVersionUID = -1212959188716158751L;
 
                 {
-                    add(new MotorChecker.MotorConfig<>("right_master", mRightMaster));
-                    add(new MotorChecker.MotorConfig<>("right_slave", mRightSlave));
+                    add(new MotorChecker.MotorConfig<>("right_leader", mRightLeader));
+
+                    for(LazySparkMax rightFollower: mRightFollowers){
+                        add(new MotorChecker.MotorConfig<>("right_follower", rightFollower));;
+                    }
                 }
             }, new MotorChecker.CheckerConfig() {
                 {
@@ -615,7 +659,7 @@ public class Drive extends Subsystem {
                     mRPMFloor = 90;
                     mCurrentEpsilon = 2.0;
                     mRPMEpsilon = 20;
-                    mRPMSupplier = mRightEncoder::getRate;
+                    mRPMSupplier = mRightEncoder::getVelocity;
                 }
             });
 
@@ -634,6 +678,10 @@ public class Drive extends Subsystem {
         // SmartDashboard.putNumber("X Error", mPeriodicIO.error.getTranslation().x());
         // SmartDashboard.putNumber("Y error", mPeriodicIO.error.getTranslation().y());
         // SmartDashboard.putNumber("Theta Error", mPeriodicIO.error.getRotation().getDegrees());
+        SmartDashboard.putNumber("Drive Left MAster NEO out", mLeftLeader.getAppliedOutput());
+        for(LazySparkMax tempFollower: mLeftFollowers){
+            SmartDashboard.putNumber("Drive left follower NEO out " + tempFollower.getDeviceId(), tempFollower.getAppliedOutput());
+        }
 
         // SmartDashboard.putNumber("Left Voltage Kf", mPeriodicIO.left_voltage / getLeftLinearVelocity());
         // SmartDashboard.putNumber("Right Voltage Kf", mPeriodicIO.right_voltage / getRightLinearVelocity());
@@ -708,10 +756,10 @@ public class Drive extends Subsystem {
     }
 
     public double getLeftVelocityInchesPerSec() {
-        return mLeftEncoder.getRate();
+        return mLeftEncoder.getVelocity();
 	}
     
     public double getRightVelocityInchesPerSec() {
-		return mRightEncoder.getRate();
+		return mRightEncoder.getVelocity();
 	}
 }
