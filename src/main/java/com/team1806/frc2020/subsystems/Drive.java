@@ -89,8 +89,11 @@ public class Drive extends Subsystem {
         //initialize configured followers
         for(int i = 0; i < Constants.kDriveMotorsPerSide.getMotorsPerSide() -1; i++){
             LazySparkMax tempLeftFollower = SparkMaxFactory.createPermanentFollowerSparkMax(Constants.kLeftDriveFollowerIds[i], mLeftLeader);
-            configureSpark(tempLeftFollower, true, false);
-            mLeftFollowers.add(tempLeftFollower);
+            if(tempLeftFollower != null){
+                configureSpark(tempLeftFollower, true, false);
+                mLeftFollowers.add(tempLeftFollower);
+            }
+
         }
 
         mRightLeader = SparkMaxFactory.createDefaultSparkMax(Constants.kRightDriveLeaderId);
@@ -98,8 +101,10 @@ public class Drive extends Subsystem {
 
         for(int i = 0; i < Constants.kDriveMotorsPerSide.getMotorsPerSide() -1; i++) {
             LazySparkMax tempRightFollower = SparkMaxFactory.createPermanentFollowerSparkMax(Constants.kRightDriveFollowerIds[i], mRightLeader);
-            configureSpark(tempRightFollower, false, false);
-            mRightFollowers.add(tempRightFollower);
+            if (tempRightFollower != null){
+                configureSpark(tempRightFollower, false, false);
+                mRightFollowers.add(tempRightFollower);
+            }
         }
 
         // burn flash so that when spark resets they have the same config
@@ -673,6 +678,10 @@ public class Drive extends Subsystem {
         // SmartDashboard.putNumber("X Error", mPeriodicIO.error.getTranslation().x());
         // SmartDashboard.putNumber("Y error", mPeriodicIO.error.getTranslation().y());
         // SmartDashboard.putNumber("Theta Error", mPeriodicIO.error.getRotation().getDegrees());
+        SmartDashboard.putNumber("Drive Left MAster NEO out", mLeftLeader.getAppliedOutput());
+        for(LazySparkMax tempFollower: mLeftFollowers){
+            SmartDashboard.putNumber("Drive left follower NEO out " + tempFollower.getDeviceId(), tempFollower.getAppliedOutput());
+        }
 
         // SmartDashboard.putNumber("Left Voltage Kf", mPeriodicIO.left_voltage / getLeftLinearVelocity());
         // SmartDashboard.putNumber("Right Voltage Kf", mPeriodicIO.right_voltage / getRightLinearVelocity());

@@ -1,6 +1,8 @@
 package com.team1806.frc2020.subsystems;
 
 
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.team1806.frc2020.Constants;
 import com.team1806.frc2020.loops.ILooper;
@@ -41,10 +43,13 @@ public class Flywheel extends Subsystem {
     private ReflectingCSVWriter mCSVWriter;
 
     private Flywheel(){
-
-        LazySparkMax mSparkMaxLeader = new LazySparkMax(30);
-        LazySparkMax mSparkMaxFollower = new LazySparkMax(31);
-
+        mSparkMaxLeader = new LazySparkMax(30);
+        mSparkMaxFollower = new LazySparkMax(31);
+        mSparkMaxLeader.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        mSparkMaxFollower.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        mSparkMaxLeader.setInverted(true);
+        mSparkMaxFollower.setInverted(true);
+        mSparkMaxFollower.follow(mSparkMaxLeader);
         mPeriodicIO = new PeriodicIO();
         setControlState(FlywheelControlState.kIdle);
         reloadGains();
@@ -99,14 +104,13 @@ public class Flywheel extends Subsystem {
         mFlywheelControlState = state;
     }
 
-    private void reloadGains() {
-        mSparkMaxLeader.getPIDController().setP(Constants.kFlywheelSpeedControlkp);
-        mSparkMaxLeader.getPIDController().setI(Constants.kFlywheelSpeedControlki);
-        mSparkMaxLeader.getPIDController().setD(Constants.kFlywheelSpeedControlkd);
-    }
-
-    public void registerEnabledLoops(ILooper mEnabledLooper){
-
+    private void reloadGains(){
+        if(mSparkMaxLeader!= null && mSparkMaxLeader.getPIDController() != null){
+            mSparkMaxLeader.getPIDController().setP(Constants.kFlywheelSpeedControlkp);
+            mSparkMaxLeader.getPIDController().setI(Constants.kFlywheelSpeedControlki);
+            mSparkMaxLeader.getPIDController().setD(Constants.kFlywheelSpeedControlkd);
+            mSparkMaxLeader.getPIDController().setOutputRange(0, 1);
+        }
     }
 
     public void writeToLog(){
@@ -175,6 +179,12 @@ public class Flywheel extends Subsystem {
          }
 
 
+    }
+
+    public synchronized void startLogging(){
+        if (mCSVWriter == null) {
+            mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/FLYWHEEL-LOGS.csv", PeriodicIO.class);
+        }
     }
 
 }

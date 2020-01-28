@@ -48,6 +48,6 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public boolean getShoot() {
-        return false;
+        return mController.getButton(XboxController.Button.A);
     }
 }
