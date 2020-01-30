@@ -145,6 +145,7 @@ public class Drive extends Subsystem {
 
         mDriveCurrentLimitState = DriveCurrentLimitState.UNTHROTTLED;
         setDriveCurrentState(DriveCurrentLimitState.THROTTLED, 0.0);
+        reloadGains();
     }
 
     private PeriodicIO mPeriodicIO;
