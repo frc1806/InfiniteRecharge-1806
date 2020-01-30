@@ -31,6 +31,11 @@ import java.util.ArrayList;
 
 public class Drive extends Subsystem {
     private static Drive mInstance;
+
+    //PID Slots
+    private static final int kLowGearPositionControlSlot = 0;
+    private static final int kHighGearVelocityControlSlot = 1;
+
     // hardware
     private final LazySparkMax mLeftLeader, mRightLeader;
     ArrayList<LazySparkMax> mLeftFollowers = new ArrayList<>();
@@ -762,4 +767,83 @@ public class Drive extends Subsystem {
     public double getRightVelocityInchesPerSec() {
 		return mRightEncoder.getVelocity();
 	}
+
+    public synchronized void reloadGains() {
+        reloadLowGearPositionGains();
+        reloadHighGearVelocityGains();
+    }
+
+
+
+    /** sets a pid on a motor controller position (high gear high speed)
+     *
+     * @param motorController to set the pid values on
+     */
+    public synchronized void reloadHighGearPositionGainsForController(CANSparkMax motorController) {
+        motorController.getPIDController().setP(Constants.kDriveHighGearVelocityKp, kHighGearVelocityControlSlot);
+        motorController.getPIDController().setI(Constants.kDriveHighGearVelocityKi, kHighGearVelocityControlSlot);
+        motorController.getPIDController().setD(Constants.kDriveHighGearVelocityKd, kHighGearVelocityControlSlot);
+        motorController.getPIDController().setFF(Constants.kDriveHighGearVelocityKf, kHighGearVelocityControlSlot);
+        motorController.getPIDController().setIZone(Constants.kDriveHighGearVelocityIZone, kHighGearVelocityControlSlot);
+
+        /*TODO: Do we need this?
+		motorController.configClosedloopRamp(Constants.kDriveHighGearVelocityRampRate, Constants.kDriveTrainPIDSetTimeout);
+         */
+    }
+
+    /** sets a pid on a motor controller position (high gear low speed)
+     *
+     * @param motorController to set the pid values on
+     */
+    public synchronized void reloadHighGearPositionGainsForControllerLowPID(CANSparkMax motorController) {
+        motorController.getPIDController().setP(Constants.kDriveHighGearVelocityLowKp, kHighGearVelocityControlSlot);
+        motorController.getPIDController().setI(Constants.kDriveHighGearVelocityLowKi, kHighGearVelocityControlSlot);
+        motorController.getPIDController().setD(Constants.kDriveHighGearVelocityLowKd, kHighGearVelocityControlSlot);
+        motorController.getPIDController().setFF(Constants.kDriveHighGearVelocityLowKf, kHighGearVelocityControlSlot);
+        motorController.getPIDController().setIZone(Constants.kDriveHighGearVelocityLowIZone, kHighGearVelocityControlSlot);
+
+                /*TODO: Do we need this?
+		motorController.configClosedloopRamp(Constants.kDriveHighGearVelocityLowRampRate, Constants.kDriveTrainPIDSetTimeout);
+         */
+    }
+
+    /** reloads the velocity pid based on whether or not the current wanted pid is high speed or low speed
+     *
+     */
+    public synchronized void reloadHighGearVelocityGains() {
+        if (false) {
+            System.out.println("low PID");
+            reloadHighGearPositionGainsForControllerLowPID(mLeftLeader);
+            reloadHighGearPositionGainsForControllerLowPID(mRightLeader);
+        } else {
+            System.out.println("high PID");
+            reloadHighGearPositionGainsForController(mLeftLeader);
+            reloadHighGearPositionGainsForController(mRightLeader);
+        }
+    }
+
+    /** Resets masterLeft and materRight low gear position gains
+     *
+     */
+    public synchronized void reloadLowGearPositionGains() {
+        reloadLowGearPositionGainsForController(mLeftLeader);
+        reloadLowGearPositionGainsForController(mRightLeader);
+    }
+    /** sets a pid on a motor controller position (low gear)
+     *
+     * @param motorController to set the pid values on
+     */
+    public synchronized void reloadLowGearPositionGainsForController(CANSparkMax motorController) {
+        motorController.getPIDController().setP(Constants.kDriveLowGearPositionKp,kLowGearPositionControlSlot);
+        motorController.getPIDController().setI(Constants.kDriveLowGearPositionKi,kLowGearPositionControlSlot);
+        motorController.getPIDController().setD(Constants.kDriveLowGearPositionKd,kLowGearPositionControlSlot);
+        motorController.getPIDController().setFF(Constants.kDriveLowGearPositionKf,kLowGearPositionControlSlot);
+        motorController.getPIDController().setIZone(Constants.kDriveLowGearPositionIZone,kLowGearPositionControlSlot);
+        motorController.getPIDController().setSmartMotionMaxVelocity(Constants.kDriveLowGearMaxVelocity,kLowGearPositionControlSlot);
+        motorController.getPIDController().setSmartMotionMaxAccel(Constants.kDriveLowGearMaxAccel, kLowGearPositionControlSlot);
+        /*TODO:DO we need this?
+		motorController.configClosedloopRamp(Constants.kDriveLowGearPositionRampRate, Constants.kDriveTrainPIDSetTimeout);
+		*/
+
+    }
 }

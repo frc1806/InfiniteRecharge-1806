@@ -121,6 +121,41 @@ public class Constants {
     public static final double kPathLookaheadTime = 0.4; // seconds to look ahead along the path for steering
     public static final double kPathMinLookaheadDistance = 24.0; // inches
 
+    //
+    // PID gains for drive velocity loop (HIGH GEAR)
+    // Units: setpoint, error, and output are in counts per tenth of a second
+    public final static double kDriveHighGearVelocityKp = .001; //.0004;//.08;//.16; //1.01;
+    public final static double kDriveHighGearVelocityKi = 0.00000001;
+    public final static double kDriveHighGearVelocityKd =  0.002; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
+    public final static double kDriveHighGearVelocityKf = 0.00004;//.0175; //.035; //0.21; //.025;
+    public final static int kDriveHighGearVelocityIZone = 0;
+    public final static double kDriveHighGearVelocityRampRate = .1;
+    public final static double kDriveHighGearNominalOutput = 0.25;
+    public final static double kDriveHighGearMaxSetpoint = 12 * 13; //FPS
+
+    // PID gains for drive velocity loop (HIGH GEAR)
+    // Units: setpoint, error, and output are in counts per tenth of a second
+    public final static double kDriveHighGearVelocityLowKp = .0004; // 1.2/1500;
+    public final static double kDriveHighGearVelocityLowKi = 0.0000000; //0.0;
+    public final static double kDriveHighGearVelocityLowKd = 0; //0.0001; //6.0/1500;
+    public final static double kDriveHighGearVelocityLowKf = 0.00000254;//0; //.025;
+    public final static int kDriveHighGearVelocityLowIZone = 0;
+    public final static double kDriveHighGearVelocityLowRampRate = .1;
+    public final static double kDriveHighGearLowNominalOutput = 0.25;
+    public final static double kDriveHighGearLowMaxSetpoint = 10.5 * 12; //FPS
+
+    // PID gains for drive velocity loop ***This should be high gear lollz sorry yall
+    // This is typically used in the most in the TurnToPoint action
+    // Units: setpoint, error, and output are in counts
+    public final static double kDriveLowGearPositionKp = .1; //.008
+    public final static double kDriveLowGearPositionKi = .00044;
+    public final static double kDriveLowGearPositionKd = 0.1; //0.0035
+    public final static double kDriveLowGearPositionKf = 0.000;
+    public final static double kDriveLowGearPositionIZone = 1.5;
+    public final static int kDriveLowGearMaxVelocity = 700; // Counts
+    public final static int kDriveLowGearMaxAccel = 20; // Counts
+    public final static double kDriveTurnMaxPower = .6;
+
     public static final double kWristToBottomEndEffectorLength = 15.91; // Length (in) from wrist joint to bottom of end effector
     public static final double kEndEffectorBottomAngle = 7.75; // Angle (°) from wrist joint to bottom of end effector when wrist is at 0°
 
