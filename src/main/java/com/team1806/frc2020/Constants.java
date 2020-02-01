@@ -151,6 +151,18 @@ public class Constants {
     public static final double kFlywheelAcceptableAccleration = 0;
     public static final double kFlywheelGearScalingFactor = 35.0 / 18.0;
 
+    // turret
+    public static final int kTurretMotor = 60;
+    public static final double kTurretDegreesPerCount = 0;
+    public static final double kTurretPositionControlKp = 0;
+    public static final double kTurretPositionControlKi = 0;
+    public static final double kTurretPositionControlKd = 0;
+    public static final double kTurretPositionControlKf = 0;
+    public static final double kTurretPositionMin = 0;
+    public static final double kTurretPositionMax = 0;
+    public static final double kTurretAcceptableAngleDeviation = 0;
+    public static final double kTurretAcceptableSpeed = 0;
+
 
 
 
