@@ -1,6 +1,7 @@
 package com.team1806.frc2020.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team1806.frc2020.Constants;
 import com.team1806.lib.util.ReflectingCSVWriter;
@@ -41,6 +42,8 @@ public class Turret extends Subsystem {
     private Turret(){
         mCANTalonSRX = new TalonSRX(Constants.kTurretMotor);
         mPeriodicIO = new PeriodicIO();
+        mTurretControlState = TurretControlState.kIdle;
+        mCANTalonSRX.setNeutralMode(NeutralMode.Brake);
     }
 
     public static Turret GetInstance(){
@@ -72,21 +75,44 @@ public class Turret extends Subsystem {
     }
 
     public boolean isOnTarget() {
-        return Math.abs(mPeriodicIO.currentPosition) >= Math.abs(mPeriodicIO.wantedPosition - Constants.kTurretAcceptableAngleDeviation) && mPeriodicIO.currentSpeed <= Constants.kTurretAcceptableSpeed;
+        return Math.abs(mPeriodicIO.wantedPosition - mPeriodicIO.currentPosition) < Constants.kTurretAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kTurretAcceptableSpeed;
     }
 
-
+    private void reloadGains(){
+        if(mCANTalonSRX!= null){
+            mCANTalonSRX.config_kP(0, Constants.kTurretPositionControlKp);
+            mCANTalonSRX.config_kI(0, Constants.kTurretPositionControlKi);
+            mCANTalonSRX.config_kD(0,Constants.kTurretPositionControlKd);
+            mCANTalonSRX.config_kF(0, Constants.kTurretPositionControlKf);
+        }
+    }
 
     public void writePeriodicOutputs(){
         switch (mPeriodicIO.turretState){
             default:
             case kIdle:
-                mCANTalonSRX.set(ControlMode.Position, 0);
+                mCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 break;
             case kPositionControl:
-                mCANTalonSRX.set(ControlMode.Position, mPeriodicIO.wantedPosition);
+                if(isOnTarget()){
+                    setControlState(TurretControlState.kHoldPosition);
+                }
+                else{
+                    mCANTalonSRX.set(ControlMode.Position, mPeriodicIO.wantedPosition);
+                }
                 break;
             case kHoldPosition:
+                mCANTalonSRX.set(ControlMode.PercentOutput, 0);
+
+                if(!isOnTarget()){
+                    setControlState(TurretControlState.kPositionControl);
+                }
+
+                else{
+                    mCANTalonSRX.set(ControlMode.PercentOutput, 0);
+
+                }
+
                 break;
             case kManualControl:
                 mCANTalonSRX.set(ControlMode.Position, mPeriodicIO.wantedManualMovement);
@@ -132,7 +158,10 @@ public class Turret extends Subsystem {
     @Override
     public void outputTelemetry() {
         SmartDashboard.putNumber("Turret Angle", mPeriodicIO.currentPosition);
-        mCSVWriter.write();
+
+        if (mCSVWriter != null) {
+            mCSVWriter.write();
+        }
 
     }
 

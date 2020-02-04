@@ -174,7 +174,9 @@ public class Flywheel extends Subsystem {
     public void outputTelemetry() {
         SmartDashboard.putNumber("Launcher Wheel RPM", mPeriodicIO.launchWheelRPM);
 
-        mCSVWriter.write();
+        if (mCSVWriter != null) {
+            mCSVWriter.write();
+        }
 
     }
 
