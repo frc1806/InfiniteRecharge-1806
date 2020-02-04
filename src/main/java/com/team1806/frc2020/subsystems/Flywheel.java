@@ -174,16 +174,22 @@ public class Flywheel extends Subsystem {
     public void outputTelemetry() {
         SmartDashboard.putNumber("Launcher Wheel RPM", mPeriodicIO.launchWheelRPM);
 
-         if(mCSVWriter != null){
-             mCSVWriter.write();
-         }
-
+        if (mCSVWriter != null) {
+            mCSVWriter.write();
+        }
 
     }
 
     public synchronized void startLogging(){
         if (mCSVWriter == null) {
             mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/FLYWHEEL-LOGS.csv", PeriodicIO.class);
+        }
+    }
+
+    public synchronized void stopLogging(){
+        if (mCSVWriter != null) {
+            mCSVWriter.flush();
+            mCSVWriter = null;
         }
     }
 
