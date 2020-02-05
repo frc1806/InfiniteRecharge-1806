@@ -13,7 +13,7 @@ public class Turret extends Subsystem {
 
     enum TurretControlState {
 
-        kIdle, kPositionControl, kHoldPosition, kManualControl;
+        kIdle, kPositionControl, kHoldPosition, kManualControl
     }
 
 
