@@ -40,11 +40,11 @@ public class Flywheel extends Subsystem {
     private LazySparkMax mSparkMaxFollower;
     private FlywheelControlState mFlywheelControlState;
     private PeriodicIO mPeriodicIO;
-    private ReflectingCSVWriter mCSVWriter;
+    private ReflectingCSVWriter<PeriodicIO  > mCSVWriter;
 
     private Flywheel(){
-        mSparkMaxLeader = new LazySparkMax(30);
-        mSparkMaxFollower = new LazySparkMax(31);
+        mSparkMaxLeader = new LazySparkMax(Constants.kFlywheelSparkMaxLeader);
+        mSparkMaxFollower = new LazySparkMax(Constants.kFlywheelSparkMaxFollower);
         mSparkMaxLeader.setIdleMode(CANSparkMax.IdleMode.kCoast);
         mSparkMaxFollower.setIdleMode(CANSparkMax.IdleMode.kCoast);
         mSparkMaxLeader.setInverted(true);
@@ -89,10 +89,7 @@ public class Flywheel extends Subsystem {
     }
 
     public boolean isReadyForLaunch() {
-        if (mPeriodicIO.launchWheelRPM < mPeriodicIO.wantedRPM + 100 && mPeriodicIO.launchWheelRPM > mPeriodicIO.wantedRPM - 100) {
-            return true;
-        }
-        return false;
+        return Math.abs(mPeriodicIO.launchWheelRPM - mPeriodicIO.wantedRPM) < Constants.kFlywheelAcceptableSpeedRange && Math.abs(mPeriodicIO.launchWheelAccel) < Constants.kFlywheelAcceptableAccleration;
     }
 
     /**
@@ -109,6 +106,7 @@ public class Flywheel extends Subsystem {
             mSparkMaxLeader.getPIDController().setP(Constants.kFlywheelSpeedControlkp);
             mSparkMaxLeader.getPIDController().setI(Constants.kFlywheelSpeedControlki);
             mSparkMaxLeader.getPIDController().setD(Constants.kFlywheelSpeedControlkd);
+            mSparkMaxLeader.getPIDController().setFF(Constants.kFlywheelSpeedControlkf);
             mSparkMaxLeader.getPIDController().setOutputRange(0, 1);
         }
     }

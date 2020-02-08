@@ -36,7 +36,7 @@ public class Turret extends Subsystem {
     private TurretControlState mTurretControlState;
     private TalonSRX mCANTalonSRX;
     private PeriodicIO mPeriodicIO;
-    private ReflectingCSVWriter mCSVWriter;
+    private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
 
 
     private Turret(){

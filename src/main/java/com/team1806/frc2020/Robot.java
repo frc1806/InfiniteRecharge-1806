@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
                     mDrive,
                     mInfrastructure,
                     mFlywheel);
-
+            AutoModeSelector.registerDisabledLoop(mDisabledLooper);
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
@@ -96,8 +96,7 @@ public class Robot extends TimedRobot {
             // Reset all auto mode state.
             if(mAutoModeExecutor != null) {
                 mAutoModeExecutor.stop();
-                AutoModeSelector.initAutoModeSelector();
-                selectedAuto = AutoModeSelector.getSelectedAutoMode(selectedModeName);
+                selectedAuto = AutoModeSelector.getSelectedAutoMode();
             }
 
             mInfrastructure.setIsManualControl(false);
@@ -207,8 +206,7 @@ public class Robot extends TimedRobot {
                 "com.team1806.frc2020.auto.modes.DoNothingMode");
       if(!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale){
           bAutoModeStale = false;
-          AutoModeSelector.initAutoModeSelector();
-          selectedAuto = AutoModeSelector.getSelectedAutoMode(selectedModeName);
+          selectedAuto = AutoModeSelector.getSelectedAutoMode();
       }
             
         } catch (Throwable t) {

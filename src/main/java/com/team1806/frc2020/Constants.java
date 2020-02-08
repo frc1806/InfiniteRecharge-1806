@@ -177,13 +177,12 @@ public class Constants {
     // flywheel
     public static final int kFlywheelSparkMaxLeader = 30;
     public static final int kFlywheelSparkMaxFollower = 31;
-    public static final double kFlywheelSpeedMultiplier = 1;
     public static final double kFlywheelSpeedControlkp = 1;
     public static final double kFlywheelSpeedControlki = 0;
     public static final double kFlywheelSpeedControlkd = 0;
     public static final double kFlywheelSpeedControlkf = 0;
-    public static final double kFlywheelAcceptableSpeedRange = 0;
-    public static final double kFlywheelAcceptableAccleration = 0;
+    public static final double kFlywheelAcceptableSpeedRange = 100;
+    public static final double kFlywheelAcceptableAccleration = 100;
     public static final double kFlywheelGearScalingFactor = 35.0 / 18.0;
 
     // turret

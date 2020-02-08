@@ -1,6 +1,15 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2020.2.2"
+    id "com.github.spotbugs" version "3.0.0"
+}
+
+allprojects {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -63,6 +72,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest:2.1'
     compile 'org.reflections:reflections:0.9.11'
+
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
