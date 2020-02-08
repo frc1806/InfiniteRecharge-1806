@@ -186,7 +186,7 @@ public class Constants {
     public static final double kFlywheelGearScalingFactor = 35.0 / 18.0;
 
     // turret
-    public static final int kTurretMotor = 60;
+    public static final int kTurretMotorId = 60;
     public static final double kTurretDegreesPerCount = 0;
     public static final double kTurretPositionControlKp = 0;
     public static final double kTurretPositionControlKi = 0;
@@ -196,6 +196,18 @@ public class Constants {
     public static final double kTurretPositionMax = 0;
     public static final double kTurretAcceptableAngleDeviation = 0;
     public static final double kTurretAcceptableSpeed = 0;
+
+    //hood
+    public static final int kHoodMotorId = 61;
+    public static final double kHoodDegreesPerCount = 0;
+    public static final double kHoodPositionControlKp = 0;
+    public static final double kHoodPositionControlKi = 0;
+    public static final double kHoodPositionControlKd = 0;
+    public static final double kHoodPositionControlKf = 0;
+    public static final double kHoodPositionMin = 0;
+    public static final double kHoodPositionMax = 0;
+    public static final double kHoodAcceptableAngleDeviation = 0;
+    public static final double kHoodAcceptableSpeed = 0;
 
 
 
