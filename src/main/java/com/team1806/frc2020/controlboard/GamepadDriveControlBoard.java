@@ -23,7 +23,7 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public double getThrottle() {
-        return -mController.getJoystick(XboxController.Side.LEFT, XboxController.Axis.Y);
+        return mController.getJoystick(XboxController.Side.LEFT, XboxController.Axis.Y);
     }
 
     @Override
@@ -33,21 +33,32 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public boolean getWantsLowGear() {
-        return false;
+        return mController.getButton(XboxController.Button.A);
     }
 
     @Override
-    public boolean getThrust() {
-        return false;
+    public boolean getWantsFrontIntake() {
+        return mController.getButton(XboxController.Button.RB);
     }
+
+    @Override
+    public boolean getWantsRearIntake() {
+        return mController.getButton(XboxController.Button.LB);
+    }
+
 
     @Override
     public boolean getQuickTurn() {
-        return mController.getTrigger(XboxController.Side.LEFT);
+        return mController.getDigitalTrigger(XboxController.Side.LEFT);
     }
 
     @Override
     public boolean getShoot() {
-        return mController.getButton(XboxController.Button.A);
+        return mController.getDigitalTrigger(XboxController.Side.RIGHT);
+    }
+
+    @Override
+    public void setRumble(boolean on) {
+        mController.setRumble(on);
     }
 }

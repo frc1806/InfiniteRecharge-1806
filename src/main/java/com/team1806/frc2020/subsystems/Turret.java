@@ -46,9 +46,7 @@ public class Turret extends Subsystem {
         mCANTalonSRX.setNeutralMode(NeutralMode.Brake);
     }
 
-    public static Turret GetInstance(){
-        return TURRET;
-    }
+    public static Turret GetInstance(){return TURRET;}
 
     private double ConvertEncoderClicksToAngle(double encoderCount){
         return encoderCount * Constants.kTurretDegreesPerCount;

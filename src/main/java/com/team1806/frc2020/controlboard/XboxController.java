@@ -38,9 +38,14 @@ public class XboxController {
         return handleDeadband((y ? -1 : 1) * mController.getRawAxis((left ? 0 : 4) + (y ? 1 : 0)), deadband);
     }
 
-    boolean getTrigger(Side side) {
+    boolean getDigitalTrigger(Side side) {
         return mController.getRawAxis(side == Side.LEFT ? 2 : 3) > Constants.kJoystickThreshold;
     }
+
+    double getAnalogTrigger(Side side){
+        return mController.getRawAxis(side == Side.LEFT ? 2 : 3);
+    }
+
 
     boolean getButton(Button button) {
         return mController.getRawButton(button.id);

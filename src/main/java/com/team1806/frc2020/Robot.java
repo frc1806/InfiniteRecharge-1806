@@ -3,7 +3,7 @@ package com.team1806.frc2020;
 import com.team1806.frc2020.auto.AutoModeExecutor;
 import com.team1806.frc2020.auto.modes.AutoModeBase;
 import com.team1806.frc2020.controlboard.ControlBoard;
-import com.team1806.frc2020.controlboard.IButtonControlBoard.TurretCardinal;
+import com.team1806.frc2020.controlboard.GamepadButtonControlBoard;
 import com.team1806.frc2020.controlboard.IControlBoard;
 import com.team1806.frc2020.loops.Looper;
 import com.team1806.frc2020.subsystems.*;
@@ -23,7 +23,7 @@ public class Robot extends TimedRobot {
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
 
-    private final IControlBoard mControlBoard = ControlBoard.getInstance();
+    private final IControlBoard mControlBoard = ControlBoard.GetInstance();
 
     private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
 
@@ -47,7 +47,6 @@ public class Robot extends TimedRobot {
     private LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
     private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
     private LatchedBoolean mAutoSteerPressed = new LatchedBoolean();
-    private TurretCardinal mPrevTurretCardinal = TurretCardinal.NONE;
     private boolean mStickyShoot;
 
     private boolean bAutoModeStale = false;
@@ -132,7 +131,6 @@ public class Robot extends TimedRobot {
             }
 
             mEnabledLooper.start();
-            mPrevTurretCardinal = TurretCardinal.NONE;
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -155,7 +153,6 @@ public class Robot extends TimedRobot {
             mInfrastructure.setIsManualControl(true);
             mControlBoard.reset();
 
-            mPrevTurretCardinal = TurretCardinal.NONE;
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;

@@ -11,5 +11,9 @@ public interface IDriveControlBoard {
 
     boolean getWantsLowGear();
 
-    boolean getThrust();
+    boolean getWantsFrontIntake();
+
+    boolean getWantsRearIntake();
+
+    void setRumble(boolean on);
 }

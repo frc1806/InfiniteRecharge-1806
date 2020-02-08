@@ -2,28 +2,75 @@ package com.team1806.frc2020.controlboard;
 
 import com.team1806.frc2020.Constants;
 
-public class ControlBoard implements IControlBoard {
-    private static ControlBoard mInstance = null;
+public class ControlBoard implements IControlBoard{
 
-    public static ControlBoard getInstance() {
-        if (mInstance == null) {
-            mInstance = new ControlBoard();
-        }
-
-        return mInstance;
-    }
-
+    private static final ControlBoard CONTROL_BOARD = new ControlBoard();
     private final IDriveControlBoard mDriveControlBoard;
     private final IButtonControlBoard mButtonControlBoard;
 
+    public static ControlBoard GetInstance(){
+        return CONTROL_BOARD;
+    }
+
     private ControlBoard() {
-        mDriveControlBoard = Constants.kUseDriveGamepad ? GamepadDriveControlBoard.getInstance()
-                : MainDriveControlBoard.getInstance();
+        mDriveControlBoard = GamepadDriveControlBoard.getInstance();
         mButtonControlBoard = GamepadButtonControlBoard.getInstance();
     }
 
     @Override
-    public void reset() {}
+    public void reset() {
+
+    }
+
+    @Override
+    public double getJogTurret() {
+        return mButtonControlBoard.getJogTurret();
+    }
+
+    @Override
+    public double getJogHood() {
+        return mButtonControlBoard.getJogHood();
+    }
+
+    @Override
+    public double getManualLaunchControl() {
+        return mButtonControlBoard.getManualLaunchControl();
+    }
+
+    @Override
+    public boolean getCloseShot() {
+        return mButtonControlBoard.getCloseShot();
+    }
+
+    @Override
+    public boolean getAutoLineShot() {
+        return mButtonControlBoard.getAutoLineShot();
+    }
+
+    @Override
+    public boolean getTrenchShot() {
+        return mButtonControlBoard.getTrenchShot();
+    }
+
+    @Override
+    public boolean getLongShot() {
+        return mButtonControlBoard.getLongShot();
+    }
+
+    @Override
+    public boolean getWantsDeployClimber() {
+        return mButtonControlBoard.getWantsDeployClimber();
+    }
+
+    @Override
+    public boolean getWantsRotationalControl() {
+        return mButtonControlBoard.getWantsRotationalControl();
+    }
+
+    @Override
+    public boolean getWantsPositionalControl() {
+        return mButtonControlBoard.getWantsPositionalControl();
+    }
 
     @Override
     public double getThrottle() {
@@ -41,97 +88,28 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getWantsLowGear() {
-        return mDriveControlBoard.getWantsLowGear();
-    }
-
-    @Override
     public boolean getShoot() {
         return mDriveControlBoard.getShoot();
     }
 
     @Override
-    public boolean getThrust() {
-        return mDriveControlBoard.getThrust();
+    public boolean getWantsLowGear() {
+        return mDriveControlBoard.getWantsLowGear();
     }
 
     @Override
-    public double getJogTurret() {
-        return mButtonControlBoard.getJogTurret();
+    public boolean getWantsFrontIntake() {
+        return mDriveControlBoard.getWantsFrontIntake();
     }
 
     @Override
-    public boolean getScorePresetLow() {
-        return mButtonControlBoard.getScorePresetLow();
-    }
-
-    @Override
-    public boolean getScorePresetMiddle() {
-        return mButtonControlBoard.getScorePresetMiddle();
-    }
-
-    @Override
-    public boolean getScorePresetHigh() {
-        return mButtonControlBoard.getScorePresetHigh();
-    }
-
-    @Override
-    public boolean getScorePresetCargo() {
-        return mButtonControlBoard.getScorePresetCargo();
-    }
-
-    @Override
-    public boolean getPresetStow() {
-        return mButtonControlBoard.getPresetStow();
-    }
-
-    @Override
-    public boolean getPickupDiskWall() {
-        return mButtonControlBoard.getPickupDiskWall();
-    }
-
-    @Override
-    public boolean getPickupBallGround() {
-        return mButtonControlBoard.getPickupBallGround();
+    public boolean getWantsRearIntake() {
+        return mDriveControlBoard.getWantsRearIntake();
     }
 
     @Override
     public void setRumble(boolean on) {
+        mDriveControlBoard.setRumble(on);
         mButtonControlBoard.setRumble(on);
-    }
-
-    @Override
-    public boolean getToggleHangMode() {
-        return mButtonControlBoard.getToggleHangMode();
-    }
-
-    @Override
-    public boolean getToggleHangModeLow() {
-        return mButtonControlBoard.getToggleHangModeLow();
-    }
-
-    @Override
-    public double getElevatorThrottle() {
-        return mButtonControlBoard.getElevatorThrottle();
-    }
-
-    @Override
-    public TurretCardinal getTurretCardinal() {
-        return mButtonControlBoard.getTurretCardinal();
-    }
-
-    @Override
-    public boolean getAutoAim() {
-        return mButtonControlBoard.getAutoAim();
-    }
-
-    @Override
-    public double getJoggingX() {
-        return mButtonControlBoard.getJoggingX();
-    }
-
-    @Override
-    public double getJoggingZ() {
-        return mButtonControlBoard.getJoggingZ();
     }
 }
