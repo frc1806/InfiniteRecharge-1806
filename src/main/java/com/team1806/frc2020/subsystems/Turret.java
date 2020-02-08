@@ -21,9 +21,9 @@ public class Turret extends Subsystem {
         public double timestamp;
         public double motorVoltage;
         public double motorAmps;
-        public double currentPosition;
+        public double currentAngle;
         public double currentSpeed;
-        public double wantedPosition;
+        public double wantedAngle;
         public double wantedManualMovement;
         public TurretControlState turretState;
 
@@ -40,7 +40,7 @@ public class Turret extends Subsystem {
 
 
     private Turret(){
-        mCANTalonSRX = new TalonSRX(Constants.kTurretMotor);
+        mCANTalonSRX = new TalonSRX(Constants.kTurretMotorId);
         mPeriodicIO = new PeriodicIO();
         mTurretControlState = TurretControlState.kIdle;
         mCANTalonSRX.setNeutralMode(NeutralMode.Brake);
@@ -60,7 +60,7 @@ public class Turret extends Subsystem {
 
     public void setWantedAngle(double angle){
         setControlState(TurretControlState.kPositionControl);
-        mPeriodicIO.wantedPosition = angle;
+        mPeriodicIO.wantedAngle = angle;
     }
 
     public void setManualControl(double wantedPosition){
@@ -70,12 +70,12 @@ public class Turret extends Subsystem {
 
     public void setWantIdle(){
         setControlState(TurretControlState.kIdle);
-        mPeriodicIO.wantedPosition = 0.0;
+        mPeriodicIO.wantedAngle = 0.0;
         mPeriodicIO.wantedManualMovement = 0.0;
     }
 
     public boolean isOnTarget() {
-        return Math.abs(mPeriodicIO.wantedPosition - mPeriodicIO.currentPosition) < Constants.kTurretAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kTurretAcceptableSpeed;
+        return Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) < Constants.kTurretAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kTurretAcceptableSpeed;
     }
 
     private void reloadGains(){
@@ -98,7 +98,7 @@ public class Turret extends Subsystem {
                     setControlState(TurretControlState.kHoldPosition);
                 }
                 else{
-                    mCANTalonSRX.set(ControlMode.Position, mPeriodicIO.wantedPosition);
+                    mCANTalonSRX.set(ControlMode.Position, ConvertAngleToEncoderClicks(mPeriodicIO.wantedAngle));
                 }
                 break;
             case kHoldPosition:
@@ -122,13 +122,14 @@ public class Turret extends Subsystem {
 
     public void readPeriodicInputs(){
         mPeriodicIO.motorVoltage = mCANTalonSRX.getMotorOutputVoltage();
-        mPeriodicIO.motorAmps = mCANTalonSRX.getStatorCurrent(); //There is also a getSupplyCurrent if that is what we needed to use instead
-        double lastPosition = mPeriodicIO.currentPosition;
-        mPeriodicIO.currentPosition = ConvertEncoderClicksToAngle(mCANTalonSRX.getSelectedSensorPosition()); //Optional arg for "pidIdx" Do we need it?
+        mPeriodicIO.motorAmps = mCANTalonSRX.getStatorCurrent();
+        double lastPosition = mPeriodicIO.currentAngle;
+        mPeriodicIO.currentAngle = ConvertEncoderClicksToAngle(mCANTalonSRX.getSelectedSensorPosition());
         double lastTimestamp = mPeriodicIO.timestamp;
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
 
-        mPeriodicIO.currentSpeed = mPeriodicIO.wantedPosition - lastPosition / mPeriodicIO.timestamp - lastTimestamp;
+        mPeriodicIO.currentSpeed = mCANTalonSRX.getSelectedSensorVelocity();
+
 
         if (mCSVWriter != null) {
             mCSVWriter.add(mPeriodicIO);
@@ -157,7 +158,7 @@ public class Turret extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putNumber("Turret Angle", mPeriodicIO.currentPosition);
+        SmartDashboard.putNumber("Turret Angle", mPeriodicIO.currentAngle);
 
         if (mCSVWriter != null) {
             mCSVWriter.write();
