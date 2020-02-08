@@ -1,5 +1,6 @@
 package com.team1806.frc2020.subsystems;
 
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -9,9 +10,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class Turret extends Subsystem {
+public class Hood extends Subsystem {
 
-    enum TurretControlState {
+    enum HoodControlState {
 
         kIdle, kPositionControl, kHoldPosition, kManualControl
     }
@@ -25,77 +26,77 @@ public class Turret extends Subsystem {
         public double currentSpeed;
         public double wantedAngle;
         public double wantedManualMovement;
-        public TurretControlState turretState;
+        public HoodControlState HoodState;
 
     }
 
 
 
-    private static Turret TURRET = new Turret();
+    private static Hood HOOD = new Hood();
 
-    private TurretControlState mTurretControlState;
+    private HoodControlState mHoodControlState;
     private TalonSRX mCANTalonSRX;
     private PeriodicIO mPeriodicIO;
-    private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
+    private ReflectingCSVWriter <PeriodicIO> mCSVWriter;
 
 
-    private Turret(){
-        mCANTalonSRX = new TalonSRX(Constants.kTurretMotorId);
+    private Hood(){
+        mCANTalonSRX = new TalonSRX(Constants.kHoodMotorId);
         mPeriodicIO = new PeriodicIO();
-        mTurretControlState = TurretControlState.kIdle;
+        mHoodControlState = HoodControlState.kIdle;
         mCANTalonSRX.setNeutralMode(NeutralMode.Brake);
     }
 
-    public static Turret GetInstance(){
-        return TURRET;
+    public static Hood GetInstance(){
+        return HOOD;
     }
 
     private double ConvertEncoderClicksToAngle(double encoderCount){
-        return encoderCount * Constants.kTurretDegreesPerCount;
+        return encoderCount * Constants.kHoodDegreesPerCount;
     }
 
     private double ConvertAngleToEncoderClicks(double angle){
-        return angle / Constants.kTurretDegreesPerCount;
+        return angle / Constants.kHoodDegreesPerCount;
     }
 
     public void setWantedAngle(double angle){
-        setControlState(TurretControlState.kPositionControl);
+        setControlState(HoodControlState.kPositionControl);
         mPeriodicIO.wantedAngle = angle;
     }
 
     public void setManualControl(double wantedPosition){
-        setControlState(TurretControlState.kManualControl);
+        setControlState(HoodControlState.kManualControl);
         mPeriodicIO.wantedManualMovement = wantedPosition;
     }
 
     public void setWantIdle(){
-        setControlState(TurretControlState.kIdle);
+        setControlState(HoodControlState.kIdle);
         mPeriodicIO.wantedAngle = 0.0;
         mPeriodicIO.wantedManualMovement = 0.0;
     }
 
     public boolean isOnTarget() {
-        return Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) < Constants.kTurretAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kTurretAcceptableSpeed;
+        return Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) < Constants.kHoodAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kHoodAcceptableSpeed;
     }
 
     private void reloadGains(){
         if(mCANTalonSRX!= null){
-            mCANTalonSRX.config_kP(0, Constants.kTurretPositionControlKp);
-            mCANTalonSRX.config_kI(0, Constants.kTurretPositionControlKi);
-            mCANTalonSRX.config_kD(0,Constants.kTurretPositionControlKd);
-            mCANTalonSRX.config_kF(0, Constants.kTurretPositionControlKf);
+            mCANTalonSRX.config_kP(0, Constants.kHoodPositionControlKp);
+            mCANTalonSRX.config_kI(0, Constants.kHoodPositionControlKi);
+            mCANTalonSRX.config_kD(0,Constants.kHoodPositionControlKd);
+            mCANTalonSRX.config_kF(0, Constants.kHoodPositionControlKf);
         }
     }
 
     public void writePeriodicOutputs(){
-        switch (mPeriodicIO.turretState){
+        switch (mPeriodicIO.HoodState){
             default:
             case kIdle:
                 mCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 break;
             case kPositionControl:
                 if(isOnTarget()){
-                    setControlState(TurretControlState.kHoldPosition);
+                    setControlState(HoodControlState.kHoldPosition);
                 }
                 else{
                     mCANTalonSRX.set(ControlMode.Position, ConvertAngleToEncoderClicks(mPeriodicIO.wantedAngle));
@@ -105,7 +106,7 @@ public class Turret extends Subsystem {
                 mCANTalonSRX.set(ControlMode.PercentOutput, 0);
 
                 if(!isOnTarget()){
-                    setControlState(TurretControlState.kPositionControl);
+                    setControlState(HoodControlState.kPositionControl);
                 }
 
                 else{
@@ -130,7 +131,6 @@ public class Turret extends Subsystem {
 
         mPeriodicIO.currentSpeed = mCANTalonSRX.getSelectedSensorVelocity();
 
-
         if (mCSVWriter != null) {
             mCSVWriter.add(mPeriodicIO);
         }
@@ -142,14 +142,14 @@ public class Turret extends Subsystem {
         mCANTalonSRX.setSelectedSensorPosition(0);
     }
 
-    public void setControlState(TurretControlState state) {
-        mPeriodicIO.turretState = state;
-        mTurretControlState = state;
+    public void setControlState(HoodControlState state) {
+        mPeriodicIO.HoodState = state;
+        mHoodControlState = state;
 
     }
 
     public void stop(){
-        setControlState(TurretControlState.kIdle);
+        setControlState(HoodControlState.kIdle);
     }
 
     public boolean checkSystem(){
@@ -158,7 +158,7 @@ public class Turret extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putNumber("Turret Angle", mPeriodicIO.currentAngle);
+        SmartDashboard.putNumber("Hood Angle", mPeriodicIO.currentAngle);
 
         if (mCSVWriter != null) {
             mCSVWriter.write();
@@ -168,7 +168,7 @@ public class Turret extends Subsystem {
 
     public synchronized void startLogging(){
         if (mCSVWriter == null) {
-            mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/TURRET-LOGS.csv", PeriodicIO.class);
+            mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/HOOD-LOGS.csv", PeriodicIO.class);
         }
     }
 
