@@ -45,6 +45,7 @@ public class Hood extends Subsystem {
         mPeriodicIO = new PeriodicIO();
         mHoodControlState = HoodControlState.kIdle;
         mCANTalonSRX.setNeutralMode(NeutralMode.Brake);
+        reloadGains();
     }
 
     public static Hood GetInstance(){
