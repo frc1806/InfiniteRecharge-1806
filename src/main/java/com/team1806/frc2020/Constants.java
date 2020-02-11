@@ -248,20 +248,6 @@ public class Constants {
     public static final double kTopConveyorSpeed = 100;
 
 
-
-    //public static final double kHoodDegreesPerCount = 0;
-    //public static final double kHoodPositionMin = 0;
-    //public static final double kHoodPositionMax = 0;
-    //public static final double kHoodAcceptableAngleDeviation = 0;
-    //public static final double kHoodAcceptableSpeed = 0;
-
-
-
-
-
-
-
-
     public enum DriveMotorsPerSide{
 
         ONE(1),
