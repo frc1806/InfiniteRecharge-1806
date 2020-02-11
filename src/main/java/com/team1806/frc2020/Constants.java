@@ -243,6 +243,10 @@ public class Constants {
     public static final double kOuterIntakeVelocityControlKd = 0;
     public static final double kOuterIntakeVelocityControlKf = 0;
 
+    public static final double kTriggerLaunchSpeed = 10000.0;
+    public static final double kBottomConveyorSpeed = 100;
+    public static final double kTopConveyorSpeed = 100;
+
 
 
     //public static final double kHoodDegreesPerCount = 0;

@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ColorSensorV3;
 import com.team1806.frc2020.Constants;
 import com.team1806.lib.drivers.LazySparkMax;
 import com.team1806.lib.util.ReflectingCSVWriter;
@@ -38,12 +37,11 @@ public class Conveyor extends Subsystem {
         public boolean frontIsExtended;
         public boolean backIsExtended;
 
-        public double controlPanelRotations;
-
         public ConveyorControlState ConveyorState;
 
-    }
+        public ConveyorControlState lastIntakeDirection;
 
+    }
 
 
     private static Conveyor CONVEYOR = new Conveyor();
@@ -54,7 +52,8 @@ public class Conveyor extends Subsystem {
     private DoubleSolenoid mFrontSolenoid, mBackSolenoid;
     private PeriodicIO mPeriodicIO;
     private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
-    private ColorSensorV3 colorSensor;
+    private ConveyorControlState mLastIntakeDirection;
+
 
 
     private Conveyor(){
@@ -69,6 +68,7 @@ public class Conveyor extends Subsystem {
         mBackSolenoid = new DoubleSolenoid(Constants.kBackIntakeFowardChannel, Constants.kBackIntakeReverseChannel);
 
         mConveyorControlState = ConveyorControlState.kIdle;
+        mLastIntakeDirection = ConveyorControlState.kFront;
 
         mTriggerCANTalonSRX.setNeutralMode(NeutralMode.Brake);
         mTopCANTalonSRX.setNeutralMode(NeutralMode.Brake);
@@ -87,8 +87,6 @@ public class Conveyor extends Subsystem {
     public static Conveyor GetInstance(){
         return CONVEYOR;
     }
-
-
 
     private void triggerReloadGains(){
         if(mTriggerCANTalonSRX!= null){
@@ -150,6 +148,9 @@ public class Conveyor extends Subsystem {
 
                 break;
             case kLaunching:
+                mBottomCANTalonSRX.set(ControlMode.Velocity, mLastIntakeDirection == ConveyorControlState.kFront? Constants.kTriggerLaunchSpeed:-Constants.kTriggerLaunchSpeed);
+                mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kBottomConveyorSpeed);
+                mTriggerCANTalonSRX.set(ControlMode.Velocity, Constants.kTriggerLaunchSpeed);
 
                 break;
             case kPositionalControl:
