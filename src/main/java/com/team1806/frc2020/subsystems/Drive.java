@@ -212,6 +212,10 @@ public class Drive extends Subsystem {
         } else if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
             mLeftLeader.getPIDController().setReference(mPeriodicIO.left_velo, ControlType.kVelocity, 0);
             mRightLeader.getPIDController().setReference(mPeriodicIO.right_velo, ControlType.kVelocity, 0);
+        } else if (mDriveControlState == DriveControlState.PARKING_BRAKE){
+            mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_velo < 0? Constants.kParkingBrakePower:-Constants.kParkingBrakePower);
+            mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_velo < 0? Constants.kParkingBrakePower: -Constants.kParkingBrakePower);
+
         }
         else {
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
@@ -600,6 +604,7 @@ public class Drive extends Subsystem {
         OPEN_LOOP, // open loop voltage control
         PATH_FOLLOWING, // velocity PID control
         DRIVE_TO_STALL,
+        PARKING_BRAKE,
     }
 
     public enum DriveCurrentLimitState {
@@ -748,6 +753,13 @@ public class Drive extends Subsystem {
 		return false;
 
 	}
+
+	public void setWantParkingBrake(){
+        if(mDriveControlState != DriveControlState.PARKING_BRAKE){
+            mDriveControlState = DriveControlState.PARKING_BRAKE;
+        }
+    }
+
 
     public float getWorldLinearAccelX() {
 		return mNavx.getWorldLinearAccelX();

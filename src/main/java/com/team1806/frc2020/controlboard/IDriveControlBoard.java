@@ -16,4 +16,6 @@ public interface IDriveControlBoard {
     boolean getWantsRearIntake();
 
     void setRumble(boolean on);
+
+    boolean getWantsPark();
 }

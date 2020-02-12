@@ -50,6 +50,8 @@ public class Constants {
     public final static double kStallSpeed = 500;
     public final static double kStallPower = .15;
 
+    //Parking Brake
+    public final static double kParkingBrakePower = 0.005;
 
     //Camera
     public static final double kCameraFrameRate = 60.0;

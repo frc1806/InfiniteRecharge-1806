@@ -58,6 +58,9 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
     }
 
     @Override
+    public boolean getWantsPark() {return mController.getButton(XboxController.Button.B);}
+
+    @Override
     public void setRumble(boolean on) {
         mController.setRumble(on);
     }
