@@ -247,6 +247,9 @@ public class Constants {
     public static final double kBottomConveyorSpeed = 100;
     public static final double kTopConveyorSpeed = 100;
 
+    //Color Wheel Reader
+    public static final double kColorMatcherRequriedConfidance = 0;
+
 
     public enum DriveMotorsPerSide{
 
