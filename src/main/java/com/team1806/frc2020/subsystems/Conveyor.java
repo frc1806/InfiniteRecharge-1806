@@ -4,12 +4,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.team1806.frc2020.Constants;
 import com.team1806.lib.drivers.LazySparkMax;
 import com.team1806.lib.util.ReflectingCSVWriter;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Conveyor extends Subsystem {
 
@@ -36,6 +37,7 @@ public class Conveyor extends Subsystem {
 
         public boolean frontIsExtended;
         public boolean backIsExtended;
+        public ColorWheelReader.MatchedColor wantedColor;
 
         public ConveyorControlState ConveyorState;
 
@@ -53,11 +55,13 @@ public class Conveyor extends Subsystem {
     private PeriodicIO mPeriodicIO;
     private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
     private ConveyorControlState mLastIntakeDirection;
+    private ColorWheelReader mColorWheelReader;
 
 
 
     private Conveyor(){
         mPeriodicIO = new PeriodicIO();
+        mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kUnknown;
 
         mTriggerCANTalonSRX = new TalonSRX(Constants.kTriggerConveyorMotorId);
         mTopCANTalonSRX = new TalonSRX(Constants.kTopConveyorMotorId);
@@ -77,16 +81,20 @@ public class Conveyor extends Subsystem {
         mOuterIntakeSparkMAX.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
 
+
+
         triggerReloadGains();
         topReloadGains();
         bottomReloadGains();
         outerIntakeReloadGains();
 
+        mColorWheelReader = ColorWheelReader.GetInstance();
     }
 
     public static Conveyor GetInstance(){
         return CONVEYOR;
     }
+
 
     private void triggerReloadGains(){
         if(mTriggerCANTalonSRX!= null){
@@ -132,6 +140,8 @@ public class Conveyor extends Subsystem {
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                mFrontSolenoid.set(DoubleSolenoid.Value.kReverse);
+                mBackSolenoid.set(DoubleSolenoid.Value.kReverse);
 
                 break;
             case kFront:
@@ -154,9 +164,53 @@ public class Conveyor extends Subsystem {
 
                 break;
             case kPositionalControl:
+                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
+
+                //turn the wheel at a speed until some condition is met to kick it out of that state
+                mFrontSolenoid.set(DoubleSolenoid.Value.kForward);//check which intake it actually is going to be on
+                mOuterIntakeSparkMAX.set(ControlType.kVelocity, Constants.kColorWheelRPM);
+
+                setWantPositionalControl();
+
+                if(mPeriodicIO.wantedColor.length() > 0)
+                {
+                    switch (mPeriodicIO.wantedColor.charAt(0))
+                    {
+                        case 'B' :
+                            //Blue case code
+                            break;
+                        case 'G' :
+                            //Green case code
+                            break;
+                        case 'R' :
+                            //Red case code
+                            break;
+                        case 'Y' :
+                            //Yellow case code
+                            break;
+                    }
+                } else {
+                    setControlState(ConveyorControlState.kIdle);
+                    System.out.println("*********NO GAME DATA*********Recieved String: \"" + mPeriodicIO.wantedColor);
+                }
+
 
                 break;
             case kRotationalControl:
+                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
+
+                //turn the wheel at a speed until some condition is met to kick it out of that state
+                mFrontSolenoid.set(DoubleSolenoid.Value.kForward);//check which intake it actually is going to be on
+                mOuterIntakeSparkMAX.set(ControlType.kVelocity, Constants.kColorWheelRPM);
+
+                if(mColorWheelReader.getColorWheelRotationCount() > 3){
+                    mOuterIntakeSparkMAX.set(ControlType.kVelocity, 0);
+                    setControlState(ConveyorControlState.kIdle);
+                }
 
                 break;
         }
@@ -232,6 +286,18 @@ public class Conveyor extends Subsystem {
             mCSVWriter.flush();
             mCSVWriter = null;
         }
+    }
+
+    public synchronized void setWantRotationalControl(){
+        setControlState(ConveyorControlState.kRotationalControl);
+        mColorWheelReader.startSensing();
+    }
+
+    public synchronized  void setWantPositionalControl(){
+        setControlState(ConveyorControlState.kPositionalControl);
+        mColorWheelReader.startSensing();
+
+        mPeriodicIO.wantedColor = DriverStation.getInstance().getGameSpecificMessage();
     }
 
 }

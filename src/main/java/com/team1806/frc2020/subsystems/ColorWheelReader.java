@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public class ColorWheelReader extends Subsystem {
 
-    private enum MatchedColor{
+    public enum MatchedColor{
         kRed, kGreen, kBlue, kYellow, kUnknown
         }
 
@@ -76,16 +76,19 @@ public class ColorWheelReader extends Subsystem {
         } else {
             return MatchedColor.kUnknown;
         }
-        //Configuring sensor shenanigans
+
     }
 
 
     public void readPeriodicInputs() {
         mPeriodicIO.lastColor = mPeriodicIO.currentColor;
         mPeriodicIO.detectedColor = mColorSensor.getColor();
-        mPeriodicIO.matchResult = mColorMatcher.matchClosestColor(mPeriodicIO.detectedColor);
-        mPeriodicIO.currentColor = matcher(mPeriodicIO.matchResult);
-
+        mPeriodicIO.matchResult =  mColorMatcher.matchClosestColor(mPeriodicIO.detectedColor);
+        MatchedColor matchedColor = matcher(mPeriodicIO.matchResult);
+        mPeriodicIO.currentColor =  matchedColor == MatchedColor.kUnknown? mPeriodicIO.currentColor: matchedColor;
+        if(mPeriodicIO.counterEnabled && mPeriodicIO.currentColor != mPeriodicIO.lastColor){
+            mSectionCount++;
+        }
     }
 
     public void writePeriodicOutputs() {
@@ -97,8 +100,9 @@ public class ColorWheelReader extends Subsystem {
     public void startSensing(){
         mColorWheelControlState = ColorWheelControlState.BEING_TURNED;
         mPeriodicIO.counterEnabled = true;
-        //counter shenanigans
+
     }
+
     public  void stopSensing(){
         mColorWheelControlState = ColorWheelControlState.IDLE;
         mPeriodicIO.counterEnabled = false;

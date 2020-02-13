@@ -249,6 +249,7 @@ public class Constants {
 
     //Color Wheel Reader
     public static final double kColorMatcherRequriedConfidance = 0;
+    public static final double kColorWheelRPM = 4000;
 
 
     public enum DriveMotorsPerSide{
