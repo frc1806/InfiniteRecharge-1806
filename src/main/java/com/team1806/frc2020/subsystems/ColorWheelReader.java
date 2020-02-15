@@ -23,7 +23,7 @@ public class ColorWheelReader extends Subsystem {
         public MatchedColor lastColor;
         public Color detectedColor;
         public ColorMatchResult matchResult;
-        public MatchedColor currentColor;
+        public MatchedColor currentColor; //This is the sensor color!!
 
         public ColorWheelControlState ColorWheelState;
 
@@ -106,6 +106,7 @@ public class ColorWheelReader extends Subsystem {
     public  void stopSensing(){
         mColorWheelControlState = ColorWheelControlState.IDLE;
         mPeriodicIO.counterEnabled = false;
+        mSectionCount = 0;
     }
 
 
@@ -142,6 +143,9 @@ public class ColorWheelReader extends Subsystem {
         }
     }
 
+    public MatchedColor getMatchedColor(){
+        return mPeriodicIO.currentColor;
+    }
 
     public void stop(){
 

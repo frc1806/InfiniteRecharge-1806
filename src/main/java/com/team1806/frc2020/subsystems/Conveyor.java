@@ -38,6 +38,7 @@ public class Conveyor extends Subsystem {
         public boolean frontIsExtended;
         public boolean backIsExtended;
         public ColorWheelReader.MatchedColor wantedColor;
+        public String FMS_Color;
 
         public ConveyorControlState ConveyorState;
 
@@ -134,7 +135,7 @@ public class Conveyor extends Subsystem {
     }
 
     public void writePeriodicOutputs(){
-        switch (mPeriodicIO.ConveyorState){
+        switch (mPeriodicIO.ConveyorState) {
             default:
             case kIdle:
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, 0);
@@ -145,20 +146,20 @@ public class Conveyor extends Subsystem {
 
                 break;
             case kFront:
-                if (!mPeriodicIO.frontIsExtended){
+                if (!mPeriodicIO.frontIsExtended) {
                     mFrontSolenoid.set(DoubleSolenoid.Value.kForward);
                 }
 
 
                 break;
             case kBack:
-                if (!mPeriodicIO.backIsExtended){
+                if (!mPeriodicIO.backIsExtended) {
                     mBackSolenoid.set(DoubleSolenoid.Value.kForward);
                 }
 
                 break;
             case kLaunching:
-                mBottomCANTalonSRX.set(ControlMode.Velocity, mLastIntakeDirection == ConveyorControlState.kFront? Constants.kTriggerLaunchSpeed:-Constants.kTriggerLaunchSpeed);
+                mBottomCANTalonSRX.set(ControlMode.Velocity, mLastIntakeDirection == ConveyorControlState.kFront ? Constants.kTriggerLaunchSpeed : -Constants.kTriggerLaunchSpeed);
                 mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kBottomConveyorSpeed);
                 mTriggerCANTalonSRX.set(ControlMode.Velocity, Constants.kTriggerLaunchSpeed);
 
@@ -171,29 +172,9 @@ public class Conveyor extends Subsystem {
                 //turn the wheel at a speed until some condition is met to kick it out of that state
                 mFrontSolenoid.set(DoubleSolenoid.Value.kForward);//check which intake it actually is going to be on
                 mOuterIntakeSparkMAX.set(ControlType.kVelocity, Constants.kColorWheelRPM);
-
-                setWantPositionalControl();
-
-                if(mPeriodicIO.wantedColor.length() > 0)
+                if (mColorWheelReader.getMatchedColor() == mPeriodicIO.wantedColor)
                 {
-                    switch (mPeriodicIO.wantedColor.charAt(0))
-                    {
-                        case 'B' :
-                            //Blue case code
-                            break;
-                        case 'G' :
-                            //Green case code
-                            break;
-                        case 'R' :
-                            //Red case code
-                            break;
-                        case 'Y' :
-                            //Yellow case code
-                            break;
-                    }
-                } else {
                     setControlState(ConveyorControlState.kIdle);
-                    System.out.println("*********NO GAME DATA*********Recieved String: \"" + mPeriodicIO.wantedColor);
                 }
 
 
@@ -207,7 +188,7 @@ public class Conveyor extends Subsystem {
                 mFrontSolenoid.set(DoubleSolenoid.Value.kForward);//check which intake it actually is going to be on
                 mOuterIntakeSparkMAX.set(ControlType.kVelocity, Constants.kColorWheelRPM);
 
-                if(mColorWheelReader.getColorWheelRotationCount() > 3){
+                if(mColorWheelReader.getColorWheelRotationCount() > 3.0){
                     mOuterIntakeSparkMAX.set(ControlType.kVelocity, 0);
                     setControlState(ConveyorControlState.kIdle);
                 }
@@ -289,15 +270,37 @@ public class Conveyor extends Subsystem {
     }
 
     public synchronized void setWantRotationalControl(){
-        setControlState(ConveyorControlState.kRotationalControl);
-        mColorWheelReader.startSensing();
+        if (mConveyorControlState != ConveyorControlState.kRotationalControl) {
+            setControlState(ConveyorControlState.kRotationalControl);
+            mColorWheelReader.startSensing();
+        }
+
     }
 
     public synchronized  void setWantPositionalControl(){
-        setControlState(ConveyorControlState.kPositionalControl);
-        mColorWheelReader.startSensing();
+        if(mConveyorControlState != ConveyorControlState.kPositionalControl)
+        {
+            setControlState(ConveyorControlState.kPositionalControl);
+            mColorWheelReader.startSensing();
+            if(mPeriodicIO.wantedColor == ColorWheelReader.MatchedColor.kUnknown)
+            {
+                mPeriodicIO.FMS_Color = DriverStation.getInstance().getGameSpecificMessage();
 
-        mPeriodicIO.wantedColor = DriverStation.getInstance().getGameSpecificMessage();
+                if (mPeriodicIO.FMS_Color.charAt(0) == 'B') {
+                    mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kBlue;
+                } else if (mPeriodicIO.FMS_Color.charAt(0) == 'G') {
+                    mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kGreen;
+                } else if (mPeriodicIO.FMS_Color.charAt(0) == 'R') {
+                    mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kRed;
+                } else if (mPeriodicIO.FMS_Color.charAt(0) == 'Y') {
+                    mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kYellow;
+                } else {
+                    mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kUnknown;
+                }
+            }
+        }
+
+
     }
 
 }
