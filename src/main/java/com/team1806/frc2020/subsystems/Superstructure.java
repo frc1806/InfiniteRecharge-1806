@@ -1,6 +1,5 @@
 package com.team1806.frc2020.subsystems;
 
-        import com.team1806.frc2020.Constants;
         import com.team1806.frc2020.Robot;
         import com.team1806.frc2020.RobotState;
         import com.team1806.frc2020.game.Shot;
@@ -8,9 +7,6 @@ package com.team1806.frc2020.subsystems;
         import com.team1806.frc2020.loops.Loop;
         import com.team1806.lib.geometry.Pose2d;
         import com.team1806.lib.geometry.Rotation2d;
-        import com.team1806.lib.geometry.Twist2d;
-        import com.team1806.lib.util.Units;
-        import com.team1806.lib.util.Util;
         import com.team1806.lib.vision.AimingParameters;
         import edu.wpi.first.wpilibj.Timer;
 
@@ -42,12 +38,14 @@ public class Superstructure extends Subsystem {
         private Hood mHood;
     private Turret mTurret;
     private Shot mCurrentShot;
-    private LauncherState mLauncherState;
+    private SuperstructureState mLauncherState;
 
-    private enum LauncherState{
-        kNotLaunching,
+    private enum SuperstructureState {
+        kIdle,
         kLaunching,
-        kVisionLaunching
+        kVisionLaunching,
+        kFrontIntake,
+        kBackIntake
     }
 
 
@@ -63,7 +61,7 @@ public class Superstructure extends Subsystem {
     }
 
     private Superstructure() {
-        mLauncherState = LauncherState.kNotLaunching;
+        mLauncherState = SuperstructureState.kIdle;
         mFlywheel = Flywheel.GetInstance();
         mTurret = Turret.GetInstance();
         mHood = Hood.GetInstance();
@@ -83,7 +81,7 @@ public class Superstructure extends Subsystem {
             public void onLoop(double timestamp) {
                 synchronized (Superstructure.this) {
                     switch(mLauncherState){
-                        case kNotLaunching:
+                        case kIdle:
                         default:
                             mFlywheel.stop();
                             mTurret.stop();
@@ -102,6 +100,20 @@ public class Superstructure extends Subsystem {
                             else{
                                 mConveyor.stop();
                             }
+                            break;
+                        case kFrontIntake:
+                            mFlywheel.stop();
+                            mTurret.stop();
+                            mHood.stop();
+
+                            mConveyor.intakeFromFront();
+                            break;
+                        case kBackIntake:
+                            mFlywheel.stop();
+                            mTurret.stop();
+                            mHood.stop();
+
+                            mConveyor.intakeFromBack();
                             break;
 
                     }
@@ -166,24 +178,24 @@ public class Superstructure extends Subsystem {
 
     public synchronized void setWantShot(Shot wantedShot){
         mCurrentShot = wantedShot;
-        if(mLauncherState != LauncherState.kLaunching)
+        if(mLauncherState != SuperstructureState.kLaunching)
         {
-            mLauncherState = LauncherState.kLaunching;
+            mLauncherState = SuperstructureState.kLaunching;
         }
 
 
     }
 
     public synchronized  void setWantVisionShot(){
-        if(mLauncherState != LauncherState.kVisionLaunching)
+        if(mLauncherState != SuperstructureState.kVisionLaunching)
         {
-            mLauncherState = LauncherState.kVisionLaunching;
+            mLauncherState = SuperstructureState.kVisionLaunching;
         }
     }
 
     public synchronized  void setStopShooting(){
-        if(mLauncherState == LauncherState.kLaunching && mLauncherState !=LauncherState.kNotLaunching){
-            mLauncherState = LauncherState.kNotLaunching;
+        if(mLauncherState != SuperstructureState.kIdle){
+            mLauncherState = SuperstructureState.kIdle;
         }
     }
 
@@ -191,6 +203,18 @@ public class Superstructure extends Subsystem {
         Pose2d goalPose = RobotState.getInstance().getVehicleToVisionTarget(Timer.getFPGATimestamp());
         Shot visionShot = new Shot(goalPose.getRotation().getDegrees(), getHoodAngleFromDistance(goalPose.getTranslation().norm()), getFlywheelSpeedFromDistance(goalPose.getTranslation().norm()));
         return visionShot;
+    }
+
+    public void frontIntake(){
+        if(mLauncherState != SuperstructureState.kFrontIntake){
+            mLauncherState = SuperstructureState.kFrontIntake;
+        }
+    }
+
+    public void backIntake(){
+        if(mLauncherState != SuperstructureState.kBackIntake){
+            mLauncherState = SuperstructureState.kBackIntake;
+        }
     }
 
     private double getHoodAngleFromDistance(double distance){

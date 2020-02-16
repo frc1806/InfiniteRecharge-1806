@@ -265,8 +265,17 @@ public class Robot extends TimedRobot {
 
         boolean wantsLowGear = mControlBoard.getWantsLowGear();
         // drive
-        mDrive.setHighGear(!wantsLowGear);
-        mDrive.setCheesyishDrive(throttle, -mControlBoard.getTurn(), mControlBoard.getQuickTurn());
+
+
+        if(mControlBoard.getWantsPark()){
+            mDrive.setHighGear(false);
+            mDrive.setWantParkingBrake();
+        } else{
+            mDrive.setHighGear(!wantsLowGear);
+            mDrive.setCheesyishDrive(throttle, -mControlBoard.getTurn(), mControlBoard.getQuickTurn());
+        }
+
+
         if (mControlBoard.getShoot()){
             mSuperstructure.setWantShot(Shot.STRAIGHT_ON_AUTOLINE);
         }
@@ -277,10 +286,28 @@ public class Robot extends TimedRobot {
             double flywheelRPM = table.getEntry("FlywheelRPM").getDouble(0);
             mSuperstructure.setWantShot(new Shot(turretAngle, hoodAngle, flywheelRPM));
         }
-        else{
-            mSuperstructure.setStopShooting();
-        }
 
+        else if(mControlBoard.getAutoLineShot()){
+            mSuperstructure.setWantShot(Shot.STRAIGHT_ON_AUTOLINE);
+        }
+        else if(mControlBoard.getCloseShot()){
+            mSuperstructure.setWantShot(Shot.CLOSE_SHOT);
+        }
+        else if (mControlBoard.getLongShot()){
+            mSuperstructure.setWantShot(Shot.STRAIGHT_ON_FROM_MAX_DIST);
+        }
+        else if (mControlBoard.getTrenchShot()){
+            mSuperstructure.setWantShot(Shot.FROM_TRENCH);
+        }
+        else if (mControlBoard.getWantsFrontIntake()){
+            mSuperstructure.frontIntake();
+        }
+        else if (mControlBoard.getWantsRearIntake()){
+            mSuperstructure.backIntake();
+        }
+        else{
+            mSuperstructure.stop();
+        }
     }
 
     @Override

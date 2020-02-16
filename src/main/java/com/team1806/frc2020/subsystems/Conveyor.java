@@ -379,6 +379,16 @@ public class Conveyor extends Subsystem {
         setControlState(ConveyorControlState.kLaunching);
     }
 
+    public void intakeFromFront (){
+        setControlState(ConveyorControlState.kFront);
+
+    }
+
+    public void intakeFromBack (){
+        setControlState(ConveyorControlState.kBack);
+
+    }
+
 
 }
 
