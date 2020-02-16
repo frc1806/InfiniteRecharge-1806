@@ -182,7 +182,7 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized  void setStopShooting(){
-        if(mLauncherState != LauncherState.kNotLaunching){
+        if(mLauncherState == LauncherState.kLaunching && mLauncherState !=LauncherState.kNotLaunching){
             mLauncherState = LauncherState.kNotLaunching;
         }
     }
