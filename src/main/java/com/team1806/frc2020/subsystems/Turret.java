@@ -182,4 +182,13 @@ public class Turret extends Subsystem {
 
     }
 
+    public Rotation2d getCurrentAngle(){
+        return Rotation2d.fromDegrees(mPeriodicIO.currentAngle);
+    }
+
+    public Rotation2d getWantedAngle(){
+        return Rotation2d.fromDegrees(mPeriodicIO.wantedAngle);
+    }
+
+
 }

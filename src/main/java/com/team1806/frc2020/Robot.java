@@ -261,13 +261,15 @@ public class Robot extends TimedRobot {
         boolean rumble = false;
         double throttle = mControlBoard.getThrottle();
 
-        Optional<AimingParameters> drive_aim_params = Optional.empty();
+        Optional<AimingParameters> drive_aim_params = RobotState.getInstance().getAimingParameters(-1, Constants.kMaxGoalTrackAge);
 
         boolean wantsLowGear = mControlBoard.getWantsLowGear();
         // drive
 
-
-        if(mControlBoard.getWantsPark()){
+        if(mControlBoard.getWantsAutoSteer()){
+            mDrive.autoSteer(throttle, drive_aim_params);
+        }
+        else if(mControlBoard.getWantsPark()){
             mDrive.setHighGear(false);
             mDrive.setWantParkingBrake();
         } else{
