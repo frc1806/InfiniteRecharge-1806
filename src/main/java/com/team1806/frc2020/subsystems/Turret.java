@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team1806.frc2020.Constants;
+import com.team1806.frc2020.RobotState;
+import com.team1806.lib.geometry.Rotation2d;
 import com.team1806.lib.util.ReflectingCSVWriter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -87,27 +89,24 @@ public class Turret extends Subsystem {
     }
 
     public void writePeriodicOutputs(){
-        switch (mPeriodicIO.turretState){
+        switch (mPeriodicIO.turretState) {
             default:
             case kIdle:
                 mCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 break;
             case kPositionControl:
-                if(isOnTarget()){
+                if (isOnTarget()) {
                     setControlState(TurretControlState.kHoldPosition);
-                }
-                else{
+                } else {
                     mCANTalonSRX.set(ControlMode.Position, ConvertAngleToEncoderClicks(mPeriodicIO.wantedAngle));
                 }
                 break;
             case kHoldPosition:
                 mCANTalonSRX.set(ControlMode.PercentOutput, 0);
 
-                if(!isOnTarget()){
+                if (!isOnTarget()) {
                     setControlState(TurretControlState.kPositionControl);
-                }
-
-                else{
+                } else {
                     mCANTalonSRX.set(ControlMode.PercentOutput, 0);
 
                 }
@@ -128,6 +127,7 @@ public class Turret extends Subsystem {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
 
         mPeriodicIO.currentSpeed = mCANTalonSRX.getSelectedSensorVelocity();
+        RobotState.getInstance().addVehicleToTurretObservation(Timer.getFPGATimestamp(), Rotation2d.fromDegrees(mPeriodicIO.currentAngle));
 
 
         if (mCSVWriter != null) {
@@ -176,6 +176,10 @@ public class Turret extends Subsystem {
             mCSVWriter.flush();
             mCSVWriter = null;
         }
+    }
+
+    private void addTurretObservation(){
+
     }
 
 }

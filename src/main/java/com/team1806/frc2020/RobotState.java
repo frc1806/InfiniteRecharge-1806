@@ -201,9 +201,8 @@ public class RobotState {
     }
 
     private void updatePowerPortGoalTracker(double timestamp, List<Pose2d> robotToVisionTargetPoses, GoalTracker tracker) {
-        if (robotToVisionTargetPoses.size() != 2 ||
-                robotToVisionTargetPoses.get(0) == null ||
-                robotToVisionTargetPoses.get(1) == null) return;
+        if (robotToVisionTargetPoses.size() == 0 ||
+                robotToVisionTargetPoses.get(0) == null) return;
 
         tracker.update(timestamp, robotToVisionTargetPoses);
     }
@@ -225,7 +224,7 @@ public class RobotState {
 
     // use known field target orientations to compensate for inaccuracy, assumes robot starts pointing directly away
     // from and perpendicular to alliance wall
-    private final double[] kPossibleTargetNormals = {0.0, 90.0, 180.0, 270.0, 30.0, 150.0, 210.0, 330.0};
+    private final double[] kPossibleTargetNormals = {0.0};
 
     public synchronized Pose2d getFieldToVisionTarget() {
         GoalTracker tracker = vision_target_high_;
@@ -285,7 +284,7 @@ public class RobotState {
         if (report == null) {
             return Optional.empty();
         }
-        Pose2d vehicleToGoal = getFieldToVehicle(timestamp).inverse().transformBy(report.field_to_target).transformBy(getVisionTargetToGoalOffset());
+        Pose2d vehicleToGoal = getFieldToVehicle(timestamp).inverse().transformBy(report.field_to_target);
 
         AimingParameters params = new AimingParameters(vehicleToGoal,
                 report.field_to_target,
@@ -298,14 +297,6 @@ public class RobotState {
         return new Pose2d();
     }
 
-
-    public synchronized Pose2d getVisionTargetToGoalOffset() {
-        // if (SuperstructureCommands.isInCargoShipPosition() && EndEffector.getInstance().getObservedGamePiece() == GamePiece.BALL) {
-        //     return Pose2d.fromTranslation(new Translation2d(-6.0, 0.0));
-        // }
-
-        return Pose2d.identity();
-    }
 
     public synchronized void outputToSmartDashboard() {
         SmartDashboard.putString("Robot Velocity", getMeasuredVelocity().toString());
