@@ -38,6 +38,7 @@ public class Superstructure extends Subsystem {
     private boolean mEnforceAutoAimMinDistance = false;
     private double mAutoAimMinDistance = 500;
     private Flywheel mFlywheel;
+    private Conveyor mConveyor;
         private Hood mHood;
     private Turret mTurret;
     private Shot mCurrentShot;
@@ -66,6 +67,7 @@ public class Superstructure extends Subsystem {
         mFlywheel = Flywheel.GetInstance();
         mTurret = Turret.GetInstance();
         mHood = Hood.GetInstance();
+        mConveyor = Conveyor.GetInstance();
     }
 
     @Override
@@ -95,10 +97,10 @@ public class Superstructure extends Subsystem {
                             mTurret.setWantedAngle(mCurrentShot.getTurretAngle());
                             mHood.setWantedAngle(mCurrentShot.getHoodAngle());
                             if(mFlywheel.isReadyForLaunch() && mTurret.isOnTarget() && mHood.isOnTarget()){
-                                //TODO: Launch power cells
+                                mConveyor.setWantLaunch();
                             }
                             else{
-                                //TODO: Don't launch
+                                mConveyor.stop();
                             }
                             break;
 

@@ -300,7 +300,7 @@ public class Conveyor extends Subsystem {
         return NEORPM * Constants.kNEORPMToControlPanelRPMConversionFactor;
     }
 
-    public void setControlState(ConveyorControlState state) {
+    private void setControlState(ConveyorControlState state) {
         mPeriodicIO.ConveyorState = state;
         mConveyorControlState = state;
 
@@ -374,6 +374,11 @@ public class Conveyor extends Subsystem {
 
 
     }
+
+    public void setWantLaunch(){
+        setControlState(ConveyorControlState.kLaunching);
+    }
+
 
 }
 
