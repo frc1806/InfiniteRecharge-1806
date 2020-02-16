@@ -1,7 +1,9 @@
 package com.team1806.frc2020.subsystems;
 
         import com.team1806.frc2020.Constants;
+        import com.team1806.frc2020.Robot;
         import com.team1806.frc2020.RobotState;
+        import com.team1806.frc2020.game.Shot;
         import com.team1806.frc2020.loops.ILooper;
         import com.team1806.frc2020.loops.Loop;
         import com.team1806.lib.geometry.Pose2d;
@@ -10,19 +12,17 @@ package com.team1806.frc2020.subsystems;
         import com.team1806.lib.util.Units;
         import com.team1806.lib.util.Util;
         import com.team1806.lib.vision.AimingParameters;
+        import edu.wpi.first.wpilibj.Timer;
 
         import java.util.Optional;
 
 /**
  * The superstructure subsystem is the overarching class containing all components of the superstructure: the
- * turret, elevator, arm, and wrist. The superstructure subsystem also uses info from the vision system.
+ * turret, flywheel, hood, and conveyor.
  * <p>
- * Instead of interacting individually with subsystems like the elevator and arm, the {@link Robot} class sends commands
+ * Instead of interacting individually with subsystems like the flywheel, turret, and hood, the {@link Robot} class sends commands
  * to the superstructure, which individually decides how to move each subsystem to get there.
  * <p>
- * The Superstructure class also adjusts the overall goal based on the turret and elevator control modes.
- *
- * @see com.team1806.frc2020.statemachines.SuperstructureCommands
  */
 public class Superstructure extends Subsystem {
     private static Superstructure mInstance;
@@ -38,6 +38,19 @@ public class Superstructure extends Subsystem {
     private boolean mEnforceAutoAimMinDistance = false;
     private double mAutoAimMinDistance = 500;
     private Flywheel mFlywheel;
+        private Hood mHood;
+    private Turret mTurret;
+    private Shot mCurrentShot;
+    private LauncherState mLauncherState;
+
+    private enum LauncherState{
+        kNotLaunching,
+        kLaunching,
+        kVisionLaunching
+    }
+
+
+
 
 
     public synchronized static Superstructure getInstance() {
@@ -49,7 +62,10 @@ public class Superstructure extends Subsystem {
     }
 
     private Superstructure() {
+        mLauncherState = LauncherState.kNotLaunching;
         mFlywheel = Flywheel.GetInstance();
+        mTurret = Turret.GetInstance();
+        mHood = Hood.GetInstance();
     }
 
     @Override
@@ -64,6 +80,29 @@ public class Superstructure extends Subsystem {
             @Override
             public void onLoop(double timestamp) {
                 synchronized (Superstructure.this) {
+                    switch(mLauncherState){
+                        case kNotLaunching:
+                        default:
+                            mFlywheel.stop();
+                            mTurret.stop();
+                            mHood.setWantedAngle(0);
+                            break;
+                        case kVisionLaunching:
+                            mCurrentShot = getShotFromVision();
+                            //intentional no break
+                        case kLaunching:
+                            mFlywheel.setSpeed(mCurrentShot.getFlywheelSpeed());
+                            mTurret.setWantedAngle(mCurrentShot.getTurretAngle());
+                            mHood.setWantedAngle(mCurrentShot.getHoodAngle());
+                            if(mFlywheel.isReadyForLaunch() && mTurret.isOnTarget() && mHood.isOnTarget()){
+                                //TODO: Launch power cells
+                            }
+                            else{
+                                //TODO: Don't launch
+                            }
+                            break;
+
+                    }
                 }
             }
 
@@ -110,7 +149,10 @@ public class Superstructure extends Subsystem {
     }
 
     @Override
-    public void stop() {}
+    public void stop() {
+        setStopShooting();
+
+    }
 
     @Override
     public boolean checkSystem() {
@@ -119,5 +161,42 @@ public class Superstructure extends Subsystem {
 
     @Override
     public synchronized void outputTelemetry() {}
+
+    public synchronized void setWantShot(Shot wantedShot){
+        mCurrentShot = wantedShot;
+        if(mLauncherState != LauncherState.kLaunching)
+        {
+            mLauncherState = LauncherState.kLaunching;
+        }
+
+
+    }
+
+    public synchronized  void setWantVisionShot(){
+        if(mLauncherState != LauncherState.kVisionLaunching)
+        {
+            mLauncherState = LauncherState.kVisionLaunching;
+        }
+    }
+
+    public synchronized  void setStopShooting(){
+        if(mLauncherState != LauncherState.kNotLaunching){
+            mLauncherState = LauncherState.kNotLaunching;
+        }
+    }
+
+    private synchronized Shot getShotFromVision(){
+        Pose2d goalPose = RobotState.getInstance().getVehicleToVisionTarget(Timer.getFPGATimestamp());
+        Shot visionShot = new Shot(goalPose.getRotation().getDegrees(), getHoodAngleFromDistance(goalPose.getTranslation().norm()), getFlywheelSpeedFromDistance(goalPose.getTranslation().norm()));
+        return visionShot;
+    }
+
+    private double getHoodAngleFromDistance(double distance){
+        return 0;
+    }
+
+    private double getFlywheelSpeedFromDistance(double distance){
+        return 7806;
+    }
 
 }

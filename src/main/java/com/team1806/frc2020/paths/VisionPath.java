@@ -95,7 +95,7 @@ public class VisionPath implements PathContainer {
         return new Pose2d(new Translation2d(x,y), Rotation2d.fromDegrees(angle));
     }
     public Pose2d generateBayVisionPoseFromODO() {
-        return RobotState.getInstance().getFieldToVisionTarget(false);
+        return RobotState.getInstance().getFieldToVisionTarget();
         
 //        Target goalTarget = targets.get(0);
 //        if(true) {

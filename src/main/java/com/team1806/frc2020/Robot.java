@@ -5,10 +5,13 @@ import com.team1806.frc2020.auto.modes.AutoModeBase;
 import com.team1806.frc2020.controlboard.ControlBoard;
 import com.team1806.frc2020.controlboard.GamepadButtonControlBoard;
 import com.team1806.frc2020.controlboard.IControlBoard;
+import com.team1806.frc2020.game.Shot;
 import com.team1806.frc2020.loops.Looper;
 import com.team1806.frc2020.subsystems.*;
 import com.team1806.lib.geometry.Pose2d;
 import com.team1806.lib.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import com.team1806.lib.util.*;
 import com.team1806.lib.vision.AimingParameters;
@@ -32,7 +35,7 @@ public class Robot extends TimedRobot {
     private final RobotState mRobotState = RobotState.getInstance();
     private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
     private final Drive mDrive = Drive.getInstance();
-    public Flywheel mFlywheel = Flywheel.GetInstance();
+    private final Superstructure mSuperstructure = Superstructure.getInstance();
 
 
     // button placed on the robot to allow the drive team to zero the robot right
@@ -70,7 +73,10 @@ public class Robot extends TimedRobot {
                     mRobotStateEstimator,
                     mDrive,
                     mInfrastructure,
-                    mFlywheel);
+                    Flywheel.GetInstance(),
+                    Turret.GetInstance(),
+                    Hood.GetInstance(),
+                    mSuperstructure);
             AutoModeSelector.registerDisabledLoop(mDisabledLooper);
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -253,10 +259,17 @@ public class Robot extends TimedRobot {
         mDrive.setHighGear(!wantsLowGear);
         mDrive.setCheesyishDrive(throttle, -mControlBoard.getTurn(), mControlBoard.getQuickTurn());
         if (mControlBoard.getShoot()){
-            mFlywheel.setSpeed(9500);
+            mSuperstructure.setWantShot(Shot.STRAIGHT_ON_AUTOLINE);
+        }
+        else if (mControlBoard.getWantDashboardShot()){
+            NetworkTable table = NetworkTableInstance.getDefault().getTable("Shot");
+            double turretAngle = table.getEntry("Turret").getDouble(0);
+            double hoodAngle = table.getEntry("Hood").getDouble(0);
+            double flywheelRPM = table.getEntry("FlywheelRPM").getDouble(0);
+            mSuperstructure.setWantShot(new Shot(turretAngle, hoodAngle, flywheelRPM));
         }
         else{
-            mFlywheel.stop();
+            mSuperstructure.setStopShooting();
         }
 
     }

@@ -7,6 +7,7 @@ public class ControlBoard implements IControlBoard{
     private static final ControlBoard CONTROL_BOARD = new ControlBoard();
     private final IDriveControlBoard mDriveControlBoard;
     private final IButtonControlBoard mButtonControlBoard;
+    private final IDebugControlBoard mDebugControlBoard;
 
     public static ControlBoard GetInstance(){
         return CONTROL_BOARD;
@@ -15,11 +16,17 @@ public class ControlBoard implements IControlBoard{
     private ControlBoard() {
         mDriveControlBoard = GamepadDriveControlBoard.getInstance();
         mButtonControlBoard = GamepadButtonControlBoard.getInstance();
+        mDebugControlBoard = GamepadDebugControlBoard.getInstance();
     }
 
     @Override
     public void reset() {
 
+    }
+
+    @Override
+    public boolean getWantDashboardShot() {
+        return mDebugControlBoard.getWantDashboardShot();
     }
 
     @Override
