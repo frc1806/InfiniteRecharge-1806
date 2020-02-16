@@ -5,12 +5,16 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.Rev2mDistanceSensor;
+import com.revrobotics.Rev2mDistanceSensor.Port;
+import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
 import com.team1806.frc2020.Constants;
 import com.team1806.lib.drivers.LazySparkMax;
 import com.team1806.lib.util.ReflectingCSVWriter;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Conveyor extends Subsystem {
 
@@ -21,7 +25,7 @@ public class Conveyor extends Subsystem {
 
 
     private class PeriodicIO {
-        public double timestamp;
+        public double currentTimestamp;
 
         public double triggerMotorVoltage;
         public double topMotorVoltage;
@@ -34,6 +38,16 @@ public class Conveyor extends Subsystem {
         public double triggerCurrentVelocity;
         public double topCurrentVelocity;
         public double bottomCurrentVelocity;
+
+        public double distance;
+        public boolean isEmpty;
+        public boolean wasEmpty;
+        public boolean isFull;
+        public boolean wasFull;
+        public double timeEmptied;
+        public double timeFilled;
+        public boolean isDoneShooting;
+        public boolean isTopDoneConveyoring;
 
         public boolean frontIsExtended;
         public boolean backIsExtended;
@@ -57,6 +71,7 @@ public class Conveyor extends Subsystem {
     private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
     private ConveyorControlState mLastIntakeDirection;
     private ColorWheelReader mColorWheelReader;
+    private Rev2mDistanceSensor mDistanceSensor;
 
 
 
@@ -71,6 +86,12 @@ public class Conveyor extends Subsystem {
 
         mFrontSolenoid = new DoubleSolenoid(Constants.kFrontIntakeFowardChannel, Constants.kFrontIntakeReverseChannel);
         mBackSolenoid = new DoubleSolenoid(Constants.kBackIntakeFowardChannel, Constants.kBackIntakeReverseChannel);
+
+        mDistanceSensor = new Rev2mDistanceSensor(Port.kMXP);
+        mDistanceSensor.setAutomaticMode(true);
+        mDistanceSensor.setEnabled(true);
+        mDistanceSensor.setDistanceUnits(Rev2mDistanceSensor.Unit.kInches);
+        mDistanceSensor.setRangeProfile(RangeProfile.kHighSpeed);
 
         mConveyorControlState = ConveyorControlState.kIdle;
         mLastIntakeDirection = ConveyorControlState.kFront;
@@ -138,6 +159,7 @@ public class Conveyor extends Subsystem {
         switch (mPeriodicIO.ConveyorState) {
             default:
             case kIdle:
+                mColorWheelReader.stopSensing();
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
@@ -149,18 +171,33 @@ public class Conveyor extends Subsystem {
                 if (!mPeriodicIO.frontIsExtended) {
                     mFrontSolenoid.set(DoubleSolenoid.Value.kForward);
                 }
-
+                mBackSolenoid.set(DoubleSolenoid.Value.kReverse);
+                mOuterIntakeSparkMAX.getPIDController().setReference(Constants.kOuterIntakeSpeed, ControlType.kVelocity);
+                if (!mPeriodicIO.isTopDoneConveyoring){
+                    mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopConveyorSpeed);
+                } else {
+                    mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                }
+                mBottomCANTalonSRX.set(ControlMode.Velocity, Constants.kBottomConveyorSpeed);
 
                 break;
             case kBack:
                 if (!mPeriodicIO.backIsExtended) {
                     mBackSolenoid.set(DoubleSolenoid.Value.kForward);
                 }
+                mFrontSolenoid.set(DoubleSolenoid.Value.kReverse);
+                mOuterIntakeSparkMAX.getPIDController().setReference(-Constants.kOuterIntakeSpeed, ControlType.kVelocity);
+                if (!mPeriodicIO.isTopDoneConveyoring){
+                    mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopConveyorSpeed);
+                } else {
+                    mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                }
+                mBottomCANTalonSRX.set(ControlMode.Velocity, -Constants.kBottomConveyorSpeed);
 
                 break;
             case kLaunching:
-                mBottomCANTalonSRX.set(ControlMode.Velocity, mLastIntakeDirection == ConveyorControlState.kFront ? Constants.kTriggerLaunchSpeed : -Constants.kTriggerLaunchSpeed);
-                mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kBottomConveyorSpeed);
+                mBottomCANTalonSRX.set(ControlMode.Velocity, mLastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomLaunchSpeed : -Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
+                mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopLaunchSpeed);
                 mTriggerCANTalonSRX.set(ControlMode.Velocity, Constants.kTriggerLaunchSpeed);
 
                 break;
@@ -198,6 +235,7 @@ public class Conveyor extends Subsystem {
     }
 
     public void readPeriodicInputs(){
+        mPeriodicIO.currentTimestamp = Timer.getFPGATimestamp();
         mPeriodicIO.triggerMotorVoltage = mTriggerCANTalonSRX.getMotorOutputVoltage();
         mPeriodicIO.topMotorVoltage = mTopCANTalonSRX.getMotorOutputVoltage();
         mPeriodicIO.bottomMotorVoltage = mBottomCANTalonSRX.getMotorOutputVoltage();
@@ -213,12 +251,44 @@ public class Conveyor extends Subsystem {
         mPeriodicIO.frontIsExtended = mFrontSolenoid.get() == DoubleSolenoid.Value.kForward;
         mPeriodicIO.backIsExtended = mBackSolenoid.get() == DoubleSolenoid.Value.kForward;
 
+        mPeriodicIO.distance = mDistanceSensor.getRange();
+        mPeriodicIO.wasEmpty = mPeriodicIO.isEmpty;
+        mPeriodicIO.isEmpty = mPeriodicIO.distance > Constants.kEmptyDistance && mDistanceSensor.isRangeValid();
+        mPeriodicIO.wasFull = mPeriodicIO.isFull;
+        mPeriodicIO.isFull = mPeriodicIO.distance < Constants.kFullDistance && mDistanceSensor.isRangeValid();
+        mPeriodicIO.timeEmptied = timeEmptied(mPeriodicIO.currentTimestamp);
+        mPeriodicIO.timeFilled = timeFilled(mPeriodicIO.currentTimestamp);
+        mPeriodicIO.isDoneShooting = doneShooting();
+        mPeriodicIO.isTopDoneConveyoring = topDoneConveyoring();
+
         if (mCSVWriter != null) {
             mCSVWriter.add(mPeriodicIO);
         }
     }
 
+    private double timeEmptied(double timestamp){
+        if (!mPeriodicIO.wasEmpty && mPeriodicIO.isEmpty){
+            return timestamp;
+        } else {
+            return mPeriodicIO.timeEmptied;
+        }
+    }
 
+    private double timeFilled(double timestamp){
+        if (!mPeriodicIO.wasFull && mPeriodicIO.isFull){
+            return timestamp;
+        } else {
+            return mPeriodicIO.timeFilled;
+        }
+    }
+
+    public boolean doneShooting(){
+        return mPeriodicIO.isEmpty && mPeriodicIO.currentTimestamp - mPeriodicIO.timeEmptied > Constants.kTimeTillEmpty;
+    }
+
+    public boolean topDoneConveyoring(){
+        return mPeriodicIO.isFull && mPeriodicIO.currentTimestamp - mPeriodicIO.timeFilled > Constants.kTimeTillInPosition;
+    }
 
     public void zeroSensors(){
         mTriggerCANTalonSRX.setSelectedSensorPosition(0);
@@ -249,6 +319,7 @@ public class Conveyor extends Subsystem {
         SmartDashboard.putString("Conveyor Control State", mPeriodicIO.ConveyorState.toString());
         SmartDashboard.putBoolean("Front Intake Is Extended", mPeriodicIO.frontIsExtended);
         SmartDashboard.putBoolean("Back Intake Is Extended",mPeriodicIO.backIsExtended);
+        SmartDashboard.putNumber("Distance Sensor Reading (Inches)", mPeriodicIO.distance);
 
         if (mCSVWriter != null) {
             mCSVWriter.write();
@@ -268,6 +339,7 @@ public class Conveyor extends Subsystem {
             mCSVWriter = null;
         }
     }
+
 
     public synchronized void setWantRotationalControl(){
         if (mConveyorControlState != ConveyorControlState.kRotationalControl) {

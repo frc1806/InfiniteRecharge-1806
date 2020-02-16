@@ -243,9 +243,17 @@ public class Constants {
     public static final double kOuterIntakeVelocityControlKd = 0;
     public static final double kOuterIntakeVelocityControlKf = 0;
 
+    public static final double kOuterIntakeSpeed = 0.0;
     public static final double kTriggerLaunchSpeed = 10000.0;
-    public static final double kBottomConveyorSpeed = 100;
-    public static final double kTopConveyorSpeed = 100;
+    public static final double kTopLaunchSpeed = 150.0;
+    public static final double kBottomLaunchSpeed = 150.0;
+    public static final double kBottomConveyorSpeed = 100.0;
+    public static final double kTopConveyorSpeed = 100.0;
+
+    public static final double kTimeTillInPosition = 0.0;
+    public static final double kTimeTillEmpty = 0.0;
+    public static final double kEmptyDistance = 20.0;
+    public static final double kFullDistance = 2.0;
 
     //Color Wheel Reader
     public static final double kColorMatcherRequriedConfidance = 0;
