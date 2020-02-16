@@ -18,4 +18,6 @@ public interface IDriveControlBoard {
     void setRumble(boolean on);
 
     boolean getWantsPark();
+
+    boolean getWantsAutoSteer();
 }

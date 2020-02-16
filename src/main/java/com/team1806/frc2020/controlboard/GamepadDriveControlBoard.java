@@ -64,4 +64,7 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
     public void setRumble(boolean on) {
         mController.setRumble(on);
     }
+
+    @Override
+    public boolean getWantsAutoSteer(){return mController.getButton(XboxController.Button.X);}
 }

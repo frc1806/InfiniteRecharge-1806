@@ -118,6 +118,11 @@ public class ControlBoard implements IControlBoard{
     public boolean getWantsPark(){return mDriveControlBoard.getWantsPark();}
 
     @Override
+    public boolean getWantsAutoSteer() {
+        return mDriveControlBoard.getWantsAutoSteer();
+    }
+
+    @Override
     public void setRumble(boolean on) {
         mDriveControlBoard.setRumble(on);
         mButtonControlBoard.setRumble(on);
