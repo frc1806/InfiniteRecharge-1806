@@ -124,7 +124,7 @@ public class Flywheel extends Subsystem {
        mPeriodicIO.leaderCurrent = mSparkMaxLeader.getOutputCurrent();
        mPeriodicIO.followerCurrent = mSparkMaxFollower.getOutputCurrent();
        double lastVelocity = mPeriodicIO.launchWheelRPM;
-       mPeriodicIO.launchWheelRPM = convertLauncherSpeedToNEOSpeed(mSparkMaxLeader.getEncoder().getVelocity());
+       mPeriodicIO.launchWheelRPM = convertNEOSpeedtoLauncherSpeed(mSparkMaxLeader.getEncoder().getVelocity());
 
 
 

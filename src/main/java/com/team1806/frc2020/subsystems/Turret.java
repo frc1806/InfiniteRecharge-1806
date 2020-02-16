@@ -44,6 +44,7 @@ public class Turret extends Subsystem {
         mPeriodicIO = new PeriodicIO();
         mTurretControlState = TurretControlState.kIdle;
         mCANTalonSRX.setNeutralMode(NeutralMode.Brake);
+        reloadGains();
     }
 
     public static Turret GetInstance(){return TURRET;}

@@ -173,8 +173,12 @@ public class Constants {
     public static final double kJoystickThreshold = 0.2;
 
     // solenoids
-    public static final int kPCMId = 1;
-    public static final int kShifterSolenoidId = 7;
+    public static final int kPCMId = 0;
+    public static final int kShifterSolenoidId = 1;
+    public static final int kFrontIntakeFowardChannel = 4;
+    public static final int kFrontIntakeReverseChannel = 5;
+    public static final int kBackIntakeFowardChannel = 6;
+    public static final int kBackIntakeReverseChannel = 7;
 
     // flywheel
     public static final int kFlywheelSparkMaxLeader = 30;
@@ -212,12 +216,50 @@ public class Constants {
     public static final double kHoodAcceptableSpeed = 0;
 
 
+    //Conveyor
+    public static final int kTriggerConveyorMotorId = 10;
+    public static final int kTopConveyorMotorId = 11;
+    public static final int kBottomConveyorMotorId = 12;
 
+    public static final int kOuterIntake = 13;
 
+    public static final double kNEORPMToControlPanelRPMConversionFactor = 1.0;
 
+    public static final double kTriggerConveyorVelocityControlKp = 0;
+    public static final double kTriggerConveyorVelocityControlKi = 0;
+    public static final double kTriggerConveyorVelocityControlKd = 0;
+    public static final double kTriggerConveyorVelocityControlKf = 0;
 
+    public static final double kTopConveyorVelocityControlKp = 0;
+    public static final double kTopConveyoVelocityControlKi = 0;
+    public static final double kTopConveyorVelocityControlKd = 0;
+    public static final double kTopConveyorVelocityControlKf = 0;
 
+    public static final double kBottomConveyorVelocityControlKp = 0;
+    public static final double kBottomConveyorVelocityControlKi = 0;
+    public static final double kBottomConveyorVelocityControlKd = 0;
+    public static final double kBottomConveyorVelocityControlKf = 0;
 
+    public static final double kOuterIntakeVelocityControlKp = 0;
+    public static final double kOuterIntakeVelocityControlKi = 0;
+    public static final double kOuterIntakeVelocityControlKd = 0;
+    public static final double kOuterIntakeVelocityControlKf = 0;
+
+    public static final double kOuterIntakeSpeed = 0.0;
+    public static final double kTriggerLaunchSpeed = 10000.0;
+    public static final double kTopLaunchSpeed = 150.0;
+    public static final double kBottomLaunchSpeed = 150.0;
+    public static final double kBottomConveyorSpeed = 100.0;
+    public static final double kTopConveyorSpeed = 100.0;
+
+    public static final double kTimeTillInPosition = 0.0;
+    public static final double kTimeTillEmpty = 0.0;
+    public static final double kEmptyDistance = 20.0;
+    public static final double kFullDistance = 2.0;
+
+    //Color Wheel Reader
+    public static final double kColorMatcherRequriedConfidance = 0;
+    public static final double kColorWheelRPM = 4000;
 
 
     public enum DriveMotorsPerSide{
