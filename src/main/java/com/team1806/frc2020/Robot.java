@@ -242,28 +242,28 @@ public class Robot extends TimedRobot {
         }
 
         if (mDriveByCameraInAuto || mAutoModeExecutor.isInterrupted()) {
-            manualControl(/*sandstorm=*/true);
+            manualControl();
         }
     }
 
     @Override
     public void teleopPeriodic() {
         try {
-            manualControl(/*sandstorm=*/false);
+            manualControl();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
         }
     }
 
-    public void manualControl(boolean sandstorm) {
+    public void manualControl() {
         double timestamp = Timer.getFPGATimestamp();
         boolean rumble = false;
         double throttle = mControlBoard.getThrottle();
 
         Optional<AimingParameters> drive_aim_params = Optional.empty();
 
-        boolean wantsLowGear = mControlBoard.getWantsLowGear() && !sandstorm;
+        boolean wantsLowGear = mControlBoard.getWantsLowGear();
         // drive
         mDrive.setHighGear(!wantsLowGear);
         mDrive.setCheesyishDrive(throttle, -mControlBoard.getTurn(), mControlBoard.getQuickTurn());
