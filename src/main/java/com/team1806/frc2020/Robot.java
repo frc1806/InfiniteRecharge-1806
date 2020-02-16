@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
     private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
     private final Drive mDrive = Drive.getInstance();
     private final Superstructure mSuperstructure = Superstructure.getInstance();
+    private final Jetson mJetson;
 
 
     // button placed on the robot to allow the drive team to zero the robot right
@@ -62,6 +63,11 @@ public class Robot extends TimedRobot {
 
     Robot() {
         CrashTracker.logRobotConstruction();
+        Jetson.JetsonConstants jetsonConstants = new Jetson.JetsonConstants();
+        jetsonConstants.kTable = "Vision";
+        jetsonConstants.OffsetFromTurret = new Pose2d(0.0, 5.0, Rotation2d.fromDegrees(0.0));
+        jetsonConstants.kHorizontalPlaneToLens = new Rotation2d(Rotation2d.fromDegrees(0.0));
+        mJetson = new Jetson(jetsonConstants);
     }
 
     @Override
@@ -73,9 +79,12 @@ public class Robot extends TimedRobot {
                     mRobotStateEstimator,
                     mDrive,
                     mInfrastructure,
+                    mJetson,
                     Flywheel.GetInstance(),
                     Turret.GetInstance(),
                     Hood.GetInstance(),
+                    ColorWheelReader.GetInstance(),
+                    Conveyor.GetInstance(),
                     mSuperstructure);
             AutoModeSelector.registerDisabledLoop(mDisabledLooper);
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
