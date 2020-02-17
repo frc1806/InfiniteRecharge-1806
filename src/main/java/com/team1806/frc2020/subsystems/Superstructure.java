@@ -220,6 +220,15 @@ public class Superstructure extends Subsystem {
         }
     }
 
+    public boolean isDoneShooting(){
+       return mConveyor.isDoneShooting();
+    }
+
+
+
+
+
+
     private double getHoodAngleFromDistance(double distance){
         return 0;
     }

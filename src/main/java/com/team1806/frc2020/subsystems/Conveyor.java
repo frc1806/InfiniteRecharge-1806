@@ -388,7 +388,9 @@ public class Conveyor extends Subsystem {
         setControlState(ConveyorControlState.kBack);
 
     }
-
+    public boolean isDoneShooting (){
+        return mPeriodicIO.isDoneShooting;
+    }
 
 }
 
