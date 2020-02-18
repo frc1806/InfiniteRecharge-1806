@@ -17,7 +17,7 @@ public class LaunchAction implements Action {
             mShot = shot;
             mTimeout = timeout;
             mSuperstructure = Superstructure.getInstance();
-            
+
         }
 
 
