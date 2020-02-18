@@ -13,7 +13,7 @@ var image;
 var imageFlipped;
 var wto;
 
-var maxSpeed = 120;
+var maxSpeed = 192;
 var maxSpeedColor = [0, 255, 0];
 var minSpeed = 0;
 var minSpeedColor = [255, 0, 0];
