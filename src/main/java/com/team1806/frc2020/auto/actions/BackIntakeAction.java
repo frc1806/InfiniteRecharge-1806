@@ -3,7 +3,7 @@ package com.team1806.frc2020.auto.actions;
 import com.team1806.frc2020.subsystems.Superstructure;
 import edu.wpi.first.wpilibj.Timer;
 
-public class BackIntakeAction {
+public class BackIntakeAction implements Action{
 
     private double mTimeout;
     private double mStartTime;
