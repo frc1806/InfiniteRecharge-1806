@@ -54,13 +54,13 @@ public class Constants {
     public final static double kParkingBrakePower = 0.005;
 
     //Camera
-    public static final double kCameraFrameRate = 60.0;
+    public static final double kCameraFrameRate = 30.0;
     public static final double kMaxGoalTrackSmoothingTime = 2.0;
     public static final double kMaxGoalTrackAge = 1.0;
     public static final double kMaxTrackerDistance = 115.0;
     public static final Rotation2d kHorizontalPlaneToCameraAngle = new Rotation2d(3.1415/4.0, false);
     public static final Pose2d kCameraToRobotCenterOffset = new Pose2d(new Translation2d(8.0, 11.0), new Rotation2d(0, false));
-    public static final double kCameraLensHeight = 55.0;
+    public static final double kCameraLensHeight = 23.0;
     public static final double kTrackStabilityWeight = 0.0;
     public static final double kTrackAgeWeight = 10.0;
     public static final double kTrackSwitchingWeight = 100.0;
@@ -111,7 +111,7 @@ public class Constants {
     public static final double kPathStopSteeringDistance = 12.0;
     public static final double kDriveVoltageRampRate = 0.0;
     public static final int kDriveCurrentThrottledLimit = 30; // amps
-    public static final int kDriveCurrentUnThrottledLimit = 80; // amps
+    public static final int kDriveCurrentUnThrottledLimit = 60; // amps
 
     public static final double kFollowTargetSamplingDistance = 1.0;
     public static final double kFollowTargetLookahead = 30.0;
@@ -281,7 +281,7 @@ public class Constants {
         }
     };
 
-    public static final DriveMotorsPerSide kDriveMotorsPerSide = DriveMotorsPerSide.TWO;
+    public static final DriveMotorsPerSide kDriveMotorsPerSide = DriveMotorsPerSide.THREE;
 
 
     /*

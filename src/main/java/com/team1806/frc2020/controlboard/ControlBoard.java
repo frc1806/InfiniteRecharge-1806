@@ -123,6 +123,11 @@ public class ControlBoard implements IControlBoard{
     }
 
     @Override
+    public boolean getWantVisionShot(){
+        return mDriveControlBoard.getWantVisionShot();
+    }
+
+    @Override
     public void setRumble(boolean on) {
         mDriveControlBoard.setRumble(on);
         mButtonControlBoard.setRumble(on);

@@ -42,6 +42,7 @@ public class Superstructure extends Subsystem {
     private Turret mTurret;
     private Shot mCurrentShot;
     private SuperstructureState mLauncherState;
+    private boolean mWantInnerGoal = false;
 
     private enum SuperstructureState {
         kIdle,
@@ -91,7 +92,7 @@ public class Superstructure extends Subsystem {
                             mHood.setWantedAngle(0);
                             break;
                         case kVisionLaunching:
-                            mCurrentShot = getShotFromVision();
+                            mCurrentShot = getShotFromVision(mWantInnerGoal);
                             //intentional no break
                         case kLaunching:
                             mFlywheel.setSpeed(mCurrentShot.getFlywheelSpeed());
@@ -189,7 +190,8 @@ public class Superstructure extends Subsystem {
 
     }
 
-    public synchronized  void setWantVisionShot(){
+    public synchronized  void setWantVisionShot(boolean innerGoal){
+        mWantInnerGoal  = innerGoal;
         if(mLauncherState != SuperstructureState.kVisionLaunching)
         {
             mLauncherState = SuperstructureState.kVisionLaunching;
@@ -202,8 +204,8 @@ public class Superstructure extends Subsystem {
         }
     }
 
-    private synchronized Shot getShotFromVision(){
-        Pose2d goalPose = RobotState.getInstance().getVehicleToVisionTarget(Timer.getFPGATimestamp());
+    private synchronized Shot getShotFromVision(boolean innerGoal){
+        Pose2d goalPose = RobotState.getInstance().getVehicleToVisionTarget(Timer.getFPGATimestamp(), innerGoal);
         Shot visionShot = new Shot(goalPose.getRotation().getDegrees(), getHoodAngleFromDistance(goalPose.getTranslation().norm()), getFlywheelSpeedFromDistance(goalPose.getTranslation().norm()));
         return visionShot;
     }

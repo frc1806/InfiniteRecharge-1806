@@ -226,7 +226,7 @@ public class RobotState {
     // from and perpendicular to alliance wall
     private final double[] kPossibleTargetNormals = {0.0};
 
-    public synchronized Pose2d getFieldToVisionTarget() {
+    public synchronized Pose2d getFieldToVisionTarget(boolean innerGoal) {
         GoalTracker tracker = vision_target_high_;
 
         if (!tracker.hasTracks()) {
@@ -242,12 +242,16 @@ public class RobotState {
                 normalClamped = possible;
             }
         }
-
-        return new Pose2d(fieldToTarget.getTranslation(), Rotation2d.fromDegrees(normalClamped));
+        Pose2d outPose = new Pose2d(fieldToTarget.getTranslation(), Rotation2d.fromDegrees(normalClamped));
+        if(innerGoal){
+            //push the center 29.26in back
+            outPose = outPose.project(29.26);
+        }
+        return outPose;
     }
 
-    public synchronized Pose2d getVehicleToVisionTarget(double timestamp) {
-        Pose2d fieldToVisionTarget = getFieldToVisionTarget();
+    public synchronized Pose2d getVehicleToVisionTarget(double timestamp, boolean innerGoal) {
+        Pose2d fieldToVisionTarget = getFieldToVisionTarget(innerGoal);
 
         if (fieldToVisionTarget == null) {
             return null;

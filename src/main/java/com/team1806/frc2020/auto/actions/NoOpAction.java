@@ -1,6 +1,6 @@
 package com.team1806.frc2020.auto.actions;
 
-public class NoopAction implements Action {
+public class NoOpAction implements Action {
 
     @Override
     public void start() {}
