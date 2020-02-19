@@ -18,6 +18,10 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Conveyor extends Subsystem {
 
+    private final boolean SPEED_CONTROL_TRIGGER = true;
+    private final boolean SPEED_CONTROL_UPPER = true;
+    private final boolean SPEED_CONTROL_BOTTOM = true;
+
     enum ConveyorControlState {
 
         kIdle, kFront, kBack, kLaunching, kPositionalControl, kRotationalControl
@@ -174,11 +178,22 @@ public class Conveyor extends Subsystem {
                 mBackSolenoid.set(DoubleSolenoid.Value.kReverse);
                 mOuterIntakeSparkMAX.getPIDController().setReference(Constants.kOuterIntakeSpeed, ControlType.kVelocity);
                 if (!mPeriodicIO.isTopDoneConveyoring){
-                    mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopConveyorSpeed);
+                    if(SPEED_CONTROL_UPPER){
+                        mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopConveyorSpeed);
+                    }
+                    else{
+                        mTopCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTopConveyorDutyCycle);
+                    }
+
                 } else {
                     mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 }
-                mBottomCANTalonSRX.set(ControlMode.Velocity, Constants.kBottomConveyorSpeed);
+                if(SPEED_CONTROL_BOTTOM){
+                    mBottomCANTalonSRX.set(ControlMode.Velocity, Constants.kBottomConveyorSpeed);
+                }
+                else{
+                    mBottomCANTalonSRX.set(ControlMode.PercentOutput, Constants.kBottomConveyorDutyCycle);
+                }
 
                 break;
             case kBack:
@@ -188,18 +203,43 @@ public class Conveyor extends Subsystem {
                 mFrontSolenoid.set(DoubleSolenoid.Value.kReverse);
                 mOuterIntakeSparkMAX.getPIDController().setReference(-Constants.kOuterIntakeSpeed, ControlType.kVelocity);
                 if (!mPeriodicIO.isTopDoneConveyoring){
-                    mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopConveyorSpeed);
+                    if(SPEED_CONTROL_UPPER){
+                        mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopConveyorSpeed);
+                    }
+                    else{
+                        mTopCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTopConveyorDutyCycle);
+                    }
                 } else {
                     mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 }
-                mBottomCANTalonSRX.set(ControlMode.Velocity, -Constants.kBottomConveyorSpeed);
+                if(SPEED_CONTROL_BOTTOM){
+                    mBottomCANTalonSRX.set(ControlMode.Velocity, -Constants.kBottomConveyorSpeed);
+                }
+                else{
+                    mBottomCANTalonSRX.set(ControlMode.PercentOutput, -Constants.kBottomConveyorDutyCycle);
+                }
 
                 break;
             case kLaunching:
-                mBottomCANTalonSRX.set(ControlMode.Velocity, mLastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomLaunchSpeed : -Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
-                mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopLaunchSpeed);
-                mTriggerCANTalonSRX.set(ControlMode.Velocity, Constants.kTriggerLaunchSpeed);
+                if(SPEED_CONTROL_BOTTOM){
+                    mBottomCANTalonSRX.set(ControlMode.Velocity, mLastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomLaunchSpeed : -Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
 
+                }
+                else{
+                    mBottomCANTalonSRX.set(ControlMode.PercentOutput, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront? Constants.kBottomConveyorDutyCycle:-Constants.kBottomConveyorDutyCycle);
+                }
+                if(SPEED_CONTROL_UPPER){
+                    mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopLaunchSpeed);
+                }
+                else{
+                    mTopCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTopConveyorDutyCycle);
+                }
+                if(SPEED_CONTROL_TRIGGER){
+                    mTriggerCANTalonSRX.set(ControlMode.Velocity, Constants.kTriggerLaunchSpeed);
+                }
+                else{
+                    mTriggerCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTriggerDutyCycle);
+                }
                 break;
             case kPositionalControl:
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, 0);
