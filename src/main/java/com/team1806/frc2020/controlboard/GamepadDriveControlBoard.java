@@ -67,4 +67,7 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public boolean getWantsAutoSteer(){return mController.getButton(XboxController.Button.X);}
+
+    @Override
+    public boolean getWantVisionShot(){ return mController.getButton(XboxController.Button.START);}
 }

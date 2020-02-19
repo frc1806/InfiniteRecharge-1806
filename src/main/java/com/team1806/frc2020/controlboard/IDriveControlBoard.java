@@ -20,4 +20,6 @@ public interface IDriveControlBoard {
     boolean getWantsPark();
 
     boolean getWantsAutoSteer();
+
+    boolean getWantVisionShot();
 }
