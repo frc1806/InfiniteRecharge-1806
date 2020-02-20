@@ -105,7 +105,7 @@ public class Conveyor extends Subsystem {
         mBottomCANTalonSRX.setNeutralMode(NeutralMode.Brake);
 
         mOuterIntakeSparkMAX.setIdleMode(CANSparkMax.IdleMode.kBrake);
-
+        mOuterIntakeSparkMAX.setSmartCurrentLimit(Constants.kOuterIntakeSmartCurrentLimit);
 
 
 

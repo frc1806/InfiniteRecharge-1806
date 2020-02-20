@@ -52,6 +52,8 @@ public class Flywheel extends Subsystem {
         mSparkMaxFollower.follow(mSparkMaxLeader);
         mPeriodicIO = new PeriodicIO();
         setControlState(FlywheelControlState.kIdle);
+        mSparkMaxLeader.setSmartCurrentLimit(Constants.kFlywheelSmartCurrentLimit);
+        mSparkMaxFollower.setSmartCurrentLimit(Constants.kFlywheelSmartCurrentLimit);
         reloadGains();
 
     }

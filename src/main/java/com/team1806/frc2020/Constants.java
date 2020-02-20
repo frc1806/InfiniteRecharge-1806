@@ -191,6 +191,7 @@ public class Constants {
     public static final double kFlywheelAcceptableSpeedRange = 100;
     public static final double kFlywheelAcceptableAccleration = 100;
     public static final double kFlywheelGearScalingFactor = 35.0 / 18.0;
+    public static final int kFlywheelSmartCurrentLimit = 50;
 
     // turret
     public static final int kTurretMotorId = 60;
@@ -223,6 +224,7 @@ public class Constants {
     public static final int kBottomConveyorMotorId = 12;
 
     public static final int kOuterIntake = 13;
+    public static final int kOuterIntakeSmartCurrentLimit = 50;
 
     public static final double kNEORPMToControlPanelRPMConversionFactor = 1.0;
 
