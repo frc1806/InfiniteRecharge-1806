@@ -5,10 +5,13 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team1806.frc2020.Constants;
 import com.team1806.frc2020.RobotState;
+import com.team1806.frc2020.controlboard.ControlBoard;
 import com.team1806.lib.geometry.Rotation2d;
 import com.team1806.lib.util.ReflectingCSVWriter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import javax.naming.ldap.Control;
 
 
 public class Turret extends Subsystem {
@@ -76,7 +79,8 @@ public class Turret extends Subsystem {
     }
 
     public boolean isOnTarget() {
-        return Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) < Constants.kTurretAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kTurretAcceptableSpeed;
+        return (Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) < Constants.kTurretAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kTurretAcceptableSpeed)
+                || ControlBoard.GetInstance().getWantManualTurret();
     }
 
     private void reloadGains(){

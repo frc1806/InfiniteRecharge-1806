@@ -30,6 +30,16 @@ public class ControlBoard implements IControlBoard{
     }
 
     @Override
+    public boolean getWantManualHood() {
+        return mDebugControlBoard.getWantManualHood();
+    }
+
+    @Override
+    public boolean getWantManualTurret() {
+        return mDebugControlBoard.getWantManualTurret();
+    }
+
+    @Override
     public double getJogTurret() {
         return mButtonControlBoard.getJogTurret();
     }

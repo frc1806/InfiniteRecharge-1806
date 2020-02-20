@@ -254,6 +254,9 @@ public class Constants {
     public static final double kBottomLaunchSpeed = 150.0;
     public static final double kBottomConveyorSpeed = 100.0;
     public static final double kTopConveyorSpeed = 100.0;
+    public static final double kTriggerDutyCycle = .75;
+    public static final double kTopConveyorDutyCycle = .75;
+    public static final double kBottomConveyorDutyCycle = .75;
 
     public static final double kTimeTillInPosition = 0.0;
     public static final double kTimeTillEmpty = 0.0;

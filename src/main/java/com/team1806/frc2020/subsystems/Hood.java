@@ -5,9 +5,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team1806.frc2020.Constants;
+import com.team1806.frc2020.controlboard.ControlBoard;
 import com.team1806.lib.util.ReflectingCSVWriter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import javax.naming.ldap.Control;
 
 
 public class Hood extends Subsystem {
@@ -77,7 +80,8 @@ public class Hood extends Subsystem {
     }
 
     public boolean isOnTarget() {
-        return Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) < Constants.kHoodAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kHoodAcceptableSpeed;
+        return (Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) < Constants.kHoodAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kHoodAcceptableSpeed)
+                || ControlBoard.GetInstance().getWantManualHood();
     }
 
     private void reloadGains(){

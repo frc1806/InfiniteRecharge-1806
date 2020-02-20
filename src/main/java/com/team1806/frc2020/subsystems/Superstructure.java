@@ -3,6 +3,7 @@ package com.team1806.frc2020.subsystems;
         import com.team1806.frc2020.Constants;
         import com.team1806.frc2020.Robot;
         import com.team1806.frc2020.RobotState;
+        import com.team1806.frc2020.controlboard.ControlBoard;
         import com.team1806.frc2020.game.Shot;
         import com.team1806.frc2020.loops.ILooper;
         import com.team1806.frc2020.loops.Loop;
@@ -28,6 +29,7 @@ public class Superstructure extends Subsystem {
 
     private final RobotState mRobotState = RobotState.getInstance();
 
+
     private boolean mHasTarget = false;
     private boolean mOnTarget = false;
     private int mTrackId = -1;
@@ -38,7 +40,7 @@ public class Superstructure extends Subsystem {
     private double mAutoAimMinDistance = 500;
     private Flywheel mFlywheel;
     private Conveyor mConveyor;
-        private Hood mHood;
+    private Hood mHood;
     private Turret mTurret;
     private Shot mCurrentShot;
     private SuperstructureState mLauncherState;
@@ -51,10 +53,6 @@ public class Superstructure extends Subsystem {
         kFrontIntake,
         kBackIntake
     }
-
-
-
-
 
     public synchronized static Superstructure getInstance() {
         if (mInstance == null) {
@@ -87,17 +85,25 @@ public class Superstructure extends Subsystem {
                     switch(mLauncherState){
                         case kIdle:
                         default:
+                            if(!ControlBoard.GetInstance().getWantManualHood()) {
+                                mHood.setWantedAngle(0);
+                            }
+                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                                mTurret.stop();
+                            }
                             mFlywheel.stop();
-                            mTurret.stop();
-                            mHood.setWantedAngle(0);
                             break;
                         case kVisionLaunching:
                             mCurrentShot = getShotFromVision(mWantInnerGoal);
                             //intentional no break
                         case kLaunching:
                             mFlywheel.setSpeed(mCurrentShot.getFlywheelSpeed());
-                            mTurret.setWantedAngle(mCurrentShot.getTurretAngle());
-                            mHood.setWantedAngle(mCurrentShot.getHoodAngle());
+                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                                mTurret.setWantedAngle(mCurrentShot.getTurretAngle());
+                            }
+                            if(!ControlBoard.GetInstance().getWantManualHood()) {
+                                mHood.setWantedAngle(mCurrentShot.getHoodAngle());
+                            }
                             if(mFlywheel.isReadyForLaunch() && mTurret.isOnTarget() && mHood.isOnTarget()){
                                 mConveyor.setWantLaunch();
                             }
@@ -107,15 +113,23 @@ public class Superstructure extends Subsystem {
                             break;
                         case kFrontIntake:
                             mFlywheel.stop();
-                            mTurret.stop();
-                            mHood.stop();
+                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                                mTurret.stop();
+                            }
+                            if(!ControlBoard.GetInstance().getWantManualHood()) {
+                                mHood.stop();
+                            }
 
                             mConveyor.intakeFromFront();
                             break;
                         case kBackIntake:
                             mFlywheel.stop();
-                            mTurret.stop();
-                            mHood.stop();
+                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                                mTurret.stop();
+                            }
+                            if(!ControlBoard.GetInstance().getWantManualHood()) {
+                                mHood.stop();
+                            }
 
                             mConveyor.intakeFromBack();
                             break;
