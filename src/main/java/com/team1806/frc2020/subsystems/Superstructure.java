@@ -49,6 +49,7 @@ public class Superstructure extends Subsystem {
     private enum SuperstructureState {
         kIdle,
         kLaunching,
+        kPreparingShot,
         kVisionLaunching,
         kFrontIntake,
         kBackIntake
@@ -109,6 +110,15 @@ public class Superstructure extends Subsystem {
                             }
                             else{
                                 mConveyor.stop();
+                            }
+                            break;
+                        case kPreparingShot:
+                            mFlywheel.setSpeed(mCurrentShot.getFlywheelSpeed());
+                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                                mTurret.setWantedAngle(mCurrentShot.getTurretAngle());
+                            }
+                            if(!ControlBoard.GetInstance().getWantManualHood()) {
+                                mHood.setWantedAngle(mCurrentShot.getHoodAngle());
                             }
                             break;
                         case kFrontIntake:
@@ -200,8 +210,14 @@ public class Superstructure extends Subsystem {
         {
             mLauncherState = SuperstructureState.kLaunching;
         }
+    }
 
-
+    public synchronized void setPrepareShot(Shot wantedShot){
+        mCurrentShot = wantedShot;
+        if(mLauncherState != SuperstructureState.kPreparingShot)
+        {
+            mLauncherState = SuperstructureState.kPreparingShot;
+        }
     }
 
     public synchronized  void setWantVisionShot(boolean innerGoal){

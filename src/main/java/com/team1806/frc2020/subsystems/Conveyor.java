@@ -18,9 +18,9 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Conveyor extends Subsystem {
 
-    private final boolean SPEED_CONTROL_TRIGGER = true;
-    private final boolean SPEED_CONTROL_UPPER = true;
-    private final boolean SPEED_CONTROL_BOTTOM = true;
+    private final boolean SPEED_CONTROL_TRIGGER = false;
+    private final boolean SPEED_CONTROL_UPPER = false;
+    private final boolean SPEED_CONTROL_BOTTOM = false;
 
     enum ConveyorControlState {
 
@@ -134,7 +134,7 @@ public class Conveyor extends Subsystem {
     private void topReloadGains(){
         if(mTopCANTalonSRX!= null){
             mTopCANTalonSRX.config_kP(0, Constants.kTopConveyorVelocityControlKp);
-            mTopCANTalonSRX.config_kI(0, Constants.kTopConveyoVelocityControlKi);
+            mTopCANTalonSRX.config_kI(0, Constants.kTopConveyorVelocityControlKi);
             mTopCANTalonSRX.config_kD(0,Constants.kTopConveyorVelocityControlKd);
             mTopCANTalonSRX.config_kF(0, Constants.kTopConveyorVelocityControlKf);
         }

@@ -232,7 +232,7 @@ public class Constants {
     public static final double kTriggerConveyorVelocityControlKf = 0;
 
     public static final double kTopConveyorVelocityControlKp = 0;
-    public static final double kTopConveyoVelocityControlKi = 0;
+    public static final double kTopConveyorVelocityControlKi = 0;
     public static final double kTopConveyorVelocityControlKd = 0;
     public static final double kTopConveyorVelocityControlKf = 0;
 
