@@ -184,14 +184,14 @@ public class Constants {
     // flywheel
     public static final int kFlywheelSparkMaxLeader = 30;
     public static final int kFlywheelSparkMaxFollower = 31;
-    public static final double kFlywheelSpeedControlkp = 1;
+    public static final double kFlywheelSpeedControlkp = .005;
     public static final double kFlywheelSpeedControlki = 0;
     public static final double kFlywheelSpeedControlkd = 0;
-    public static final double kFlywheelSpeedControlkf = 0;
+    public static final double kFlywheelSpeedControlkf = 0.000005;
     public static final double kFlywheelAcceptableSpeedRange = 100;
     public static final double kFlywheelAcceptableAccleration = 100;
     public static final double kFlywheelGearScalingFactor = 35.0 / 18.0;
-    public static final int kFlywheelSmartCurrentLimit = 50;
+    public static final int kFlywheelSmartCurrentLimit = 55;
 
     // turret
     public static final int kTurretMotorId = 60;
@@ -254,7 +254,7 @@ public class Constants {
     public static final double kBottomLaunchSpeed = 150.0;
     public static final double kBottomConveyorSpeed = 100.0;
     public static final double kTopConveyorSpeed = 100.0;
-    public static final double kTriggerDutyCycle = .75;
+    public static final double kTriggerDutyCycle = 1.0;
     public static final double kTopConveyorDutyCycle = .75;
     public static final double kBottomConveyorDutyCycle = .75;
 
@@ -286,7 +286,7 @@ public class Constants {
         }
     };
 
-    public static final DriveMotorsPerSide kDriveMotorsPerSide = DriveMotorsPerSide.THREE;
+    public static final DriveMotorsPerSide kDriveMotorsPerSide = DriveMotorsPerSide.ONE;
 
 
     /*

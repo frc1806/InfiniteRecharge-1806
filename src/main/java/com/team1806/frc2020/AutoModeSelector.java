@@ -40,7 +40,7 @@ public class AutoModeSelector {
 
         //SmartDashboard.putStringArray(AUTO_OPTIONS_DASHBOARD_KEY, modesArray.toArray(stringArray));
         //SmartDashboard.putString(SELECTED_AUTO_MODE_DASHBOARD_KEY, mDefaultMode.mDashboardName);
-
+        SmartDashboard.putData(AUTO_CHOOSER);
     }
 
 
@@ -54,6 +54,7 @@ public class AutoModeSelector {
         Set<Class<? extends AutoModeBase>> modes = reflections.getSubTypesOf(AutoModeBase.class);
 
         for (Class<?> mode : modes) {
+            if(mode != null && selectedModeName != null){
             if (selectedModeName.equals(mode.getName())) {
                 try {
                     return (AutoModeBase) mode.getConstructor().newInstance();
@@ -77,6 +78,7 @@ public class AutoModeSelector {
                     return fallBackToDefaultAuto(selectedModeName);
                 } finally {
                 }
+            }
             }
         }
 
@@ -107,7 +109,10 @@ public class AutoModeSelector {
 
             @Override
             public void onLoop(double timestamp) {
-                SmartDashboard.putString(SELECTED_AUTO_MODE_DASHBOARD_KEY, AUTO_CHOOSER.getSelected());
+                if(AUTO_CHOOSER.getSelected() != null){
+                    SmartDashboard.putString(SELECTED_AUTO_MODE_DASHBOARD_KEY, AUTO_CHOOSER.getSelected());
+                }
+
             }
 
             @Override

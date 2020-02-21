@@ -91,7 +91,7 @@ public class Flywheel extends Subsystem {
     }
 
     public boolean isReadyForLaunch() {
-        return Math.abs(mPeriodicIO.launchWheelRPM - mPeriodicIO.wantedRPM) < Constants.kFlywheelAcceptableSpeedRange && Math.abs(mPeriodicIO.launchWheelAccel) < Constants.kFlywheelAcceptableAccleration;
+        return Math.abs(mPeriodicIO.launchWheelRPM - mPeriodicIO.wantedRPM) < Constants.kFlywheelAcceptableSpeedRange; //&& Math.abs(mPeriodicIO.launchWheelAccel) < Constants.kFlywheelAcceptableAccleration;
     }
 
     /**
@@ -131,7 +131,7 @@ public class Flywheel extends Subsystem {
 
 
 
-       mPeriodicIO.launchWheelAccel = mPeriodicIO.timestamp - lastTimestamp / mPeriodicIO.launchWheelRPM - lastVelocity;
+       mPeriodicIO.launchWheelAccel = (mPeriodicIO.launchWheelRPM - lastVelocity)/(mPeriodicIO.timestamp - lastTimestamp );
 
        if (mCSVWriter != null) {
            mCSVWriter.add(mPeriodicIO);
@@ -173,6 +173,7 @@ public class Flywheel extends Subsystem {
     @Override
     public void outputTelemetry() {
         SmartDashboard.putNumber("Launcher Wheel RPM", mPeriodicIO.launchWheelRPM);
+        SmartDashboard.putNumber("Launcher Wheel Accel", mPeriodicIO.launchWheelAccel);
 
         if (mCSVWriter != null) {
             mCSVWriter.write();

@@ -93,6 +93,7 @@ public class Superstructure extends Subsystem {
                                 mTurret.stop();
                             }
                             mFlywheel.stop();
+                            mConveyor.stop();
                             break;
                         case kVisionLaunching:
                             mCurrentShot = getShotFromVision(mWantInnerGoal);
@@ -105,12 +106,8 @@ public class Superstructure extends Subsystem {
                             if(!ControlBoard.GetInstance().getWantManualHood()) {
                                 mHood.setWantedAngle(mCurrentShot.getHoodAngle());
                             }
-                            if(mFlywheel.isReadyForLaunch() && mTurret.isOnTarget() && mHood.isOnTarget()){
-                                mConveyor.setWantLaunch();
-                            }
-                            else{
-                                mConveyor.stop();
-                            }
+                            mConveyor.setWantLaunch(mFlywheel.isReadyForLaunch()); //&& mTurret.isOnTarget() && mHood.isOnTarget());
+
                             break;
                         case kPreparingShot:
                             mFlywheel.setSpeed(mCurrentShot.getFlywheelSpeed());
@@ -192,7 +189,7 @@ public class Superstructure extends Subsystem {
 
     @Override
     public void stop() {
-        setStopShooting();
+        mLauncherState = SuperstructureState.kIdle;
 
     }
 

@@ -127,6 +127,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        mAutoModeExecutor = new AutoModeExecutor();
         bAutoModeStale = true;
         try {
             CrashTracker.logAutoInit();

@@ -25,8 +25,6 @@ public class ColorWheelReader extends Subsystem {
         public ColorMatchResult matchResult;
         public MatchedColor currentColor; //This is the sensor color!!
 
-        public ColorWheelControlState ColorWheelState;
-
     }
 
     private PeriodicIO mPeriodicIO;
@@ -49,6 +47,7 @@ public class ColorWheelReader extends Subsystem {
     }
 
     private ColorWheelReader(){
+
         mPeriodicIO = new PeriodicIO();
         mColorSensor = new ColorSensorV3(i2cPort);
         mColorMatcher = new ColorMatch();
@@ -59,6 +58,10 @@ public class ColorWheelReader extends Subsystem {
         mColorMatcher.addColorMatch(kRedTarget);
         mColorMatcher.addColorMatch(kYellowTarget);
         mColorMatcher.setConfidenceThreshold(0);
+        mPeriodicIO.lastColor = MatchedColor.kUnknown;
+        mPeriodicIO.currentColor = MatchedColor.kUnknown;
+        mPeriodicIO.detectedColor = Color.kLimeGreen;
+        mPeriodicIO.matchResult = new ColorMatchResult(Color.kLimeGreen, 100); //Hi 1678
     }
 
     private MatchedColor matcher(ColorMatchResult matchResult) {
@@ -116,7 +119,7 @@ public class ColorWheelReader extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putString("Color Wheel Control State", mPeriodicIO.ColorWheelState.toString());
+        SmartDashboard.putString("Color Wheel Control State", mColorWheelControlState.toString());
         SmartDashboard.putString("Color Sensor Current Color", mPeriodicIO.currentColor.toString());
         SmartDashboard.putNumber("Color Sensor Red", mPeriodicIO.detectedColor.red);
         SmartDashboard.putNumber("Color Sensor Green", mPeriodicIO.detectedColor.green);

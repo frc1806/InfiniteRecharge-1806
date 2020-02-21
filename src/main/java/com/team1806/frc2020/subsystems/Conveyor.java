@@ -62,6 +62,8 @@ public class Conveyor extends Subsystem {
 
         public ConveyorControlState lastIntakeDirection;
 
+        public boolean isReadyToLaunch;
+
     }
 
 
@@ -97,7 +99,7 @@ public class Conveyor extends Subsystem {
         mDistanceSensor.setDistanceUnits(Rev2mDistanceSensor.Unit.kInches);
         mDistanceSensor.setRangeProfile(RangeProfile.kHighSpeed);
 
-        mConveyorControlState = ConveyorControlState.kIdle;
+        setControlState(ConveyorControlState.kIdle);
         mLastIntakeDirection = ConveyorControlState.kFront;
 
         mTriggerCANTalonSRX.setNeutralMode(NeutralMode.Brake);
@@ -107,6 +109,10 @@ public class Conveyor extends Subsystem {
         mOuterIntakeSparkMAX.setIdleMode(CANSparkMax.IdleMode.kBrake);
         mOuterIntakeSparkMAX.setSmartCurrentLimit(Constants.kOuterIntakeSmartCurrentLimit);
 
+        mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kUnknown;
+
+        mTriggerCANTalonSRX.setInverted(true);
+        mBottomCANTalonSRX.setInverted(true);
 
 
         triggerReloadGains();
@@ -234,12 +240,16 @@ public class Conveyor extends Subsystem {
                 else{
                     mTopCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTopConveyorDutyCycle);
                 }
-                if(SPEED_CONTROL_TRIGGER){
-                    mTriggerCANTalonSRX.set(ControlMode.Velocity, Constants.kTriggerLaunchSpeed);
+                if(mPeriodicIO.isReadyToLaunch){
+                    if(SPEED_CONTROL_TRIGGER){
+                        mTriggerCANTalonSRX.set(ControlMode.Velocity, Constants.kTriggerLaunchSpeed);
+                    }
+                    else{
+                        mTriggerCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTriggerDutyCycle);
+                    }
+
                 }
-                else{
-                    mTriggerCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTriggerDutyCycle);
-                }
+
                 break;
             case kPositionalControl:
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, 0);
@@ -415,16 +425,19 @@ public class Conveyor extends Subsystem {
 
     }
 
-    public void setWantLaunch(){
+    public void setWantLaunch(boolean isReady){
         setControlState(ConveyorControlState.kLaunching);
+        mPeriodicIO.isReadyToLaunch = isReady;
     }
 
     public void intakeFromFront (){
+        mPeriodicIO.lastIntakeDirection = ConveyorControlState.kFront;
         setControlState(ConveyorControlState.kFront);
 
     }
 
     public void intakeFromBack (){
+        mPeriodicIO.lastIntakeDirection = ConveyorControlState.kBack;
         setControlState(ConveyorControlState.kBack);
 
     }
