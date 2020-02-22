@@ -68,6 +68,7 @@ public class Robot extends TimedRobot {
         jetsonConstants.OffsetFromTurret = new Pose2d(0.0, 5.0, Rotation2d.fromDegrees(0.0));
         jetsonConstants.kHorizontalPlaneToLens = new Rotation2d(Rotation2d.fromDegrees(0.0));
         mJetson = new Jetson(jetsonConstants);
+
     }
 
     @Override
