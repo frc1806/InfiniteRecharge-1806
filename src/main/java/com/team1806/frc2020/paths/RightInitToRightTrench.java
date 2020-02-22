@@ -4,7 +4,7 @@ import com.team1806.lib.control.Path;
 
 import java.util.ArrayList;
 
-public class RightSideTrenchRun implements PathContainer{
+public class RightInitToRightTrench implements PathContainer{
     //Starts on the init line on the right and goes backwards through the trench picking up 5 Power Cells
 
     @Override

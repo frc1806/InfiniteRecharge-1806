@@ -54,6 +54,8 @@ public class Flywheel extends Subsystem {
         setControlState(FlywheelControlState.kIdle);
         mSparkMaxLeader.setSmartCurrentLimit(Constants.kFlywheelSmartCurrentLimit);
         mSparkMaxFollower.setSmartCurrentLimit(Constants.kFlywheelSmartCurrentLimit);
+        mSparkMaxLeader.burnFlash();
+        mSparkMaxFollower.burnFlash();
         reloadGains();
 
     }

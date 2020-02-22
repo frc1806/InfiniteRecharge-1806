@@ -108,6 +108,7 @@ public class Conveyor extends Subsystem {
 
         mOuterIntakeSparkMAX.setIdleMode(CANSparkMax.IdleMode.kBrake);
         mOuterIntakeSparkMAX.setSmartCurrentLimit(Constants.kOuterIntakeSmartCurrentLimit);
+        mOuterIntakeSparkMAX.burnFlash();
 
         mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kUnknown;
 

@@ -83,6 +83,7 @@ public class Drive extends Subsystem {
         sparkMax.setInverted(!left);
         sparkMax.enableVoltageCompensation(12.0);
         sparkMax.setClosedLoopRampRate(Constants.kDriveVoltageRampRate);
+        sparkMax.burnFlash();
     }
 
     private Drive() {

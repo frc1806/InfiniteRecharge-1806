@@ -12,9 +12,8 @@ public class PrepareShotAction implements Action {
     private Superstructure mSuperstructure;
 
 
-    public PrepareShotAction(Shot shot, double timeout){
+    public PrepareShotAction(Shot shot){
         mShot = shot;
-        mTimeout = timeout;
         mSuperstructure = Superstructure.getInstance();
 
     }
@@ -34,7 +33,7 @@ public class PrepareShotAction implements Action {
 
     @Override
     public boolean isFinished() {
-        return mSuperstructure.isDoneShooting() || Timer.getFPGATimestamp() - mStartTime > mTimeout;
+        return true;
     }
 
     @Override
