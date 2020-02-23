@@ -24,7 +24,7 @@ public class Conveyor extends Subsystem {
 
     enum ConveyorControlState {
 
-        kIdle, kFront, kBack, kLaunching, kPositionalControl, kRotationalControl
+        kIdle, kFront, kBack, kLaunching, kPositionalControl, kRotationalControl, kJammed
     }
 
 
@@ -75,7 +75,6 @@ public class Conveyor extends Subsystem {
     private DoubleSolenoid mFrontSolenoid, mBackSolenoid;
     private PeriodicIO mPeriodicIO;
     private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
-    private ConveyorControlState mLastIntakeDirection;
     private ColorWheelReader mColorWheelReader;
     private Rev2mDistanceSensor mDistanceSensor;
 
@@ -100,7 +99,7 @@ public class Conveyor extends Subsystem {
         mDistanceSensor.setRangeProfile(RangeProfile.kHighSpeed);
 
         setControlState(ConveyorControlState.kIdle);
-        mLastIntakeDirection = ConveyorControlState.kFront;
+        mPeriodicIO.lastIntakeDirection = ConveyorControlState.kFront;
 
         mTriggerCANTalonSRX.setNeutralMode(NeutralMode.Brake);
         mTopCANTalonSRX.setNeutralMode(NeutralMode.Brake);
@@ -229,7 +228,7 @@ public class Conveyor extends Subsystem {
                 break;
             case kLaunching:
                 if(SPEED_CONTROL_BOTTOM){
-                    mBottomCANTalonSRX.set(ControlMode.Velocity, mLastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomLaunchSpeed : -Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
+                    mBottomCANTalonSRX.set(ControlMode.Velocity, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomLaunchSpeed : -Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
 
                 }
                 else{
@@ -282,6 +281,20 @@ public class Conveyor extends Subsystem {
                 }
 
                 break;
+            case kJammed:
+                if(SPEED_CONTROL_BOTTOM){
+                    mBottomCANTalonSRX.set(ControlMode.Velocity, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront ? -Constants.kBottomLaunchSpeed : Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
+
+                }
+                else{
+                    mBottomCANTalonSRX.set(ControlMode.PercentOutput, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront? -Constants.kBottomConveyorDutyCycle: Constants.kBottomConveyorDutyCycle);
+                }
+                if(SPEED_CONTROL_UPPER){
+                    mTopCANTalonSRX.set(ControlMode.Velocity, -Constants.kTopLaunchSpeed);
+                }
+                else{
+                    mTopCANTalonSRX.set(ControlMode.PercentOutput, -Constants.kTopConveyorDutyCycle);
+                }
         }
     }
 
@@ -442,6 +455,11 @@ public class Conveyor extends Subsystem {
         setControlState(ConveyorControlState.kBack);
 
     }
+
+    public void setWantUnjam(){
+        setControlState(ConveyorControlState.kJammed);
+    }
+
     public boolean isDoneShooting (){
         return mPeriodicIO.isDoneShooting;
     }

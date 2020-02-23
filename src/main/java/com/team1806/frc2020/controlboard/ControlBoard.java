@@ -90,6 +90,9 @@ public class ControlBoard implements IControlBoard{
     }
 
     @Override
+    public boolean getWantsUnjam() { return mButtonControlBoard.getWantsUnjam(); }
+
+    @Override
     public double getThrottle() {
         return mDriveControlBoard.getThrottle();
     }

@@ -309,6 +309,9 @@ public class Robot extends TimedRobot {
         else if (mControlBoard.getWantsRearIntake()){
             mSuperstructure.backIntake();
         }
+        else if (mControlBoard.getWantsUnjam()){
+            mSuperstructure.unjam();
+        }
         else{
             mSuperstructure.stop();
         }

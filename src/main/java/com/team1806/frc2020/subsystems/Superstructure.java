@@ -52,7 +52,8 @@ public class Superstructure extends Subsystem {
         kPreparingShot,
         kVisionLaunching,
         kFrontIntake,
-        kBackIntake
+        kBackIntake,
+        kUnjamming
     }
 
     public synchronized static Superstructure getInstance() {
@@ -140,6 +141,8 @@ public class Superstructure extends Subsystem {
 
                             mConveyor.intakeFromBack();
                             break;
+                        case kUnjamming:
+                            mConveyor.setWantUnjam();
 
                     }
                 }
@@ -246,6 +249,12 @@ public class Superstructure extends Subsystem {
     public void backIntake(){
         if(mLauncherState != SuperstructureState.kBackIntake){
             mLauncherState = SuperstructureState.kBackIntake;
+        }
+    }
+
+    public void unjam(){
+        if (mLauncherState != SuperstructureState.kUnjamming){
+            mLauncherState = SuperstructureState.kUnjamming;
         }
     }
 

@@ -28,5 +28,7 @@ public interface IButtonControlBoard {
 
     boolean getWantsPositionalControl();
 
+    //Conveyor
+    boolean getWantsUnjam();
 
 }

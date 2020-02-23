@@ -3,6 +3,7 @@ package com.team1806.frc2020.controlboard;
 import com.team1806.frc2020.Constants;
 import com.team1806.lib.util.Deadband;
 import com.team1806.lib.util.DelayedBoolean;
+import edu.wpi.first.wpilibj.buttons.POVButton;
 
 public class GamepadButtonControlBoard implements IButtonControlBoard {
     private final double kDeadband = 0.15;
@@ -96,7 +97,10 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getWantsPositionalControl() {
-        return mController.getDigitalTrigger(XboxController.Side.LEFT); }
+        return mController.getDigitalTrigger(XboxController.Side.LEFT);
+    }
 
+    @Override
+    public boolean getWantsUnjam() { return mController.getDPad() == 0; }
 
 }

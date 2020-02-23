@@ -46,12 +46,12 @@ public class CameraLED extends Subsystem {
     }
 
     private class PeriodicIO {
-        CameraLED_ControlState mCameraLED_ControlState;
+        CameraLED_ControlState cameraLED_ControlState;
 
     }
 
     private void setControlState(CameraLED_ControlState state) {
-        mPeriodicIO.mCameraLED_ControlState = state;
+        mPeriodicIO.cameraLED_ControlState = state;
 
     }
 
