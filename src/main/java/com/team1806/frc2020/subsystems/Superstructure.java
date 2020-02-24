@@ -143,6 +143,14 @@ public class Superstructure extends Subsystem {
                             break;
                         case kUnjamming:
                             mConveyor.setWantUnjam();
+                            mFlywheel.stop();
+                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                                mTurret.stop();
+                            }
+                            if(!ControlBoard.GetInstance().getWantManualHood()) {
+                                mHood.stop();
+                            }
+
 
                     }
                 }

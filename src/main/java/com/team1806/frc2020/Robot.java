@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
         CrashTracker.logRobotConstruction();
         Jetson.JetsonConstants jetsonConstants = new Jetson.JetsonConstants();
         jetsonConstants.kTable = "Vision";
-        jetsonConstants.OffsetFromTurret = new Pose2d(0.0, 5.0, Rotation2d.fromDegrees(0.0));
+        jetsonConstants.OffsetFromTurret = new Pose2d(0.0, 10.0, Rotation2d.fromDegrees(0.0));
         jetsonConstants.kHorizontalPlaneToLens = new Rotation2d(Rotation2d.fromDegrees(0.0));
         mJetson = new Jetson(jetsonConstants);
 

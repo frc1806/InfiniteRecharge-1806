@@ -286,7 +286,7 @@ public class Constants {
         }
     };
 
-    public static final DriveMotorsPerSide kDriveMotorsPerSide = DriveMotorsPerSide.TWO;
+    public static final DriveMotorsPerSide kDriveMotorsPerSide = DriveMotorsPerSide.THREE;
 
 
     /*
