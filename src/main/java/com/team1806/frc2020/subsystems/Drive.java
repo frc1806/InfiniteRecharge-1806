@@ -120,11 +120,13 @@ public class Drive extends Subsystem {
         // mRightLeader.burnFlash();
         // mRightFollower.burnFlash();
 
+        /*
         mLeftEncoder = mLeftLeader.getAlternateEncoder(AlternateEncoderType.kQuadrature, 4096);
         mRightEncoder = mRightLeader.getAlternateEncoder(AlternateEncoderType.kQuadrature, 4096);
+        */
 
-        mLeftEncoder.setInverted(true);
-        mRightEncoder.setInverted(false);
+        mLeftEncoder = mLeftLeader.getEncoder();
+        mRightEncoder = mRightLeader.getEncoder();
 
         mLeftEncoder.setPositionConversionFactor(Constants.kDriveWheelDiameterInches * Math.PI / Constants.kDriveEncoderPPR);
         mLeftEncoder.setVelocityConversionFactor(Constants.kDriveWheelDiameterInches * Math.PI / Constants.kDriveEncoderPPR);

@@ -86,7 +86,8 @@ public class Robot extends TimedRobot {
                     Hood.GetInstance(),
                     ColorWheelReader.GetInstance(),
                     Conveyor.GetInstance(),
-                    mSuperstructure);
+                    mSuperstructure,
+                    new CameraLED(0, 24));
             AutoModeSelector.registerDisabledLoop(mDisabledLooper);
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -140,6 +141,7 @@ public class Robot extends TimedRobot {
             mHasBeenEnabled = true;
 
             mInfrastructure.setIsManualControl(true); // turn on compressor when superstructure is not moving
+            mDrive.setHighGear(true);
 
             System.out.println("Auto init - " + mDriveByCameraInAuto);
             mAutoModeExecutor.setAutoMode(selectedAuto);

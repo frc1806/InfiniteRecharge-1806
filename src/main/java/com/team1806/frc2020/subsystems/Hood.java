@@ -30,6 +30,7 @@ public class Hood extends Subsystem {
         public double wantedAngle;
         public double wantedManualMovement;
         public HoodControlState HoodState;
+        public int currentEncoderClicks;
 
     }
 
@@ -41,6 +42,7 @@ public class Hood extends Subsystem {
     private TalonSRX mCANTalonSRX;
     private PeriodicIO mPeriodicIO;
     private ReflectingCSVWriter <PeriodicIO> mCSVWriter;
+    private boolean mIsAngleValid;
 
 
     private Hood(){
@@ -48,7 +50,9 @@ public class Hood extends Subsystem {
         mPeriodicIO = new PeriodicIO();
         mHoodControlState = HoodControlState.kIdle;
         mCANTalonSRX.setNeutralMode(NeutralMode.Brake);
+        mIsAngleValid = false;
         reloadGains();
+        mCANTalonSRX.setSensorPhase(true);
     }
 
     public static Hood GetInstance(){
@@ -65,8 +69,20 @@ public class Hood extends Subsystem {
 
     public void setWantedAngle(double angle){
         setControlState(HoodControlState.kPositionControl);
-        mPeriodicIO.wantedAngle = angle;
+        if (mPeriodicIO.wantedAngle <= Constants.kHoodPositionMax && mPeriodicIO.wantedAngle >= Constants.kHoodPositionMin) {
+            mIsAngleValid = true;
+            mPeriodicIO.wantedAngle = angle;
+        }
+        else if (mPeriodicIO.wantedAngle > Constants.kHoodPositionMax){
+            mIsAngleValid = false;
+            mPeriodicIO.wantedAngle = Constants.kHoodPositionMax;
+        }
+        else {
+            mIsAngleValid = false;
+            mPeriodicIO.wantedAngle = Constants.kHoodPositionMin;
+        }
     }
+
 
     public void setManualControl(double wantedPosition){
         setControlState(HoodControlState.kManualControl);
@@ -80,7 +96,7 @@ public class Hood extends Subsystem {
     }
 
     public boolean isOnTarget() {
-        return (Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) < Constants.kHoodAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kHoodAcceptableSpeed)
+        return (Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) < Constants.kHoodAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kHoodAcceptableSpeed && mIsAngleValid)
                 || ControlBoard.GetInstance().getWantManualHood();
     }
 
@@ -130,10 +146,10 @@ public class Hood extends Subsystem {
         mPeriodicIO.motorVoltage = mCANTalonSRX.getMotorOutputVoltage();
         mPeriodicIO.motorAmps = mCANTalonSRX.getStatorCurrent();
         double lastPosition = mPeriodicIO.currentAngle;
+        mPeriodicIO.currentEncoderClicks = mCANTalonSRX.getSelectedSensorPosition();
         mPeriodicIO.currentAngle = ConvertEncoderClicksToAngle(mCANTalonSRX.getSelectedSensorPosition());
         double lastTimestamp = mPeriodicIO.timestamp;
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
-
         mPeriodicIO.currentSpeed = mCANTalonSRX.getSelectedSensorVelocity();
 
         if (mCSVWriter != null) {
@@ -164,6 +180,8 @@ public class Hood extends Subsystem {
     @Override
     public void outputTelemetry() {
         SmartDashboard.putNumber("Hood Angle", mPeriodicIO.currentAngle);
+        SmartDashboard.putNumber("Current Hood Encoder Clicks", mPeriodicIO.currentEncoderClicks);
+
 
         if (mCSVWriter != null) {
             mCSVWriter.write();

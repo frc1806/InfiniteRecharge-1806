@@ -184,7 +184,7 @@ public class Constants {
     // flywheel
     public static final int kFlywheelSparkMaxLeader = 30;
     public static final int kFlywheelSparkMaxFollower = 31;
-    public static final double kFlywheelSpeedControlkp = .005;
+    public static final double kFlywheelSpeedControlkp = .009;
     public static final double kFlywheelSpeedControlki = 0;
     public static final double kFlywheelSpeedControlkd = 0;
     public static final double kFlywheelSpeedControlkf = 0.000005;
@@ -207,13 +207,13 @@ public class Constants {
 
     //hood
     public static final int kHoodMotorId = 61;
-    public static final double kHoodDegreesPerCount = 0;
-    public static final double kHoodPositionControlKp = 0;
+    public static final double kHoodDegreesPerCount = 1 / 22.9;
+    public static final double kHoodPositionControlKp = .75;
     public static final double kHoodPositionControlKi = 0;
     public static final double kHoodPositionControlKd = 0;
     public static final double kHoodPositionControlKf = 0;
     public static final double kHoodPositionMin = 0;
-    public static final double kHoodPositionMax = 0;
+    public static final double kHoodPositionMax = 54;
     public static final double kHoodAcceptableAngleDeviation = 0;
     public static final double kHoodAcceptableSpeed = 0;
 

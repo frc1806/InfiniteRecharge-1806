@@ -32,6 +32,8 @@ public class Turret extends Subsystem {
         public double wantedManualMovement;
         public TurretControlState turretState;
 
+        public int currentEncoderClicks;
+
     }
 
 
@@ -42,6 +44,7 @@ public class Turret extends Subsystem {
     private TalonSRX mCANTalonSRX;
     private PeriodicIO mPeriodicIO;
     private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
+    public boolean mIsAngleValid;
 
 
     private Turret(){
@@ -49,6 +52,7 @@ public class Turret extends Subsystem {
         mPeriodicIO = new PeriodicIO();
         mTurretControlState = TurretControlState.kIdle;
         mCANTalonSRX.setNeutralMode(NeutralMode.Brake);
+        mIsAngleValid = false;
         reloadGains();
     }
 
@@ -64,7 +68,18 @@ public class Turret extends Subsystem {
 
     public void setWantedAngle(double angle){
         setControlState(TurretControlState.kPositionControl);
-        mPeriodicIO.wantedAngle = angle;
+        if (mPeriodicIO.wantedAngle <= Constants.kTurretPositionMax && mPeriodicIO.wantedAngle >= Constants.kTurretPositionMin) {
+            mIsAngleValid = true;
+            mPeriodicIO.wantedAngle = angle;
+        }
+        else if (mPeriodicIO.wantedAngle > Constants.kTurretPositionMax){
+            mIsAngleValid = false;
+            mPeriodicIO.wantedAngle = Constants.kTurretPositionMax;
+        }
+        else {
+            mIsAngleValid = false;
+            mPeriodicIO.wantedAngle = Constants.kTurretPositionMin;
+        }
     }
 
     public void setManualControl(double wantedPosition){
@@ -79,7 +94,7 @@ public class Turret extends Subsystem {
     }
 
     public boolean isOnTarget() {
-        return (Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) < Constants.kTurretAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kTurretAcceptableSpeed)
+        return (Math.abs(mPeriodicIO.wantedAngle - mPeriodicIO.currentAngle) <= Constants.kTurretAcceptableAngleDeviation && Math.abs(mPeriodicIO.currentSpeed) <= Constants.kTurretAcceptableSpeed && mIsAngleValid)
                 || ControlBoard.GetInstance().getWantManualTurret();
     }
 
@@ -126,6 +141,7 @@ public class Turret extends Subsystem {
         mPeriodicIO.motorVoltage = mCANTalonSRX.getMotorOutputVoltage();
         mPeriodicIO.motorAmps = mCANTalonSRX.getStatorCurrent();
         double lastPosition = mPeriodicIO.currentAngle;
+        mPeriodicIO.currentEncoderClicks = mCANTalonSRX.getSelectedSensorPosition();
         mPeriodicIO.currentAngle = ConvertEncoderClicksToAngle(mCANTalonSRX.getSelectedSensorPosition());
         double lastTimestamp = mPeriodicIO.timestamp;
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
@@ -162,6 +178,7 @@ public class Turret extends Subsystem {
     @Override
     public void outputTelemetry() {
         SmartDashboard.putNumber("Turret Angle", mPeriodicIO.currentAngle);
+        SmartDashboard.putNumber("Current Turret Encoder Clicks", mPeriodicIO.currentEncoderClicks);
 
         if (mCSVWriter != null) {
             mCSVWriter.write();
