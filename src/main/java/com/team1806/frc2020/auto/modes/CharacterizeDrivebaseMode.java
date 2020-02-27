@@ -14,6 +14,12 @@ public class CharacterizeDrivebaseMode extends AutoModeBase {
     private final boolean reverse;
     private final boolean turn;
 
+    public CharacterizeDrivebaseMode(){
+        this.highGear = true;
+        this.reverse = true;
+        this.turn = false;
+    }
+
     public CharacterizeDrivebaseMode(boolean highGear, boolean reverse, boolean turn) {
         this.highGear = highGear;
         this.reverse = reverse;

@@ -303,6 +303,10 @@ public class RobotState {
 
 
     public synchronized void outputToSmartDashboard() {
+        double now =Timer.getFPGATimestamp();
         SmartDashboard.putString("Robot Velocity", getMeasuredVelocity().toString());
+        SmartDashboard.putNumber("Robot X", getFieldToVehicle(now).getTranslation().x());
+        SmartDashboard.putNumber("Robot Y", getFieldToVehicle(now).getTranslation().y());
+        SmartDashboard.putNumber("Robot Heading", getFieldToVehicle(now).getRotation().getDegrees());
     }
 }

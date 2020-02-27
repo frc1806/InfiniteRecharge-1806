@@ -64,6 +64,8 @@ public class Conveyor extends Subsystem {
 
         public boolean isReadyToLaunch;
 
+        public int currentTopEncoderClicks;
+
     }
 
 
@@ -112,7 +114,7 @@ public class Conveyor extends Subsystem {
         mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kUnknown;
 
         mTriggerCANTalonSRX.setInverted(true);
-        mBottomCANTalonSRX.setInverted(true);
+        mBottomCANTalonSRX.setInverted(false);
 
 
         triggerReloadGains();
@@ -325,6 +327,8 @@ public class Conveyor extends Subsystem {
         mPeriodicIO.isDoneShooting = doneShooting();
         mPeriodicIO.isTopDoneConveyoring = topDoneConveyoring();
 
+        mPeriodicIO.currentTopEncoderClicks = mTopCANTalonSRX.getSelectedSensorPosition();
+
         if (mCSVWriter != null) {
             mCSVWriter.add(mPeriodicIO);
         }
@@ -384,6 +388,7 @@ public class Conveyor extends Subsystem {
         SmartDashboard.putBoolean("Front Intake Is Extended", mPeriodicIO.frontIsExtended);
         SmartDashboard.putBoolean("Back Intake Is Extended",mPeriodicIO.backIsExtended);
         SmartDashboard.putNumber("Distance Sensor Reading (Inches)", mPeriodicIO.distance);
+        SmartDashboard.putNumber("Conveyor Top Encoder Clicks", mPeriodicIO.currentTopEncoderClicks);
 
         if (mCSVWriter != null) {
             mCSVWriter.write();
