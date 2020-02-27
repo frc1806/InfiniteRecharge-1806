@@ -233,10 +233,13 @@ public class Drive extends Subsystem {
 
     @Override
     public synchronized void writePeriodicOutputs() {
-        if (mDriveControlState == DriveControlState.OPEN_LOOP || mDriveControlState == DriveControlState.PATH_FOLLOWING) {
+        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
             mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
-        }  else if (mDriveControlState == DriveControlState.PARKING_BRAKE){
+        } else if (mDriveControlState == DriveControlState.PATH_FOLLOWING){
+            mLeftLeader.getPIDController().setReference(mPeriodicIO.left_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
+            mLeftLeader.getPIDController().setReference(mPeriodicIO.left_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
+        }else if (mDriveControlState == DriveControlState.PARKING_BRAKE){
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.leftParkingBrakePower);
             mRightLeader.set(ControlType.kDutyCycle,mPeriodicIO.rightParkingBrakePower);
 
@@ -549,9 +552,8 @@ public class Drive extends Subsystem {
                     robot_state.getPredictedVelocity().dx);
             if (!mPathFollower.isFinished()) {
 
-                DriveSignal setpoint = Kinematics.inverseKinematicsDutyCycle(command);
-                mPeriodicIO.left_demand = setpoint.getLeft();
-                mPeriodicIO.right_demand = setpoint.getRight();
+                Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematicsVelo(command);
+                updateVelocitySetpoint(setpoint);
             } else {
                 if (!mPathFollower.isForceFinished()) {
                     mPeriodicIO.left_demand = 0;
@@ -876,5 +878,22 @@ public class Drive extends Subsystem {
 		motorController.configClosedloopRamp(Constants.kDriveLowGearPositionRampRate, Constants.kDriveTrainPIDSetTimeout);
 		*/
 
+    }
+
+    /**
+     * Update velocity setpoint is used to send over our desired velocity from pure pursuit control
+     *
+     */
+    private synchronized void updateVelocitySetpoint(Kinematics.DriveVelocity driveVelocityIn) {
+            final double max_desired = Math.max(Math.abs(driveVelocityIn.left), Math.abs(driveVelocityIn.right));
+            final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
+                    ? Constants.kDriveHighGearMaxSetpoint / max_desired : 1.0;
+            mPeriodicIO.left_velo = inchesPerSecondToRPM(driveVelocityIn.left * scale);
+            mPeriodicIO.right_velo = inchesPerSecondToRPM(driveVelocityIn.right * scale);
+
+    }
+
+    private static double inchesPerSecondToRPM(double inches_per_second) {
+        return (inches_per_second / (1/ Constants.kDriveHighGearInchesPerCount)) * 60;
     }
 }

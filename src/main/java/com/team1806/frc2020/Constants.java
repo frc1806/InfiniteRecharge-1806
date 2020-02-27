@@ -102,17 +102,18 @@ public class Constants {
     public static final double kInertiaSteeringGain = 0.0; // angular velocity command is multiplied by this gain *
                                                      // our speed
                                                      // in inches per sec
-    public static final double kPathFollowingMaxAccel = 80.0;  // inches per second ^ 2
-    public static final double kPathFollowingMaxVel = 196.0; // inches per second
-    public static final double kPathFollowingProfileKp = 0.03 / 12.0;  // % throttle per inch of error
-    public static final double kPathFollowingProfileKi = 0.0;
-    public static final double kPathFollowingProfileKv = 0.01 / 12.0;  // % throttle per inch/s of error
-    public static final double kPathFollowingProfileKffv = 0.003889;  // % throttle per inch/s
-    public static final double kPathFollowingProfileKffa = 0.001415;  // % throttle per inch/s^2
-    public static final double kPathFollowingProfileKs = 0.01801 / 12.0;  // % throttle
-    public static final double kPathFollowingGoalPosTolerance = 3.0;
-    public static final double kPathFollowingGoalVelTolerance = 12.0;
-    public static final double kPathStopSteeringDistance = 12.0;
+                                                     public final static double kSegmentCompletionTolerance = 0.5; // inches
+    public final static double kPathFollowingMaxAccel = 55; // inches per second^2
+    public final static double kPathFollowingMaxVel = 196; // inches per second
+    public final static double kPathFollowingProfileKp = 1.1; //.99
+    public final static double kPathFollowingProfileKi = 0.049; //.049
+    public final static double kPathFollowingProfileKv = 0.000013; //0.000013
+    public final static double kPathFollowingProfileKffv = 1.2; //1.2
+    public final static double kPathFollowingProfileKffa = 0.05; //.05
+    public final static double kPathFollowingProfileKs = 0.1801 / 12.0; //power to break static friction
+    public final static double kPathFollowingGoalPosTolerance = 0.3;
+    public final static double kPathFollowingGoalVelTolerance = 18.0;
+    public final static double kPathStopSteeringDistance = 6; //2.25
     public static final double kDriveVoltageRampRate = 0.0;
     public static final int kDriveCurrentThrottledLimit = 30; // amps
     public static final int kDriveCurrentUnThrottledLimit = 60; // amps
@@ -132,14 +133,14 @@ public class Constants {
     //
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
-    public final static double kDriveHighGearVelocityKp = .0009; //.0004;//.08;//.16; //1.01;
-    public final static double kDriveHighGearVelocityKi = 0.000000001;
-    public final static double kDriveHighGearVelocityKd =  0.000125; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
-    public final static double kDriveHighGearVelocityKf = 0.000004;//.0175; //.035; //0.21; //.025;
+    public final static double kDriveHighGearVelocityKp = .001; //.0004;//.08;//.16; //1.01;
+    public final static double kDriveHighGearVelocityKi = 0.00000001;
+    public final static double kDriveHighGearVelocityKd =  0.002; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
+    public final static double kDriveHighGearVelocityKf = 0.00004;//.0175; //.035; //0.21; //.025;
     public final static int kDriveHighGearVelocityIZone = 0;
     public final static double kDriveHighGearVelocityRampRate = .1;
     public final static double kDriveHighGearNominalOutput = 0.25;
-    public final static double kDriveHighGearMaxSetpoint = 12 * 16; //FPS
+    public final static double kDriveHighGearMaxSetpoint = 12 * 16; //Inches/sec
 
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
