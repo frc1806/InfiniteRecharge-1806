@@ -17,6 +17,7 @@ public class SubsystemManager implements ILooper {
 
     private List<Subsystem> mAllSubsystems;
     private List<Loop> mLoops = new ArrayList<>();
+    private boolean pauseLoops = false;
 
     private SubsystemManager() {}
 
@@ -62,9 +63,12 @@ public class SubsystemManager implements ILooper {
 
         @Override
         public void onLoop(double timestamp) {
-            mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
-            mLoops.forEach(l -> l.onLoop(timestamp));
-            mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
+            if(!pauseLoops) {
+
+                mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
+                mLoops.forEach(l -> l.onLoop(timestamp));
+                mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
+            }
         }
 
         @Override
@@ -79,7 +83,7 @@ public class SubsystemManager implements ILooper {
 
         @Override
         public void onLoop(double timestamp) {
-            mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
+            if(!pauseLoops) mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
         }
 
         @Override
@@ -93,6 +97,12 @@ public class SubsystemManager implements ILooper {
 
     public void registerDisabledLoops(Looper disabledLooper) {
         disabledLooper.register(new DisabledLoop());
+    }
+
+    public void zeroSensors(){
+        pauseLoops = true;
+        mAllSubsystems.forEach(s-> s.zeroSensors());
+        pauseLoops = false;
     }
 
     @Override

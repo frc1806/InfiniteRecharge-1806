@@ -21,6 +21,7 @@ import com.team1806.lib.geometry.*;
 import com.team1806.lib.util.*;
 import com.team1806.lib.vision.AimingParameters;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -47,7 +48,7 @@ public class Drive extends Subsystem {
     private PathFollower mPathFollower;
     private Path mCurrentPath = null;
 
-    private final Solenoid mShifter;
+    private final DoubleSolenoid mShifter;
     // control states
     private DriveControlState mDriveControlState;
     private DriveCurrentLimitState mDriveCurrentLimitState;
@@ -135,7 +136,7 @@ public class Drive extends Subsystem {
         mRightEncoder.setPositionConversionFactor(1);
         mRightEncoder.setVelocityConversionFactor(1);
 
-        mShifter = new Solenoid(Constants.kPCMId, Constants.kShifterSolenoidId);
+        mShifter = new DoubleSolenoid(Constants.kPCMId, Constants.kShifterHighSolenoidId, Constants.kShifterLowSolenoidId);
 
         mNavx = new NavX(Constants.kNavXSPIPort);
 
@@ -197,7 +198,7 @@ public class Drive extends Subsystem {
 
         mPeriodicIO.left_position_ticks = mLeftEncoder.getPosition();
         mPeriodicIO.right_position_ticks = mRightEncoder.getPosition();
-        mPeriodicIO.gyro_heading = mNavx.getYaw().rotateBy(mGyroOffset);
+        mPeriodicIO.gyro_heading = (mNavx.getYaw().rotateBy(mGyroOffset));
 
         double deltaLeftTicks = mPeriodicIO.left_position_ticks - mPeriodicIO.previous_left_position_ticks;
         mPeriodicIO.left_distance += deltaLeftTicks * (mIsHighGear?Constants.kDriveHighGearInchesPerCount:Constants.kDriveLowGearInchesPerCount);
@@ -238,7 +239,7 @@ public class Drive extends Subsystem {
             mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
         } else if (mDriveControlState == DriveControlState.PATH_FOLLOWING){
             mLeftLeader.getPIDController().setReference(mPeriodicIO.left_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
-            mLeftLeader.getPIDController().setReference(mPeriodicIO.left_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
+            mRightLeader.getPIDController().setReference(mPeriodicIO.right_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
         }else if (mDriveControlState == DriveControlState.PARKING_BRAKE){
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.leftParkingBrakePower);
             mRightLeader.set(ControlType.kDutyCycle,mPeriodicIO.rightParkingBrakePower);
@@ -357,6 +358,11 @@ public class Drive extends Subsystem {
             wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
             wheel = wheel / (denominator * denominator) * Math.abs(throttle);
         }
+        if(quickTurn){
+            wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
+            wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
+            wheel = wheel / (denominator * denominator) * Math.abs(Math.max(throttle, .75));
+        }
 
         wheel *= kWheelGain;
         DriveSignal signal = Kinematics.inverseKinematicsDutyCycle(new Twist2d(throttle, 0.0, wheel));
@@ -415,7 +421,7 @@ public class Drive extends Subsystem {
         if (wantsHighGear != mIsHighGear) {
             mIsHighGear = wantsHighGear;
             // Plumbed default high.
-            mShifter.set(!wantsHighGear);
+            mShifter.set(wantsHighGear?DoubleSolenoid.Value.kForward:DoubleSolenoid.Value.kReverse);
         }
     }
 
@@ -450,7 +456,7 @@ public class Drive extends Subsystem {
     public synchronized void setHeading(Rotation2d heading) {
         System.out.println("set heading: " + heading.getDegrees());
 
-        mGyroOffset = mNavx.getYaw().inverse();
+        mGyroOffset = heading.rotateBy(mNavx.getYaw()).inverse();
         System.out.println("gyro offset: " + mGyroOffset.getDegrees());
 
         mPeriodicIO.gyro_heading = heading;
@@ -888,9 +894,10 @@ public class Drive extends Subsystem {
             final double max_desired = Math.max(Math.abs(driveVelocityIn.left), Math.abs(driveVelocityIn.right));
             final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
                     ? Constants.kDriveHighGearMaxSetpoint / max_desired : 1.0;
-            mPeriodicIO.left_velo = inchesPerSecondToRPM(driveVelocityIn.left * scale);
-            mPeriodicIO.right_velo = inchesPerSecondToRPM(driveVelocityIn.right * scale);
 
+            mPeriodicIO.left_velo = convertInchesPerSecToNeoRPM(driveVelocityIn.left * scale);
+            mPeriodicIO.right_velo = convertInchesPerSecToNeoRPM(driveVelocityIn.right * scale);
+        System.out.println(mPeriodicIO.left_velo);
     }
 
     private static double inchesPerSecondToRPM(double inches_per_second) {

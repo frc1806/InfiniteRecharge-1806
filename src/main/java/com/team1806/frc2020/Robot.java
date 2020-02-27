@@ -129,6 +129,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        mSubsystemManager.zeroSensors();
         mAutoModeExecutor = new AutoModeExecutor();
         bAutoModeStale = true;
         try {

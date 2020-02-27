@@ -7,6 +7,7 @@ import com.team1806.frc2020.loops.Loop;
 import com.team1806.lib.geometry.Pose2d;
 import com.team1806.lib.geometry.Rotation2d;
 import com.team1806.lib.geometry.Twist2d;
+import edu.wpi.first.wpilibj.Timer;
 
 public class RobotStateEstimator extends Subsystem {
     static RobotStateEstimator mInstance = new RobotStateEstimator();
@@ -84,5 +85,14 @@ public class RobotStateEstimator extends Subsystem {
     @Override
     public void outputTelemetry() {
         mRobotState.outputToSmartDashboard();
+    }
+
+    @Override
+    public void zeroSensors(){
+        mRobotState.reset();
+        left_encoder_prev_distance_ = 0;
+        right_encoder_prev_distance_ = 0;
+        prev_timestamp_ = Timer.getFPGATimestamp();
+        prev_heading_ = null;
     }
 }

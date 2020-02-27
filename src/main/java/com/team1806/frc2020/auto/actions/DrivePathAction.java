@@ -47,7 +47,7 @@ public class DrivePathAction implements Action {
     @Override
     public void done() {
         if (mStopWhenDone) {
-            mDrive.setVelocity(new Kinematics.DriveVelocity(0, 0));
+            mDrive.setOpenLoop(new DriveSignal(0,0));
         }
     }
 }

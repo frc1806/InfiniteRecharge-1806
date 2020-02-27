@@ -35,7 +35,7 @@ public class XboxController {
         boolean left = side == Side.LEFT;
         boolean y = axis == Axis.Y;
         // multiplies by -1 if y-axis (inverted normally)
-        return handleDeadband((y ? -1 : 1) * mController.getRawAxis((left ? 0 : 4) + (y ? 1 : 0)), deadband);
+        return handleDeadband((y ? -1 : 1) * mController.getRawAxis((left ? 0 : 4) + (y ? 1 : 0)), deadband, Constants.kJoystickMinActualOutput);
     }
 
     boolean getDigitalTrigger(Side side) {
@@ -63,7 +63,12 @@ public class XboxController {
         mController.setRumble(rumbleType, power);
     }
 
-    private double handleDeadband(double value, double deadband) {
-        return (Math.abs(value) > Math.abs(deadband)) ? value : 0;
+    private double handleDeadband(double value, double deadband, double minActualOutput) {
+        if(Math.abs(value) > Math.abs(deadband)){
+            return (value- (value>0?deadband-minActualOutput:-(deadband-minActualOutput)))* (1.0/(1.0-deadband));
+        }
+        else{
+            return 0;
+        }
     }
 }

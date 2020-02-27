@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class RightInitToRightTrenchAuto extends AutoModeBase {
     protected void routine() throws AutoModeEndedException {
-        RobotState.getInstance().reset(Timer.getFPGATimestamp(), new Pose2d(new Translation2d(131, 250), Rotation2d.fromDegrees(0)));
+        RobotState.getInstance().reset(Timer.getFPGATimestamp(), new Pose2d(new Translation2d(131, 250), Rotation2d.fromDegrees(180.0)));
         runAction(new DrivePathAction(new RightInitToRightTrench(), true));
     }
 }

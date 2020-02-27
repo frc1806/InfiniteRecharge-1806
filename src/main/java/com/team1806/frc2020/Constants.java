@@ -103,12 +103,12 @@ public class Constants {
                                                      // our speed
                                                      // in inches per sec
                                                      public final static double kSegmentCompletionTolerance = 0.5; // inches
-    public final static double kPathFollowingMaxAccel = 55; // inches per second^2
+    public final static double kPathFollowingMaxAccel = 30; // inches per second^2
     public final static double kPathFollowingMaxVel = 196; // inches per second
-    public final static double kPathFollowingProfileKp = 1.1; //.99
-    public final static double kPathFollowingProfileKi = 0.049; //.049
-    public final static double kPathFollowingProfileKv = 0.000013; //0.000013
-    public final static double kPathFollowingProfileKffv = 1.2; //1.2
+    public final static double kPathFollowingProfileKp = 0.25; //.99
+    public final static double kPathFollowingProfileKi = 0.00; //.049
+    public final static double kPathFollowingProfileKv = 0.00013; //0.000013
+    public final static double kPathFollowingProfileKffv =1.2; //1.2
     public final static double kPathFollowingProfileKffa = 0.05; //.05
     public final static double kPathFollowingProfileKs = 0.1801 / 12.0; //power to break static friction
     public final static double kPathFollowingGoalPosTolerance = 0.3;
@@ -128,13 +128,13 @@ public class Constants {
     public static final double kPathLookaheadTime = 0.4; // seconds to look ahead along the path for steering
     public static final double kPathMinLookaheadDistance = 24.0; // inches
 
-    public static final double kParkingBreakPowerLimit = 0.07;
+    public static final double kParkingBreakPowerLimit = 0.04;
 
     //
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
-    public final static double kDriveHighGearVelocityKp = .001; //.0004;//.08;//.16; //1.01;
-    public final static double kDriveHighGearVelocityKi = 0.00000001;
+    public final static double kDriveHighGearVelocityKp = .0002; //.0004;//.08;//.16; //1.01;
+    public final static double kDriveHighGearVelocityKi = 0.000000000;
     public final static double kDriveHighGearVelocityKd =  0.002; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
     public final static double kDriveHighGearVelocityKf = 0.00004;//.0175; //.035; //0.21; //.025;
     public final static int kDriveHighGearVelocityIZone = 0;
@@ -144,10 +144,10 @@ public class Constants {
 
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
-    public final static double kDriveHighGearVelocityLowKp = .0004; // 1.2/1500;
+    public final static double kDriveHighGearVelocityLowKp = .0003; // 1.2/1500;
     public final static double kDriveHighGearVelocityLowKi = 0.0000000; //0.0;
     public final static double kDriveHighGearVelocityLowKd = 0; //0.0001; //6.0/1500;
-    public final static double kDriveHighGearVelocityLowKf = 0.00000254;//0; //.025;
+    public final static double kDriveHighGearVelocityLowKf = 0.0000987;//0; //.025;
     public final static int kDriveHighGearVelocityLowIZone = 0;
     public final static double kDriveHighGearVelocityLowRampRate = .1;
     public final static double kDriveHighGearLowNominalOutput = 0.25;
@@ -179,10 +179,12 @@ public class Constants {
     public static final int kMainThrottleJoystickPort = 0;
     public static final int kMainTurnJoystickPort = 1;
     public static final double kJoystickThreshold = 0.2;
+    public static final double kJoystickMinActualOutput = 0.02;
 
     // solenoids
     public static final int kPCMId = 0;
-    public static final int kShifterSolenoidId = 1;
+    public static final int kShifterHighSolenoidId = 0;
+    public static final int kShifterLowSolenoidId=1;
     public static final int kFrontIntakeFowardChannel = 4;
     public static final int kFrontIntakeReverseChannel = 5;
     public static final int kBackIntakeFowardChannel = 6;
