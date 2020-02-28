@@ -111,7 +111,7 @@ public class Constants {
     public final static double kPathFollowingProfileKffv =1.2; //1.2
     public final static double kPathFollowingProfileKffa = 0.05; //.05
     public final static double kPathFollowingProfileKs = 0.1801 / 12.0; //power to break static friction
-    public final static double kPathFollowingGoalPosTolerance = 0.3;
+    public final static double kPathFollowingGoalPosTolerance = 1.5;
     public final static double kPathFollowingGoalVelTolerance = 18.0;
     public final static double kPathStopSteeringDistance = 6; //2.25
     public static final double kDriveVoltageRampRate = 0.0;
@@ -275,6 +275,9 @@ public class Constants {
     //Color Wheel Reader
     public static final double kColorMatcherRequriedConfidance = 0;
     public static final double kColorWheelRPM = 4000;
+
+    //Flashlight
+    public static final int kFlashlightRelayChannel = 0;
 
 
     public enum DriveMotorsPerSide{

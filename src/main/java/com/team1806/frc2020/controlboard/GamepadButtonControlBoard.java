@@ -103,4 +103,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     @Override
     public boolean getWantsUnjam() { return mController.getDPad() == 0; }
 
+    @Override
+    public boolean getWantsFlashlight(){ return mController.getDPad() == 180; }
+
 }

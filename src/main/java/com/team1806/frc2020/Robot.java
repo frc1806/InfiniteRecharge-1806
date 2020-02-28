@@ -60,6 +60,7 @@ public class Robot extends TimedRobot {
     private String selectedModeName;
     private String lastSelectedModeName;
     private boolean mDriveByCameraInAuto = false;
+    private Flashlight mFlashlight = Flashlight.GetInstance();
 
     Robot() {
         CrashTracker.logRobotConstruction();
@@ -87,6 +88,7 @@ public class Robot extends TimedRobot {
                     ColorWheelReader.GetInstance(),
                     Conveyor.GetInstance(),
                     mSuperstructure,
+                    mFlashlight,
                     new CameraLED(0, 24));
             AutoModeSelector.registerDisabledLoop(mDisabledLooper);
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -318,6 +320,14 @@ public class Robot extends TimedRobot {
         else{
             mSuperstructure.stop();
         }
+
+        if (mControlBoard.getWantsFlashlight()){
+            mFlashlight.setFlashlightOn(true);
+        }
+        else {
+            mFlashlight.setFlashlightOn(false);
+        }
+
     }
 
     @Override

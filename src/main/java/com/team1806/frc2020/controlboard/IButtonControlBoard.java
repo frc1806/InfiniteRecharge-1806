@@ -8,6 +8,7 @@ public interface IButtonControlBoard {
     double getJogTurret();
     double getJogHood();
     double getManualLaunchControl();
+    boolean getWantsFlashlight();
 
     //Preset Launcher
     boolean getCloseShot();

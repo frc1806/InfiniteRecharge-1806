@@ -15,7 +15,7 @@ public class Flywheel extends Subsystem {
 
 
     enum FlywheelControlState {
-        kIdle, kSpeedControlled, kManualControlled;
+        kIdle, kSpeedControlled, kManualControlled
     }
 
     private class PeriodicIO {

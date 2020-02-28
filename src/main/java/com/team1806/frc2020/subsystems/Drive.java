@@ -327,11 +327,11 @@ public class Drive extends Subsystem {
      */
     public synchronized void setOpenLoop(DriveSignal signal) {
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-            setBrakeMode(true);
+            forceDoneWithPath();
+            setBrakeMode(false);
             System.out.println("switching to open loop");
             System.out.println(signal);
             mDriveControlState = DriveControlState.OPEN_LOOP;
-            
         }
 
         mPeriodicIO.left_demand = signal.getLeft();

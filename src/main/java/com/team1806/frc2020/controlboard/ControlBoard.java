@@ -141,6 +141,9 @@ public class ControlBoard implements IControlBoard{
     }
 
     @Override
+    public boolean getWantsFlashlight(){ return mButtonControlBoard.getWantsFlashlight(); }
+
+    @Override
     public void setRumble(boolean on) {
         mDriveControlBoard.setRumble(on);
         mButtonControlBoard.setRumble(on);
