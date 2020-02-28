@@ -12,9 +12,11 @@ import com.team1806.lib.geometry.Pose2d;
 import com.team1806.lib.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
 import com.team1806.lib.util.*;
 import com.team1806.lib.vision.AimingParameters;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -61,6 +63,9 @@ public class Robot extends TimedRobot {
     private String lastSelectedModeName;
     private boolean mDriveByCameraInAuto = false;
     private Flashlight mFlashlight = Flashlight.GetInstance();
+    private Sendable mFlywheelSpeed;
+    private Sendable mHoodAngle;
+    private Sendable mTurretAngle;
 
     Robot() {
         CrashTracker.logRobotConstruction();
@@ -99,6 +104,7 @@ public class Robot extends TimedRobot {
             mDrive.setHeading(Rotation2d.identity());
 
             AutoModeSelector.initAutoModeSelector();
+            setupDashboardShot();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -289,10 +295,9 @@ public class Robot extends TimedRobot {
             mSuperstructure.setWantShot(Shot.STRAIGHT_ON_AUTOLINE);
         }
         else if (mControlBoard.getWantDashboardShot()){
-            NetworkTable table = NetworkTableInstance.getDefault().getTable("Shot");
-            double turretAngle = table.getEntry("Turret").getDouble(0);
-            double hoodAngle = table.getEntry("Hood").getDouble(0);
-            double flywheelRPM = table.getEntry("FlywheelRPM").getDouble(0);
+            double turretAngle = SmartDashboard.getNumber("TestingWantedTurretAngle", 0);
+            double hoodAngle = SmartDashboard.getNumber("TestingWantedHoodAngle", 0);
+            double flywheelRPM = SmartDashboard.getNumber("TestingWantedFlywheelRPM", 3000);
             mSuperstructure.setWantShot(new Shot(turretAngle, hoodAngle, flywheelRPM));
         }
 
@@ -335,4 +340,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void endCompetition() { }
+
+    private void setupDashboardShot(){
+        SmartDashboard.putNumber("TestingWantedTurretAngle", 0);
+        SmartDashboard.putNumber("TestingWantedHoodAngle", 0);
+        SmartDashboard.putNumber("TestingWantedFlywheelRPM", 3000);
+
+    }
+
 }
