@@ -1,6 +1,5 @@
 package com.team1806.frc2020.subsystems;
 
-        import com.team1806.frc2020.Constants;
         import com.team1806.frc2020.Robot;
         import com.team1806.frc2020.RobotState;
         import com.team1806.frc2020.controlboard.ControlBoard;
@@ -9,8 +8,6 @@ package com.team1806.frc2020.subsystems;
         import com.team1806.frc2020.loops.Loop;
         import com.team1806.lib.geometry.Pose2d;
         import com.team1806.lib.geometry.Rotation2d;
-        import com.team1806.lib.geometry.Twist2d;
-        import com.team1806.lib.util.Units;
         import com.team1806.lib.vision.AimingParameters;
         import edu.wpi.first.wpilibj.Timer;
 
@@ -43,7 +40,7 @@ public class Superstructure extends Subsystem {
     private Hood mHood;
     private Turret mTurret;
     private Shot mCurrentShot;
-    private SuperstructureState mLauncherState;
+    private SuperstructureState mSuperstructureState;
     private boolean mWantInnerGoal = false;
 
     private enum SuperstructureState {
@@ -53,7 +50,8 @@ public class Superstructure extends Subsystem {
         kVisionLaunching,
         kFrontIntake,
         kBackIntake,
-        kUnjamming
+        kUnjamming,
+        kIntakeSweep,
     }
 
     public synchronized static Superstructure getInstance() {
@@ -65,7 +63,7 @@ public class Superstructure extends Subsystem {
     }
 
     private Superstructure() {
-        mLauncherState = SuperstructureState.kIdle;
+        mSuperstructureState = SuperstructureState.kIdle;
         mFlywheel = Flywheel.GetInstance();
         mTurret = Turret.GetInstance();
         mHood = Hood.GetInstance();
@@ -84,7 +82,7 @@ public class Superstructure extends Subsystem {
             @Override
             public void onLoop(double timestamp) {
                 synchronized (Superstructure.this) {
-                    switch(mLauncherState){
+                    switch(mSuperstructureState){
                         case kIdle:
                         default:
                             if(!ControlBoard.GetInstance().getWantManualHood()) {
@@ -150,7 +148,17 @@ public class Superstructure extends Subsystem {
                             if(!ControlBoard.GetInstance().getWantManualHood()) {
                                 mHood.stop();
                             }
-
+                            break;
+                        case kIntakeSweep:
+                            mConveyor.wantSweep();
+                            mFlywheel.stop();
+                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                                mTurret.stop();
+                            }
+                            if(!ControlBoard.GetInstance().getWantManualHood()) {
+                                mHood.stop();
+                            }
+                            break;
 
                     }
                 }
@@ -200,7 +208,7 @@ public class Superstructure extends Subsystem {
 
     @Override
     public void stop() {
-        mLauncherState = SuperstructureState.kIdle;
+        mSuperstructureState = SuperstructureState.kIdle;
 
     }
 
@@ -214,31 +222,31 @@ public class Superstructure extends Subsystem {
 
     public synchronized void setWantShot(Shot wantedShot){
         mCurrentShot = wantedShot;
-        if(mLauncherState != SuperstructureState.kLaunching)
+        if(mSuperstructureState != SuperstructureState.kLaunching)
         {
-            mLauncherState = SuperstructureState.kLaunching;
+            mSuperstructureState = SuperstructureState.kLaunching;
         }
     }
 
     public synchronized void setPrepareShot(Shot wantedShot){
         mCurrentShot = wantedShot;
-        if(mLauncherState != SuperstructureState.kPreparingShot)
+        if(mSuperstructureState != SuperstructureState.kPreparingShot)
         {
-            mLauncherState = SuperstructureState.kPreparingShot;
+            mSuperstructureState = SuperstructureState.kPreparingShot;
         }
     }
 
     public synchronized  void setWantVisionShot(boolean innerGoal){
         mWantInnerGoal  = innerGoal;
-        if(mLauncherState != SuperstructureState.kVisionLaunching)
+        if(mSuperstructureState != SuperstructureState.kVisionLaunching)
         {
-            mLauncherState = SuperstructureState.kVisionLaunching;
+            mSuperstructureState = SuperstructureState.kVisionLaunching;
         }
     }
 
     public synchronized  void setStopShooting(){
-        if(mLauncherState != SuperstructureState.kIdle){
-            mLauncherState = SuperstructureState.kIdle;
+        if(mSuperstructureState != SuperstructureState.kIdle){
+            mSuperstructureState = SuperstructureState.kIdle;
         }
     }
 
@@ -249,20 +257,26 @@ public class Superstructure extends Subsystem {
     }
 
     public void frontIntake(){
-        if(mLauncherState != SuperstructureState.kFrontIntake){
-            mLauncherState = SuperstructureState.kFrontIntake;
+        if(mSuperstructureState != SuperstructureState.kFrontIntake){
+            mSuperstructureState = SuperstructureState.kFrontIntake;
         }
     }
 
     public void backIntake(){
-        if(mLauncherState != SuperstructureState.kBackIntake){
-            mLauncherState = SuperstructureState.kBackIntake;
+        if(mSuperstructureState != SuperstructureState.kBackIntake){
+            mSuperstructureState = SuperstructureState.kBackIntake;
         }
     }
 
     public void unjam(){
-        if (mLauncherState != SuperstructureState.kUnjamming){
-            mLauncherState = SuperstructureState.kUnjamming;
+        if (mSuperstructureState != SuperstructureState.kUnjamming){
+            mSuperstructureState = SuperstructureState.kUnjamming;
+        }
+    }
+
+    public void setWantSweep(){
+        if(mSuperstructureState != SuperstructureState.kIntakeSweep){
+            mSuperstructureState = SuperstructureState.kIntakeSweep;
         }
     }
 
@@ -280,8 +294,9 @@ public class Superstructure extends Subsystem {
     }
 
     private double getFlywheelSpeedFromDistance(double distance){
-        return 7806;
+        return 3500;
     }
+
 
 
 }

@@ -22,9 +22,11 @@ public class Conveyor extends Subsystem {
     private final boolean SPEED_CONTROL_UPPER = false;
     private final boolean SPEED_CONTROL_BOTTOM = false;
 
+    private boolean mWantManualTrigger;
+
     enum ConveyorControlState {
 
-        kIdle, kFront, kBack, kLaunching, kPositionalControl, kRotationalControl, kJammed
+        kIdle, kFront, kBack, kLaunching, kPositionalControl, kRotationalControl, kJammed, kSweepIntake,
     }
 
 
@@ -79,6 +81,7 @@ public class Conveyor extends Subsystem {
     private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
     private ColorWheelReader mColorWheelReader;
     private Rev2mDistanceSensor mDistanceSensor;
+    private Drive mDrive = Drive.getInstance();
 
 
 
@@ -103,7 +106,7 @@ public class Conveyor extends Subsystem {
         setControlState(ConveyorControlState.kIdle);
         mPeriodicIO.lastIntakeDirection = ConveyorControlState.kFront;
 
-        mTriggerCANTalonSRX.setNeutralMode(NeutralMode.Brake);
+        mTriggerCANTalonSRX.setNeutralMode(NeutralMode.Coast);
         mTopCANTalonSRX.setNeutralMode(NeutralMode.Brake);
         mBottomCANTalonSRX.setNeutralMode(NeutralMode.Brake);
 
@@ -113,7 +116,7 @@ public class Conveyor extends Subsystem {
 
         mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kUnknown;
 
-        mTriggerCANTalonSRX.setInverted(true);
+        mTriggerCANTalonSRX.setInverted(false);
         mBottomCANTalonSRX.setInverted(false);
 
 
@@ -172,7 +175,7 @@ public class Conveyor extends Subsystem {
             default:
             case kIdle:
                 mColorWheelReader.stopSensing();
-                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger()?Constants.kTriggerDutyCycle:0);
                 mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 mFrontSolenoid.set(DoubleSolenoid.Value.kReverse);
@@ -202,7 +205,7 @@ public class Conveyor extends Subsystem {
                 else{
                     mBottomCANTalonSRX.set(ControlMode.PercentOutput, Constants.kBottomConveyorDutyCycle);
                 }
-
+                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger()?Constants.kTriggerDutyCycle:0);
                 break;
             case kBack:
                 if (!mPeriodicIO.backIsExtended) {
@@ -226,7 +229,7 @@ public class Conveyor extends Subsystem {
                 else{
                     mBottomCANTalonSRX.set(ControlMode.PercentOutput, -Constants.kBottomConveyorDutyCycle);
                 }
-
+                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger()?Constants.kTriggerDutyCycle:0);
                 break;
             case kLaunching:
                 if(SPEED_CONTROL_BOTTOM){
@@ -251,10 +254,13 @@ public class Conveyor extends Subsystem {
                     }
 
                 }
+                else{
+                    mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger()?Constants.kTriggerDutyCycle:0);
+                }
 
                 break;
             case kPositionalControl:
-                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger()?Constants.kTriggerDutyCycle:0);
                 mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
 
@@ -269,7 +275,7 @@ public class Conveyor extends Subsystem {
 
                 break;
             case kRotationalControl:
-                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger()?Constants.kTriggerDutyCycle:0);
                 mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
 
@@ -297,6 +303,11 @@ public class Conveyor extends Subsystem {
                 else{
                     mTopCANTalonSRX.set(ControlMode.PercentOutput, -Constants.kTopConveyorDutyCycle);
                 }
+                mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger()?Constants.kTriggerDutyCycle:0);
+                break;
+
+            case kSweepIntake:
+                mOuterIntakeSparkMAX.set(ControlType.kDutyCycle, (( mDrive.getLeftLinearVelocity() + mDrive.getRightLinearVelocity())/2 >0?Constants.kOuterIntakeSpeed:-Constants.kOuterIntakeSpeed));
         }
     }
 
@@ -459,6 +470,18 @@ public class Conveyor extends Subsystem {
         mPeriodicIO.lastIntakeDirection = ConveyorControlState.kBack;
         setControlState(ConveyorControlState.kBack);
 
+    }
+
+    public void wantSweep(){
+        setControlState(ConveyorControlState.kSweepIntake);
+    }
+
+    public boolean isWantManualTrigger() {
+        return mWantManualTrigger;
+    }
+
+    public void setWantManualTrigger(boolean wantManualTrigger) {
+        this.mWantManualTrigger = wantManualTrigger;
     }
 
     public void setWantUnjam(){

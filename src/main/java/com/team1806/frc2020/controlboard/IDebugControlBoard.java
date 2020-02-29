@@ -5,4 +5,5 @@ public interface IDebugControlBoard {
     public boolean getWantDashboardShot();
     public boolean getWantManualHood();
     public boolean getWantManualTurret();
+    public boolean getWantTrigger();
 }

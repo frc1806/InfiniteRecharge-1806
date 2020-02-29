@@ -31,5 +31,6 @@ public interface IButtonControlBoard {
 
     //Conveyor
     boolean getWantsUnjam();
+    boolean getWantIntakeSweep();
 
 }

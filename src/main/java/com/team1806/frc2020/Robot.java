@@ -37,6 +37,7 @@ public class Robot extends TimedRobot {
     private final RobotState mRobotState = RobotState.getInstance();
     private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
     private final Drive mDrive = Drive.getInstance();
+    private final Conveyor mConveyor = Conveyor.GetInstance();
     private final Superstructure mSuperstructure = Superstructure.getInstance();
     private final Jetson mJetson;
 
@@ -91,7 +92,7 @@ public class Robot extends TimedRobot {
                     Turret.GetInstance(),
                     Hood.GetInstance(),
                     ColorWheelReader.GetInstance(),
-                    Conveyor.GetInstance(),
+                    mConveyor,
                     mSuperstructure,
                     mFlashlight,
                     new CameraLED(0, 24));
@@ -322,6 +323,10 @@ public class Robot extends TimedRobot {
         else if (mControlBoard.getWantsUnjam()){
             mSuperstructure.unjam();
         }
+        else if (mControlBoard.getWantIntakeSweep()){
+            mSuperstructure.setWantSweep();
+        }
+
         else{
             mSuperstructure.stop();
         }
@@ -332,6 +337,8 @@ public class Robot extends TimedRobot {
         else {
             mFlashlight.setFlashlightOn(false);
         }
+
+        mConveyor.setWantManualTrigger(mControlBoard.getWantTrigger());
 
     }
 

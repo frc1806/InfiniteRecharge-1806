@@ -17,12 +17,13 @@ public class TimedMobilityAction implements Action {
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
-        driveTrain.setHighGear(false);
+
+        driveTrain.setHighGear(true);
     }
 
     @Override
     public void update() {
-        driveTrain.setOpenLoop(new DriveSignal(.8,.8));
+        driveTrain.setOpenLoop(new DriveSignal(.4,.4));
     }
 
     @Override

@@ -46,13 +46,17 @@ public class Hood extends Subsystem {
 
 
     private Hood(){
+        mHoodControlState = HoodControlState.kIdle;
+
         mCANTalonSRX = new TalonSRX(Constants.kHoodMotorId);
         mPeriodicIO = new PeriodicIO();
+        mPeriodicIO.HoodState = HoodControlState.kIdle;
         mHoodControlState = HoodControlState.kIdle;
         mCANTalonSRX.setNeutralMode(NeutralMode.Brake);
         mIsAngleValid = false;
         reloadGains();
-        mCANTalonSRX.setSensorPhase(true);
+        mCANTalonSRX.setInverted(true);
+        mCANTalonSRX.setSensorPhase(false);
     }
 
     public static Hood GetInstance(){
@@ -181,6 +185,7 @@ public class Hood extends Subsystem {
     public void outputTelemetry() {
         SmartDashboard.putNumber("Hood Angle", mPeriodicIO.currentAngle);
         SmartDashboard.putNumber("Current Hood Encoder Clicks", mPeriodicIO.currentEncoderClicks);
+        SmartDashboard.putString("Hood Control State", mPeriodicIO.HoodState.toString());
 
 
         if (mCSVWriter != null) {

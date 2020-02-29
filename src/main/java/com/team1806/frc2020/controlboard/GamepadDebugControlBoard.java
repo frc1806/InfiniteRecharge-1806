@@ -42,4 +42,10 @@ public class GamepadDebugControlBoard implements IDebugControlBoard {
     public boolean getWantManualTurret() {
         return wantManualTurret.update(mController.getButton(XboxController.Button.B));
     }
+
+    @Override
+    public boolean getWantTrigger() {
+        return (mController.getButton((XboxController.Button.Y)));
+    }
+
 }

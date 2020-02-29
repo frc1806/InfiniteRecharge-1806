@@ -144,6 +144,12 @@ public class ControlBoard implements IControlBoard{
     public boolean getWantsFlashlight(){ return mButtonControlBoard.getWantsFlashlight(); }
 
     @Override
+    public boolean getWantTrigger(){return mDebugControlBoard.getWantTrigger(); }
+
+    @Override
+    public boolean getWantIntakeSweep(){return mButtonControlBoard.getWantIntakeSweep();}
+
+    @Override
     public void setRumble(boolean on) {
         mDriveControlBoard.setRumble(on);
         mButtonControlBoard.setRumble(on);

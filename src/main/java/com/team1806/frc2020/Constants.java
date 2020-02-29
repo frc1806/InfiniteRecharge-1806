@@ -174,8 +174,8 @@ public class Constants {
 
     public static final boolean kUseDriveGamepad = true;
     public static final int kDriveGamepadPort = 0;
-    public static final int kButtonGamepadPort = 2;
-    public static final int kDebugGamepadPort = 3;
+    public static final int kButtonGamepadPort = 1;
+    public static final int kDebugGamepadPort = 2;
     public static final int kMainThrottleJoystickPort = 0;
     public static final int kMainTurnJoystickPort = 1;
     public static final double kJoystickThreshold = 0.2;
@@ -183,12 +183,12 @@ public class Constants {
 
     // solenoids
     public static final int kPCMId = 0;
-    public static final int kShifterHighSolenoidId = 0;
-    public static final int kShifterLowSolenoidId=1;
-    public static final int kFrontIntakeFowardChannel = 4;
-    public static final int kFrontIntakeReverseChannel = 5;
+    public static final int kShifterHighSolenoidId = 4;
+    public static final int kShifterLowSolenoidId=3;
+    public static final int kFrontIntakeFowardChannel = 5;
+    public static final int kFrontIntakeReverseChannel = 2;
     public static final int kBackIntakeFowardChannel = 6;
-    public static final int kBackIntakeReverseChannel = 7;
+    public static final int kBackIntakeReverseChannel = 1;
 
     // flywheel
     public static final int kFlywheelSparkMaxLeader = 30;
@@ -218,13 +218,13 @@ public class Constants {
     public static final int kHoodMotorId = 61;
     public static final double kHoodDegreesPerCount = 1 / 22.9;
     public static final double kHoodPositionControlKp = .75;
-    public static final double kHoodPositionControlKi = 0;
+    public static final double kHoodPositionControlKi = 0.001;
     public static final double kHoodPositionControlKd = 0;
     public static final double kHoodPositionControlKf = 0;
     public static final double kHoodPositionMin = 0;
     public static final double kHoodPositionMax = 54;
-    public static final double kHoodAcceptableAngleDeviation = 0;
-    public static final double kHoodAcceptableSpeed = 0;
+    public static final double kHoodAcceptableAngleDeviation = .4;
+    public static final double kHoodAcceptableSpeed = 100;
 
 
     //Conveyor
