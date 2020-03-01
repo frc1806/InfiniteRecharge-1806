@@ -2,16 +2,18 @@ package com.team1806.frc2020.auto.actions;
 
 import com.team1806.frc2020.RobotState;
 
-public class RunActionAtY implements Action{
+public class RunActionAtY implements Action {
     private double triggerY;
     private double currentY;
     private double lastY;
     private Action action = null;
     private boolean hasRunAction = false;
-    public RunActionAtY(double y, Action action){
+
+    public RunActionAtY(double y, Action action) {
         this.triggerY = y;
         this.action = action;
     }
+
     @Override
     public boolean isFinished() {
         return action.isFinished();
@@ -20,12 +22,12 @@ public class RunActionAtY implements Action{
     @Override
     public void update() {
         currentY = RobotState.getInstance().getLatestFieldToVehicle().getValue().getTranslation().y();
-        if((lastY <= triggerY && currentY > triggerY) || (currentY <= triggerY && lastY> triggerY) && !hasRunAction){
+        if ((lastY <= triggerY && currentY > triggerY) || (currentY <= triggerY && lastY > triggerY) && !hasRunAction) {
             action.start();
             hasRunAction = true;
         }
         lastY = currentY;
-        if(hasRunAction){
+        if (hasRunAction) {
             action.update();
         }
     }

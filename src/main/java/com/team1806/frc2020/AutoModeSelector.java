@@ -1,19 +1,17 @@
 package com.team1806.frc2020;
 
+import com.team1806.frc2020.auto.modes.AutoModeBase;
+import com.team1806.frc2020.auto.modes.DoNothingMode;
+import com.team1806.frc2020.loops.ILooper;
+import com.team1806.frc2020.loops.Loop;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.reflections.Reflections;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
-
-import com.team1806.frc2020.auto.modes.AutoModeBase;
-import com.team1806.frc2020.auto.modes.DoNothingMode;
-
-import com.team1806.frc2020.loops.ILooper;
-import com.team1806.frc2020.loops.Loop;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import org.reflections.Reflections;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Class that allows a user to select which autonomous mode to execute from shuffleboard.
@@ -54,31 +52,31 @@ public class AutoModeSelector {
         Set<Class<? extends AutoModeBase>> modes = reflections.getSubTypesOf(AutoModeBase.class);
 
         for (Class<?> mode : modes) {
-            if(mode != null && selectedModeName != null){
-            if (selectedModeName.equals(mode.getName())) {
-                try {
-                    return (AutoModeBase) mode.getConstructor().newInstance();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                    return fallBackToDefaultAuto(selectedModeName);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                    return fallBackToDefaultAuto(selectedModeName);
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                    return fallBackToDefaultAuto(selectedModeName);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return fallBackToDefaultAuto(selectedModeName);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                    return fallBackToDefaultAuto(selectedModeName);
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                    return fallBackToDefaultAuto(selectedModeName);
-                } finally {
+            if (mode != null && selectedModeName != null) {
+                if (selectedModeName.equals(mode.getName())) {
+                    try {
+                        return (AutoModeBase) mode.getConstructor().newInstance();
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                        return fallBackToDefaultAuto(selectedModeName);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                        return fallBackToDefaultAuto(selectedModeName);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                        return fallBackToDefaultAuto(selectedModeName);
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                        return fallBackToDefaultAuto(selectedModeName);
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                        return fallBackToDefaultAuto(selectedModeName);
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                        return fallBackToDefaultAuto(selectedModeName);
+                    } finally {
+                    }
                 }
-            }
             }
         }
 
@@ -109,7 +107,7 @@ public class AutoModeSelector {
 
             @Override
             public void onLoop(double timestamp) {
-                if(AUTO_CHOOSER.getSelected() != null){
+                if (AUTO_CHOOSER.getSelected() != null) {
                     SmartDashboard.putString(SELECTED_AUTO_MODE_DASHBOARD_KEY, AUTO_CHOOSER.getSelected());
                 }
 

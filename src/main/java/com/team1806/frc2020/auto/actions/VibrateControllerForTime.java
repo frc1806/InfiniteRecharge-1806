@@ -1,20 +1,21 @@
 package com.team1806.frc2020.auto.actions;
 
+import com.team1806.frc2020.controlboard.XboxController;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
-import com.team1806.frc2020.auto.actions.Action;
-import com.team1806.frc2020.controlboard.XboxController;
 
 
 public class VibrateControllerForTime implements Action {
     Timer timer;
     double wantedTime;
     XboxController controller;
-    public VibrateControllerForTime(double time, XboxController contoller){
+
+    public VibrateControllerForTime(double time, XboxController contoller) {
         timer = new Timer();
         wantedTime = time;
         this.controller = contoller;
     }
+
     @Override
     public boolean isFinished() {
         return timer.get() >= wantedTime;

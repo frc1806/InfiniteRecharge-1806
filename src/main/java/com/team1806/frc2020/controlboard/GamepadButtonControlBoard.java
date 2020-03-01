@@ -3,15 +3,18 @@ package com.team1806.frc2020.controlboard;
 import com.team1806.frc2020.Constants;
 import com.team1806.lib.util.Deadband;
 import com.team1806.lib.util.DelayedBoolean;
-import edu.wpi.first.wpilibj.buttons.POVButton;
 
 public class GamepadButtonControlBoard implements IButtonControlBoard {
+    private static GamepadButtonControlBoard mInstance = null;
     private final double kDeadband = 0.15;
-
     private final double kDPadDelay = 0.02;
+    private final XboxController mController;
     private DelayedBoolean mDPadValid;
 
-    private static GamepadButtonControlBoard mInstance = null;
+    private GamepadButtonControlBoard() {
+        mController = new XboxController(Constants.kButtonGamepadPort);
+        reset();
+    }
 
     public static GamepadButtonControlBoard getInstance() {
         if (mInstance == null) {
@@ -19,13 +22,6 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
         }
 
         return mInstance;
-    }
-
-    private final XboxController mController;
-
-    private GamepadButtonControlBoard() {
-        mController = new XboxController(Constants.kButtonGamepadPort);
-        reset();
     }
 
     @Override
@@ -101,12 +97,18 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
-    public boolean getWantsUnjam() { return mController.getDPad() == 0; }
+    public boolean getWantsUnjam() {
+        return mController.getDPad() == 0;
+    }
 
     @Override
-    public boolean getWantsFlashlight(){ return mController.getDPad() == 180; }
+    public boolean getWantsFlashlight() {
+        return mController.getDPad() == 180;
+    }
 
     @Override
-    public boolean getWantIntakeSweep() {return mController.getDPad() == 270; }
+    public boolean getWantIntakeSweep() {
+        return mController.getDPad() == 270;
+    }
 
 }

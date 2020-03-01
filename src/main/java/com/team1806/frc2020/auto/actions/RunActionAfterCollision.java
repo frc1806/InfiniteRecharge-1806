@@ -1,10 +1,7 @@
 package com.team1806.frc2020.auto.actions;
 
-import com.team1806.frc2020.auto.actions.Action;
-import com.team1806.frc2020.subsystems.Drive;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.team1806.frc2020.Constants;
+import com.team1806.frc2020.subsystems.Drive;
 
 public class RunActionAfterCollision implements Action {
 
@@ -23,26 +20,29 @@ public class RunActionAfterCollision implements Action {
     }
 
     @Override
-    public boolean isFinished() {return action.isFinished();}
-
+    public boolean isFinished() {
+        return action.isFinished();
+    }
 
 
     @Override
     public void update() {
-    currentAcceleration = mDriveTrainSubsystem.getWorldLinearAccelZ();
-    if (currentAcceleration - lastAcceleration >= Constants.kCollisionJerkThreshold && !hasActionRun){
-        action.start();
-        hasActionRun = true;
-    }
-    if (hasActionRun){
-        action.update();
-    }
-    lastAcceleration = currentAcceleration;
+        currentAcceleration = mDriveTrainSubsystem.getWorldLinearAccelZ();
+        if (currentAcceleration - lastAcceleration >= Constants.kCollisionJerkThreshold && !hasActionRun) {
+            action.start();
+            hasActionRun = true;
+        }
+        if (hasActionRun) {
+            action.update();
+        }
+        lastAcceleration = currentAcceleration;
     }
 
 
     @Override
-    public void done() { action.done();}
+    public void done() {
+        action.done();
+    }
 
     @Override
     public void start() {

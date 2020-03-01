@@ -3,13 +3,13 @@ package com.team1806.frc2020.auto.actions;
 import com.team1806.frc2020.subsystems.Superstructure;
 import edu.wpi.first.wpilibj.Timer;
 
-public class BackIntakeAction implements Action{
+public class BackIntakeAction implements Action {
 
     private double mTimeout;
     private double mStartTime;
     private Superstructure mSuperstructure;
 
-    public BackIntakeAction(double timeout){
+    public BackIntakeAction(double timeout) {
         mTimeout = timeout;
         mSuperstructure = Superstructure.getInstance();
     }
@@ -32,5 +32,7 @@ public class BackIntakeAction implements Action{
     }
 
     @Override
-    public void done() {mSuperstructure.stop();}
+    public void done() {
+        mSuperstructure.stop();
+    }
 }

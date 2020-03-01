@@ -4,6 +4,11 @@ import com.team1806.frc2020.Constants;
 
 public class GamepadDriveControlBoard implements IDriveControlBoard {
     private static GamepadDriveControlBoard mInstance = null;
+    private final XboxController mController;
+
+    private GamepadDriveControlBoard() {
+        mController = new XboxController(Constants.kDriveGamepadPort);
+    }
 
     public static GamepadDriveControlBoard getInstance() {
         if (mInstance == null) {
@@ -12,14 +17,6 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
         return mInstance;
     }
-
-    private final XboxController mController;
-
-    private GamepadDriveControlBoard() {
-        mController = new XboxController(Constants.kDriveGamepadPort);
-    }
-
-
 
     @Override
     public double getThrottle() {
@@ -33,8 +30,9 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public boolean getWantsLowGear() {
-        return mController.getButton(XboxController.Button.A);
+        return mController.getDPad() == 180;
     }
+
 
     @Override
     public boolean getWantsFrontIntake() {
@@ -58,7 +56,9 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
     }
 
     @Override
-    public boolean getWantsPark() {return mController.getButton(XboxController.Button.B);}
+    public boolean getWantsPark() {
+        return mController.getButton(XboxController.Button.B);
+    }
 
     @Override
     public void setRumble(boolean on) {
@@ -66,8 +66,22 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
     }
 
     @Override
-    public boolean getWantsAutoSteer(){return mController.getButton(XboxController.Button.X);}
+    public boolean getWantsAutoSteer() {
+        return mController.getButton(XboxController.Button.X);
+    }
 
     @Override
-    public boolean getWantVisionShot(){ return mController.getButton(XboxController.Button.START);}
+    public boolean getWantVisionShot() {
+        return mController.getButton(XboxController.Button.START);
+    }
+
+    @Override
+    public boolean getWantsHighGear() {
+        return mController.getDPad() == 0;
+    }
+
+    @Override
+    public boolean getCloseShot() {
+        return mController.getDPad() == 270;
+    }
 }

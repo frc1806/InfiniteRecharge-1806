@@ -11,43 +11,16 @@ import com.team1806.lib.util.ReflectingCSVWriter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import javax.naming.ldap.Control;
-
 
 public class Turret extends Subsystem {
 
-    enum TurretControlState {
-
-        kIdle, kPositionControl, kHoldPosition, kManualControl
-    }
-
-
-    private class PeriodicIO {
-        public double timestamp;
-        public double motorVoltage;
-        public double motorAmps;
-        public double currentAngle;
-        public double currentSpeed;
-        public double wantedAngle;
-        public double wantedManualMovement;
-        public TurretControlState turretState;
-
-        public int currentEncoderClicks;
-
-    }
-
-
-
     private static Turret TURRET = new Turret();
-
+    public boolean mIsAngleValid;
     private TurretControlState mTurretControlState;
     private TalonSRX mCANTalonSRX;
     private PeriodicIO mPeriodicIO;
     private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
-    public boolean mIsAngleValid;
-
-
-    private Turret(){
+    private Turret() {
         mCANTalonSRX = new TalonSRX(Constants.kTurretMotorId);
         mPeriodicIO = new PeriodicIO();
         mTurretControlState = TurretControlState.kIdle;
@@ -56,38 +29,24 @@ public class Turret extends Subsystem {
         reloadGains();
     }
 
-    public static Turret GetInstance(){return TURRET;}
+    public static Turret GetInstance() {
+        return TURRET;
+    }
 
-    private double ConvertEncoderClicksToAngle(double encoderCount){
+    private double ConvertEncoderClicksToAngle(double encoderCount) {
         return encoderCount * Constants.kTurretDegreesPerCount;
     }
 
-    private double ConvertAngleToEncoderClicks(double angle){
+    private double ConvertAngleToEncoderClicks(double angle) {
         return angle / Constants.kTurretDegreesPerCount;
     }
 
-    public void setWantedAngle(double angle){
-        setControlState(TurretControlState.kPositionControl);
-        if (mPeriodicIO.wantedAngle <= Constants.kTurretPositionMax && mPeriodicIO.wantedAngle >= Constants.kTurretPositionMin) {
-            mIsAngleValid = true;
-            mPeriodicIO.wantedAngle = angle;
-        }
-        else if (mPeriodicIO.wantedAngle > Constants.kTurretPositionMax){
-            mIsAngleValid = false;
-            mPeriodicIO.wantedAngle = Constants.kTurretPositionMax;
-        }
-        else {
-            mIsAngleValid = false;
-            mPeriodicIO.wantedAngle = Constants.kTurretPositionMin;
-        }
-    }
-
-    public void setManualControl(double wantedPosition){
+    public void setManualControl(double wantedPosition) {
         setControlState(TurretControlState.kManualControl);
         mPeriodicIO.wantedManualMovement = wantedPosition;
     }
 
-    public void setWantIdle(){
+    public void setWantIdle() {
         setControlState(TurretControlState.kIdle);
         mPeriodicIO.wantedAngle = 0.0;
         mPeriodicIO.wantedManualMovement = 0.0;
@@ -98,16 +57,16 @@ public class Turret extends Subsystem {
                 || ControlBoard.GetInstance().getWantManualTurret();
     }
 
-    private void reloadGains(){
-        if(mCANTalonSRX!= null){
+    private void reloadGains() {
+        if (mCANTalonSRX != null) {
             mCANTalonSRX.config_kP(0, Constants.kTurretPositionControlKp);
             mCANTalonSRX.config_kI(0, Constants.kTurretPositionControlKi);
-            mCANTalonSRX.config_kD(0,Constants.kTurretPositionControlKd);
+            mCANTalonSRX.config_kD(0, Constants.kTurretPositionControlKd);
             mCANTalonSRX.config_kF(0, Constants.kTurretPositionControlKf);
         }
     }
 
-    public void writePeriodicOutputs(){
+    public void writePeriodicOutputs() {
         switch (mPeriodicIO.turretState) {
             default:
             case kIdle:
@@ -137,7 +96,7 @@ public class Turret extends Subsystem {
         }
     }
 
-    public void readPeriodicInputs(){
+    public void readPeriodicInputs() {
         mPeriodicIO.motorVoltage = mCANTalonSRX.getMotorOutputVoltage();
         mPeriodicIO.motorAmps = mCANTalonSRX.getStatorCurrent();
         double lastPosition = mPeriodicIO.currentAngle;
@@ -155,9 +114,7 @@ public class Turret extends Subsystem {
         }
     }
 
-
-
-    public void zeroSensors(){
+    public void zeroSensors() {
         mCANTalonSRX.setSelectedSensorPosition(0);
     }
 
@@ -167,11 +124,11 @@ public class Turret extends Subsystem {
 
     }
 
-    public void stop(){
+    public void stop() {
         setControlState(TurretControlState.kIdle);
     }
 
-    public boolean checkSystem(){
+    public boolean checkSystem() {
         return true;
     }
 
@@ -186,29 +143,62 @@ public class Turret extends Subsystem {
 
     }
 
-    public synchronized void startLogging(){
+    public synchronized void startLogging() {
         if (mCSVWriter == null) {
             mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/TURRET-LOGS.csv", PeriodicIO.class);
         }
     }
 
-    public synchronized void stopLogging(){
+    public synchronized void stopLogging() {
         if (mCSVWriter != null) {
             mCSVWriter.flush();
             mCSVWriter = null;
         }
     }
 
-    private void addTurretObservation(){
+    private void addTurretObservation() {
 
     }
 
-    public Rotation2d getCurrentAngle(){
+    public Rotation2d getCurrentAngle() {
         return Rotation2d.fromDegrees(mPeriodicIO.currentAngle);
     }
 
-    public Rotation2d getWantedAngle(){
+    public Rotation2d getWantedAngle() {
         return Rotation2d.fromDegrees(mPeriodicIO.wantedAngle);
+    }
+
+    public void setWantedAngle(double angle) {
+        setControlState(TurretControlState.kPositionControl);
+        if (mPeriodicIO.wantedAngle <= Constants.kTurretPositionMax && mPeriodicIO.wantedAngle >= Constants.kTurretPositionMin) {
+            mIsAngleValid = true;
+            mPeriodicIO.wantedAngle = angle;
+        } else if (mPeriodicIO.wantedAngle > Constants.kTurretPositionMax) {
+            mIsAngleValid = false;
+            mPeriodicIO.wantedAngle = Constants.kTurretPositionMax;
+        } else {
+            mIsAngleValid = false;
+            mPeriodicIO.wantedAngle = Constants.kTurretPositionMin;
+        }
+    }
+
+    enum TurretControlState {
+
+        kIdle, kPositionControl, kHoldPosition, kManualControl
+    }
+
+    private class PeriodicIO {
+        public double timestamp;
+        public double motorVoltage;
+        public double motorAmps;
+        public double currentAngle;
+        public double currentSpeed;
+        public double wantedAngle;
+        public double wantedManualMovement;
+        public TurretControlState turretState;
+
+        public int currentEncoderClicks;
+
     }
 
 

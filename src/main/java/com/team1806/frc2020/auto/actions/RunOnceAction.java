@@ -12,7 +12,8 @@ public abstract class RunOnceAction implements Action {
     }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     @Override
     public boolean isFinished() {
@@ -20,7 +21,8 @@ public abstract class RunOnceAction implements Action {
     }
 
     @Override
-    public void done() {}
+    public void done() {
+    }
 
     public abstract void runOnce();
 }

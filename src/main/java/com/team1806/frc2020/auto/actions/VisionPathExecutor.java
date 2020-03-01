@@ -1,11 +1,11 @@
 package com.team1806.frc2020.auto.actions;
 
-import com.team1806.frc2020.auto.actions.Action;
 import com.team1806.frc2020.auto.modes.VisionMode;
 
 public class VisionPathExecutor implements Action {
     VisionMode visionMode;
     boolean started = false;
+
     @Override
     public boolean isFinished() {
         return started && visionMode.getIsDone();

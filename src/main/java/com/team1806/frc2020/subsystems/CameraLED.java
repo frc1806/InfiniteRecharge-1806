@@ -1,6 +1,8 @@
 package com.team1806.frc2020.subsystems;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+
 public class CameraLED extends Subsystem {
 
 
@@ -10,12 +12,7 @@ public class CameraLED extends Subsystem {
     private PeriodicIO mPeriodicIO;
 
 
-    enum CameraLED_ControlState {
-
-        kVision,
-    }
-
-    public CameraLED(int port, int mNumOfLEDs){
+    public CameraLED(int port, int mNumOfLEDs) {
         this.mLED = new AddressableLED(port);
         this.mNumOfLEDs = mNumOfLEDs;
         this.mLEDBuffer = new AddressableLEDBuffer(mNumOfLEDs);
@@ -26,9 +23,10 @@ public class CameraLED extends Subsystem {
 
     }
 
-    public void readPeriodicInputs(){ }
+    public void readPeriodicInputs() {
+    }
 
-    public void writePeriodicOutputs(){
+    public void writePeriodicOutputs() {
         for (int i = 0; i < mLEDBuffer.getLength(); i++) {
             // Sets the specified LED to the rgb values for green
             mLEDBuffer.setRGB(i, 0, 255, 0);
@@ -38,17 +36,12 @@ public class CameraLED extends Subsystem {
 
     }
 
-    private class PeriodicIO {
-        CameraLED_ControlState cameraLED_ControlState;
-
-    }
-
     private void setControlState(CameraLED_ControlState state) {
         mPeriodicIO.cameraLED_ControlState = state;
 
     }
 
-    public void StartLED(){
+    public void StartLED() {
         mLED.start();
     }
 
@@ -68,6 +61,16 @@ public class CameraLED extends Subsystem {
 
     @Override
     public void outputTelemetry() {
+
+    }
+
+    enum CameraLED_ControlState {
+
+        kVision,
+    }
+
+    private class PeriodicIO {
+        CameraLED_ControlState cameraLED_ControlState;
 
     }
 

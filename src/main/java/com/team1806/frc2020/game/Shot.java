@@ -2,10 +2,10 @@ package com.team1806.frc2020.game;
 
 public class Shot {
 
-    public static Shot CLOSE_SHOT = new Shot(0, 20, 4500);
-    public static Shot STRAIGHT_ON_AUTOLINE = new Shot(0, 47, 3500);
-    public static Shot FROM_TRENCH =  new Shot(-5, 10, 8000);
-    public static Shot STRAIGHT_ON_FROM_MAX_DIST = new Shot(0, 30, 10000);
+    public static Shot CLOSE_SHOT = new Shot(0, 17, 2500);
+    public static Shot STRAIGHT_ON_AUTOLINE = new Shot(0, 49, 3500);
+    public static Shot FROM_TRENCH = new Shot(0, 53, 3800);
+    public static Shot STRAIGHT_ON_FROM_MAX_DIST = new Shot(0, 52, 5500);
     private double mTurretAngle;
     private double mHoodAngle;
     private double mFlywheelSpeed;

@@ -3,35 +3,29 @@ package com.team1806.frc2020;
 import com.team1806.frc2020.auto.AutoModeExecutor;
 import com.team1806.frc2020.auto.modes.AutoModeBase;
 import com.team1806.frc2020.controlboard.ControlBoard;
-import com.team1806.frc2020.controlboard.GamepadButtonControlBoard;
 import com.team1806.frc2020.controlboard.IControlBoard;
 import com.team1806.frc2020.game.Shot;
 import com.team1806.frc2020.loops.Looper;
 import com.team1806.frc2020.subsystems.*;
 import com.team1806.lib.geometry.Pose2d;
 import com.team1806.lib.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import com.team1806.lib.util.CrashTracker;
+import com.team1806.lib.util.LatchedBoolean;
+import com.team1806.lib.vision.AimingParameters;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
-import com.team1806.lib.util.*;
-import com.team1806.lib.vision.AimingParameters;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
 
 public class Robot extends TimedRobot {
+    public static AutoModeBase selectedAuto;
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
-
     private final IControlBoard mControlBoard = ControlBoard.GetInstance();
-
     private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
-
     // subsystems
     private final Infrastructure mInfrastructure = Infrastructure.getInstance();
     private final RobotState mRobotState = RobotState.getInstance();
@@ -40,14 +34,10 @@ public class Robot extends TimedRobot {
     private final Conveyor mConveyor = Conveyor.GetInstance();
     private final Superstructure mSuperstructure = Superstructure.getInstance();
     private final Jetson mJetson;
-
-
     // button placed on the robot to allow the drive team to zero the robot right
     // before the start of a match
     DigitalInput resetRobotButton = new DigitalInput(Constants.kResetButtonChannel);
-
     private boolean mHasBeenEnabled = false;
-
     private LatchedBoolean mShootPressed = new LatchedBoolean();
     private LatchedBoolean mThrustReleased = new LatchedBoolean();
     private LatchedBoolean mThrustPressed = new LatchedBoolean();
@@ -55,11 +45,9 @@ public class Robot extends TimedRobot {
     private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
     private LatchedBoolean mAutoSteerPressed = new LatchedBoolean();
     private boolean mStickyShoot;
-
     private boolean bAutoModeStale = false;
     private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
     private AutoModeExecutor mAutoModeExecutor;
-    public static AutoModeBase selectedAuto;
     private String selectedModeName;
     private String lastSelectedModeName;
     private boolean mDriveByCameraInAuto = false;
@@ -119,7 +107,7 @@ public class Robot extends TimedRobot {
             mEnabledLooper.stop();
 
             // Reset all auto mode state.
-            if(mAutoModeExecutor != null) {
+            if (mAutoModeExecutor != null) {
                 mAutoModeExecutor.stop();
                 selectedAuto = AutoModeSelector.getSelectedAutoMode();
             }
@@ -225,16 +213,17 @@ public class Robot extends TimedRobot {
         try {
             if (!resetRobotButton.get() && !mHasBeenEnabled) {
                 System.out.println("Zeroing Robot!");
+                mSubsystemManager.zeroSensors();
             }
 
             selectedModeName = SmartDashboard.getString(
-                AutoModeSelector.SELECTED_AUTO_MODE_DASHBOARD_KEY,
-                "com.team1806.frc2020.auto.modes.DoNothingMode");
-      if(!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale){
-          bAutoModeStale = false;
-          selectedAuto = AutoModeSelector.getSelectedAutoMode();
-      }
-            
+                    AutoModeSelector.SELECTED_AUTO_MODE_DASHBOARD_KEY,
+                    "com.team1806.frc2020.auto.modes.DoNothingMode");
+            if (!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale) {
+                bAutoModeStale = false;
+                selectedAuto = AutoModeSelector.getSelectedAutoMode();
+            }
+
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -280,61 +269,52 @@ public class Robot extends TimedRobot {
         boolean wantsLowGear = mControlBoard.getWantsLowGear();
         // drive
 
-        if(mControlBoard.getWantsAutoSteer()){
+        if (mControlBoard.getWantsAutoSteer()) {
             mDrive.autoSteer(throttle, drive_aim_params);
-        }
-        else if(mControlBoard.getWantsPark()){
+        } else if (mControlBoard.getWantsPark()) {
             mDrive.setHighGear(false);
             mDrive.setWantParkingBrake();
-        } else{
-            mDrive.setHighGear(!wantsLowGear);
+        } else {
+
             mDrive.setCheesyishDrive(throttle, -mControlBoard.getTurn(), mControlBoard.getQuickTurn());
         }
-
-
-        if (mControlBoard.getShoot()){
-            mSuperstructure.setWantShot(Shot.STRAIGHT_ON_AUTOLINE);
+        if (mControlBoard.getWantsLowGear()) {
+            mDrive.setHighGear(false);
+        } else if (mControlBoard.getWantsHighGear()) {
+            mDrive.setHighGear(true);
         }
-        else if (mControlBoard.getWantDashboardShot()){
+
+
+        if (mControlBoard.getShoot()) {
+            mSuperstructure.setWantShot(Shot.STRAIGHT_ON_AUTOLINE);
+        } else if (mControlBoard.getWantDashboardShot()) {
             double turretAngle = SmartDashboard.getNumber("TestingWantedTurretAngle", 0);
             double hoodAngle = SmartDashboard.getNumber("TestingWantedHoodAngle", 0);
             double flywheelRPM = SmartDashboard.getNumber("TestingWantedFlywheelRPM", 3000);
             mSuperstructure.setWantShot(new Shot(turretAngle, hoodAngle, flywheelRPM));
-        }
-
-        else if(mControlBoard.getAutoLineShot()){
+        } else if (mControlBoard.getAutoLineShot()) {
             mSuperstructure.setWantShot(Shot.STRAIGHT_ON_AUTOLINE);
-        }
-        else if(mControlBoard.getCloseShot()){
+        } else if (mControlBoard.getCloseShot()) {
             mSuperstructure.setWantShot(Shot.CLOSE_SHOT);
-        }
-        else if (mControlBoard.getLongShot()){
+        } else if (mControlBoard.getLongShot()) {
             mSuperstructure.setWantShot(Shot.STRAIGHT_ON_FROM_MAX_DIST);
-        }
-        else if (mControlBoard.getTrenchShot()){
+        } else if (mControlBoard.getTrenchShot()) {
             mSuperstructure.setWantShot(Shot.FROM_TRENCH);
-        }
-        else if (mControlBoard.getWantsFrontIntake()){
+        } else if (mControlBoard.getWantsFrontIntake()) {
             mSuperstructure.frontIntake();
-        }
-        else if (mControlBoard.getWantsRearIntake()){
+        } else if (mControlBoard.getWantsRearIntake()) {
             mSuperstructure.backIntake();
-        }
-        else if (mControlBoard.getWantsUnjam()){
+        } else if (mControlBoard.getWantsUnjam()) {
             mSuperstructure.unjam();
-        }
-        else if (mControlBoard.getWantIntakeSweep()){
+        } else if (mControlBoard.getWantIntakeSweep()) {
             mSuperstructure.setWantSweep();
-        }
-
-        else{
+        } else {
             mSuperstructure.stop();
         }
 
-        if (mControlBoard.getWantsFlashlight()){
+        if (mControlBoard.getWantsFlashlight()) {
             mFlashlight.setFlashlightOn(true);
-        }
-        else {
+        } else {
             mFlashlight.setFlashlightOn(false);
         }
 
@@ -343,12 +323,14 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+    }
 
     @Override
-    public void endCompetition() { }
+    public void endCompetition() {
+    }
 
-    private void setupDashboardShot(){
+    private void setupDashboardShot() {
         SmartDashboard.putNumber("TestingWantedTurretAngle", 0);
         SmartDashboard.putNumber("TestingWantedHoodAngle", 0);
         SmartDashboard.putNumber("TestingWantedFlywheelRPM", 3000);

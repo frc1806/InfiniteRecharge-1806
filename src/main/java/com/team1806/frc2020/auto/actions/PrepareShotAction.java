@@ -12,7 +12,7 @@ public class PrepareShotAction implements Action {
     private Superstructure mSuperstructure;
 
 
-    public PrepareShotAction(Shot shot){
+    public PrepareShotAction(Shot shot) {
         mShot = shot;
         mSuperstructure = Superstructure.getInstance();
 

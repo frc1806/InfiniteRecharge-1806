@@ -22,4 +22,9 @@ public interface IDriveControlBoard {
     boolean getWantsAutoSteer();
 
     boolean getWantVisionShot();
+
+    boolean getWantsHighGear();
+
+    boolean getCloseShot();
+
 }

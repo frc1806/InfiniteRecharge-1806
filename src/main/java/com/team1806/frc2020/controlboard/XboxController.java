@@ -7,24 +7,6 @@ import edu.wpi.first.wpilibj.Joystick;
 public class XboxController {
     private final Joystick mController;
 
-    public enum Side {
-        LEFT, RIGHT
-    }
-
-    public enum Axis {
-        X, Y
-    }
-
-    public enum Button {
-        A(1), B(2), X(3), Y(4), LB(5), RB(6), BACK(7), START(8), L_JOYSTICK(9), R_JOYSTICK(10);
-
-        public final int id;
-
-        Button(int id) {
-            this.id = id;
-        }
-    }
-
     XboxController(int port) {
         mController = new Joystick(port);
     }
@@ -42,10 +24,9 @@ public class XboxController {
         return mController.getRawAxis(side == Side.LEFT ? 2 : 3) > Constants.kJoystickThreshold;
     }
 
-    double getAnalogTrigger(Side side){
+    double getAnalogTrigger(Side side) {
         return mController.getRawAxis(side == Side.LEFT ? 2 : 3);
     }
-
 
     boolean getButton(Button button) {
         return mController.getRawButton(button.id);
@@ -64,11 +45,28 @@ public class XboxController {
     }
 
     private double handleDeadband(double value, double deadband, double minActualOutput) {
-        if(Math.abs(value) > Math.abs(deadband)){
-            return (value- (value>0?deadband-minActualOutput:-(deadband-minActualOutput)))* (1.0/(1.0-deadband));
-        }
-        else{
+        if (Math.abs(value) > Math.abs(deadband)) {
+            return (value - (value > 0 ? deadband - minActualOutput : -(deadband - minActualOutput))) * (1.0 / (1.0 - deadband));
+        } else {
             return 0;
+        }
+    }
+
+    public enum Side {
+        LEFT, RIGHT
+    }
+
+    public enum Axis {
+        X, Y
+    }
+
+    public enum Button {
+        A(1), B(2), X(3), Y(4), LB(5), RB(6), BACK(7), START(8), L_JOYSTICK(9), R_JOYSTICK(10);
+
+        public final int id;
+
+        Button(int id) {
+            this.id = id;
         }
     }
 }

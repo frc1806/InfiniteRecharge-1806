@@ -138,18 +138,18 @@ public class PathBuilder {
             this.radius = new Translation2d(center, a.end).norm();
         }
 
+        private static Translation2d intersect(Line l1, Line l2) {
+            final Pose2d lineA = new Pose2d(l1.end, new Rotation2d(l1.slope, true).normal());
+            final Pose2d lineB = new Pose2d(l2.start, new Rotation2d(l2.slope, true).normal());
+            return lineA.intersection(lineB);
+        }
+
         private void addToPath(Path p) {
             a.addToPath(p, speed);
             if (radius > kEpsilon && radius < kReallyBigNumber) {
                 p.addSegment(new PathSegment(a.end.x(), a.end.y(), b.start.x(), b.start.y(), center.x(), center.y(),
                         speed, p.getLastMotionState(), b.speed));
             }
-        }
-
-        private static Translation2d intersect(Line l1, Line l2) {
-            final Pose2d lineA = new Pose2d(l1.end, new Rotation2d(l1.slope, true).normal());
-            final Pose2d lineB = new Pose2d(l2.start, new Rotation2d(l2.slope, true).normal());
-            return lineA.intersection(lineB);
         }
     }
 }

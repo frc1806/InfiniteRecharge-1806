@@ -1,6 +1,5 @@
 package com.team1806.frc2020.auto.actions;
 
-import com.team1806.frc2020.Kinematics;
 import com.team1806.frc2020.paths.PathContainer;
 import com.team1806.frc2020.subsystems.Drive;
 import com.team1806.lib.control.Path;
@@ -37,7 +36,8 @@ public class DrivePathAction implements Action {
     }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     @Override
     public boolean isFinished() {
@@ -47,7 +47,7 @@ public class DrivePathAction implements Action {
     @Override
     public void done() {
         if (mStopWhenDone) {
-            mDrive.setOpenLoop(new DriveSignal(0,0));
+            mDrive.setOpenLoop(new DriveSignal(0, 0));
         }
     }
 }

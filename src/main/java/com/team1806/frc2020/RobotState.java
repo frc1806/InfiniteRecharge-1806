@@ -12,24 +12,20 @@ import com.team1806.lib.vision.AimingParameters;
 import com.team1806.lib.vision.GoalTracker;
 import com.team1806.lib.vision.GoalTracker.TrackReportComparator;
 import com.team1806.lib.vision.TargetInfo;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class RobotState {
-    private static RobotState mInstance;
-
-    public static RobotState getInstance() {
-        if (mInstance == null) {
-            mInstance = new RobotState();
-        }
-
-        return mInstance;
-    }
-
     private static final int kObservationBufferSize = 100;
+    private static RobotState mInstance;
+    // use known field target orientations to compensate for inaccuracy, assumes robot starts pointing directly away
+    // from and perpendicular to alliance wall
+    private final double[] kPossibleTargetNormals = {0.0};
 
     /*
      * RobotState keeps track of the poses of various coordinate frames throughout
@@ -66,7 +62,7 @@ public class RobotState {
      *
      * 4. Camera-to-goal: Measured by the vision system.
      */
-
+    List<Pose2d> mCameraToVisionTargetPosesHigh = new ArrayList<>();
     // FPGATimestamp -> Pose2d or Rotation2d
     private InterpolatingTreeMap<InterpolatingDouble, Pose2d> field_to_vehicle_;
     private InterpolatingTreeMap<InterpolatingDouble, Rotation2d> vehicle_to_turret_;
@@ -74,13 +70,18 @@ public class RobotState {
     private Twist2d vehicle_velocity_measured_;
     private MovingAverageTwist2d vehicle_velocity_measured_filtered_;
     private double distance_driven_;
-
     private GoalTracker vision_target_high_ = new GoalTracker();
-
-    List<Pose2d> mCameraToVisionTargetPosesHigh = new ArrayList<>();
 
     private RobotState() {
         reset(0.0, Pose2d.identity(), Rotation2d.identity());
+    }
+
+    public static RobotState getInstance() {
+        if (mInstance == null) {
+            mInstance = new RobotState();
+        }
+
+        return mInstance;
     }
 
     /**
@@ -225,10 +226,6 @@ public class RobotState {
         updatePowerPortGoalTracker(timestamp, mCameraToVisionTargetPosesHigh, vision_target_high_);
     }
 
-    // use known field target orientations to compensate for inaccuracy, assumes robot starts pointing directly away
-    // from and perpendicular to alliance wall
-    private final double[] kPossibleTargetNormals = {0.0};
-
     public synchronized Pose2d getFieldToVisionTarget(boolean innerGoal) {
         GoalTracker tracker = vision_target_high_;
 
@@ -246,7 +243,7 @@ public class RobotState {
             }
         }
         Pose2d outPose = new Pose2d(fieldToTarget.getTranslation(), Rotation2d.fromDegrees(normalClamped));
-        if(innerGoal){
+        if (innerGoal) {
             //push the center 29.26in back
             outPose = outPose.project(29.26);
         }
@@ -306,7 +303,7 @@ public class RobotState {
 
 
     public synchronized void outputToSmartDashboard() {
-        double now =Timer.getFPGATimestamp();
+        double now = Timer.getFPGATimestamp();
         SmartDashboard.putString("Robot Velocity", getMeasuredVelocity().toString());
         SmartDashboard.putNumber("Robot X", getFieldToVehicle(now).getTranslation().x());
         SmartDashboard.putNumber("Robot Y", getFieldToVehicle(now).getTranslation().y());

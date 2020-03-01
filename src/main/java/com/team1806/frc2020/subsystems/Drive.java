@@ -1,7 +1,7 @@
 package com.team1806.frc2020.subsystems;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANEncoder;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.ControlType;
 import com.team1806.frc2020.Constants;
@@ -12,18 +12,17 @@ import com.team1806.frc2020.loops.Loop;
 import com.team1806.lib.control.Lookahead;
 import com.team1806.lib.control.Path;
 import com.team1806.lib.control.PathFollower;
-import com.team1806.lib.drivers.LazySparkMax;
-import com.team1806.lib.drivers.MotorChecker;
-import com.team1806.lib.drivers.SparkMaxChecker;
-import com.team1806.lib.drivers.SparkMaxFactory;
-import com.team1806.lib.drivers.NavX;
-import com.team1806.lib.geometry.*;
-import com.team1806.lib.util.*;
+import com.team1806.lib.drivers.*;
+import com.team1806.lib.geometry.Pose2d;
+import com.team1806.lib.geometry.Rotation2d;
+import com.team1806.lib.geometry.Translation2d;
+import com.team1806.lib.geometry.Twist2d;
+import com.team1806.lib.util.DriveSignal;
+import com.team1806.lib.util.ReflectingCSVWriter;
+import com.team1806.lib.util.Util;
 import com.team1806.lib.vision.AimingParameters;
-
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -31,24 +30,25 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class Drive extends Subsystem {
-    private static Drive mInstance;
-
     //PID Slots
     private static final int kLowGearPositionControlSlot = 0;
     private static final int kHighGearVelocityControlSlot = 1;
-
+    private static Drive mInstance;
     // hardware
     private final LazySparkMax mLeftLeader, mRightLeader;
+    private final CANEncoder mLeftEncoder, mRightEncoder;
+    private final DoubleSolenoid mShifter;
     ArrayList<LazySparkMax> mLeftFollowers = new ArrayList<>();
     ArrayList<LazySparkMax> mRightFollowers = new ArrayList<>();
-
-    private final CANEncoder mLeftEncoder, mRightEncoder;
-
+    //drive to stall variables
+    boolean wasPushing = false;
+    boolean startingPush = false;
+    boolean finishingPush = false;
+    boolean isTimedOut = false;
+    double pushTimeStamp = 0;
     // Controllers
     private PathFollower mPathFollower;
     private Path mCurrentPath = null;
-
-    private final DoubleSolenoid mShifter;
     // control states
     private DriveControlState mDriveControlState;
     private DriveCurrentLimitState mDriveCurrentLimitState;
@@ -59,32 +59,11 @@ public class Drive extends Subsystem {
     private boolean mIsBrakeMode;
     private Rotation2d mGyroOffset = Rotation2d.identity();
     private double mLastDriveCurrentSwitchTime = -1;
-
     //timing
     private double currentTimeStamp;
-	private double lastTimeStamp;
-
-    //drive to stall variables
-	boolean wasPushing = false;
-	boolean startingPush = false;
-	boolean finishingPush = false;
-	boolean isTimedOut = false;
-	double pushTimeStamp = 0;
-
-    public synchronized static Drive getInstance() {
-        if (mInstance == null) {
-            mInstance = new Drive();
-        }
-
-        return mInstance;
-    }
-
-    private void configureSpark(LazySparkMax sparkMax, boolean left, boolean master) {
-        sparkMax.setInverted(left);
-        sparkMax.enableVoltageCompensation(12.0);
-        sparkMax.setClosedLoopRampRate(Constants.kDriveVoltageRampRate);
-        sparkMax.burnFlash();
-    }
+    private double lastTimeStamp;
+    private PeriodicIO mPeriodicIO;
+    private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
 
     private Drive() {
         mPeriodicIO = new PeriodicIO();
@@ -94,9 +73,9 @@ public class Drive extends Subsystem {
         configureSpark(mLeftLeader, true, true);
 
         //initialize configured followers
-        for(int i = 0; i < Constants.kDriveMotorsPerSide.getMotorsPerSide() -1; i++){
+        for (int i = 0; i < Constants.kDriveMotorsPerSide.getMotorsPerSide() - 1; i++) {
             LazySparkMax tempLeftFollower = SparkMaxFactory.createPermanentFollowerSparkMax(Constants.kLeftDriveFollowerIds[i], mLeftLeader);
-            if(tempLeftFollower != null){
+            if (tempLeftFollower != null) {
                 configureSpark(tempLeftFollower, true, false);
                 mLeftFollowers.add(tempLeftFollower);
             }
@@ -106,9 +85,9 @@ public class Drive extends Subsystem {
         mRightLeader = SparkMaxFactory.createDefaultSparkMax(Constants.kRightDriveLeaderId);
         configureSpark(mRightLeader, false, true);
 
-        for(int i = 0; i < Constants.kDriveMotorsPerSide.getMotorsPerSide() -1; i++) {
+        for (int i = 0; i < Constants.kDriveMotorsPerSide.getMotorsPerSide() - 1; i++) {
             LazySparkMax tempRightFollower = SparkMaxFactory.createPermanentFollowerSparkMax(Constants.kRightDriveFollowerIds[i], mRightLeader);
-            if (tempRightFollower != null){
+            if (tempRightFollower != null) {
                 configureSpark(tempRightFollower, false, false);
                 mRightFollowers.add(tempRightFollower);
             }
@@ -128,7 +107,7 @@ public class Drive extends Subsystem {
         mLeftEncoder = mLeftLeader.getEncoder();
         mRightEncoder = mRightLeader.getEncoder();
 
-       /// mLeftEncoder.setInverted(false);
+        /// mLeftEncoder.setInverted(false);
         ///mRightEncoder.setInverted(true);
 
         mLeftEncoder.setPositionConversionFactor(1);
@@ -155,37 +134,23 @@ public class Drive extends Subsystem {
         reloadGains();
     }
 
-    private PeriodicIO mPeriodicIO;
-    private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
+    public synchronized static Drive getInstance() {
+        if (mInstance == null) {
+            mInstance = new Drive();
+        }
 
-    public static class PeriodicIO {
-        // INPUTS
-        public double timestamp;
-        public double left_voltage;
-        public double right_voltage;
-        public double left_position_ticks;
-        public double right_position_ticks;
-        public double previous_left_position_ticks;
-        public double previous_right_position_ticks;
-        public double left_distance;
-        public double right_distance;
-        public double left_velocity;
-        public double right_velocity;
-        public Rotation2d gyro_heading = Rotation2d.identity();
-        public Pose2d error = Pose2d.identity();
+        return mInstance;
+    }
 
-        // OUTPUTS
-        public double left_demand;
-        public double right_demand;
-        public double left_accel;
-        public double right_accel;
-        public double left_velo;
-        public double right_velo;
-        public double left_feedforward;
-        public double right_feedforward;
+    private static double inchesPerSecondToRPM(double inches_per_second) {
+        return (inches_per_second / (1 / Constants.kDriveHighGearInchesPerCount)) * 60;
+    }
 
-        public double rightParkingBrakePower;
-        public double leftParkingBrakePower;
+    private void configureSpark(LazySparkMax sparkMax, boolean left, boolean master) {
+        sparkMax.setInverted(left);
+        sparkMax.enableVoltageCompensation(12.0);
+        sparkMax.setClosedLoopRampRate(Constants.kDriveVoltageRampRate);
+        sparkMax.burnFlash();
     }
 
     @Override
@@ -201,28 +166,26 @@ public class Drive extends Subsystem {
         mPeriodicIO.gyro_heading = (mNavx.getYaw().rotateBy(mGyroOffset));
 
         double deltaLeftTicks = mPeriodicIO.left_position_ticks - mPeriodicIO.previous_left_position_ticks;
-        mPeriodicIO.left_distance += deltaLeftTicks * (mIsHighGear?Constants.kDriveHighGearInchesPerCount:Constants.kDriveLowGearInchesPerCount);
+        mPeriodicIO.left_distance += deltaLeftTicks * (mIsHighGear ? Constants.kDriveHighGearInchesPerCount : Constants.kDriveLowGearInchesPerCount);
 
         double deltaRightTicks = mPeriodicIO.right_position_ticks - mPeriodicIO.previous_right_position_ticks;
-        mPeriodicIO.right_distance += deltaRightTicks * (mIsHighGear?Constants.kDriveHighGearInchesPerCount:Constants.kDriveLowGearInchesPerCount);
+        mPeriodicIO.right_distance += deltaRightTicks * (mIsHighGear ? Constants.kDriveHighGearInchesPerCount : Constants.kDriveLowGearInchesPerCount);
 
-        mPeriodicIO.left_velocity =mLeftEncoder.getVelocity();
-        mPeriodicIO.right_velocity =mRightEncoder.getVelocity();
+        mPeriodicIO.left_velocity = mLeftEncoder.getVelocity();
+        mPeriodicIO.right_velocity = mRightEncoder.getVelocity();
 
-        if (mDriveControlState== DriveControlState.PARKING_BRAKE){
+        if (mDriveControlState == DriveControlState.PARKING_BRAKE) {
             mPeriodicIO.leftParkingBrakePower = Constants.kParkingBrakePowerProportional * -mPeriodicIO.left_velocity;
-            if (mPeriodicIO.leftParkingBrakePower >= Constants.kParkingBreakPowerLimit){
+            if (mPeriodicIO.leftParkingBrakePower >= Constants.kParkingBreakPowerLimit) {
                 mPeriodicIO.leftParkingBrakePower = Constants.kParkingBreakPowerLimit;
-            }
-            else if (mPeriodicIO.leftParkingBrakePower <= -Constants.kParkingBreakPowerLimit){
+            } else if (mPeriodicIO.leftParkingBrakePower <= -Constants.kParkingBreakPowerLimit) {
                 mPeriodicIO.leftParkingBrakePower = -Constants.kParkingBreakPowerLimit;
             }
 
             mPeriodicIO.rightParkingBrakePower = Constants.kParkingBrakePowerProportional * -mPeriodicIO.right_velocity;
-            if (mPeriodicIO.rightParkingBrakePower >= Constants.kParkingBreakPowerLimit){
+            if (mPeriodicIO.rightParkingBrakePower >= Constants.kParkingBreakPowerLimit) {
                 mPeriodicIO.rightParkingBrakePower = Constants.kParkingBreakPowerLimit;
-            }
-            else if (mPeriodicIO.rightParkingBrakePower <= -Constants.kParkingBreakPowerLimit){
+            } else if (mPeriodicIO.rightParkingBrakePower <= -Constants.kParkingBreakPowerLimit) {
                 mPeriodicIO.rightParkingBrakePower = -Constants.kParkingBreakPowerLimit;
             }
         }
@@ -237,15 +200,14 @@ public class Drive extends Subsystem {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
             mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
-        } else if (mDriveControlState == DriveControlState.PATH_FOLLOWING){
+        } else if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
             mLeftLeader.getPIDController().setReference(mPeriodicIO.left_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
             mRightLeader.getPIDController().setReference(mPeriodicIO.right_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
-        }else if (mDriveControlState == DriveControlState.PARKING_BRAKE){
+        } else if (mDriveControlState == DriveControlState.PARKING_BRAKE) {
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.leftParkingBrakePower);
-            mRightLeader.set(ControlType.kDutyCycle,mPeriodicIO.rightParkingBrakePower);
+            mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.rightParkingBrakePower);
 
-        }
-        else {
+        } else {
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
             mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
         }
@@ -289,9 +251,9 @@ public class Drive extends Subsystem {
                             break;
                     }
 
-            
+
                     setDriveCurrentState(DriveCurrentLimitState.UNTHROTTLED, timestamp);
-                    
+
                 }
             }
 
@@ -304,7 +266,7 @@ public class Drive extends Subsystem {
     }
 
     private void handleFaults() {
-        for(LazySparkMax rightFollower: mRightFollowers){
+        for (LazySparkMax rightFollower : mRightFollowers) {
             if (rightFollower.getStickyFault(CANSparkMax.FaultID.kHasReset)) {
                 System.out.println("Right Follower Reset! Id: " + rightFollower.getDeviceId());
                 rightFollower.follow(mRightLeader);
@@ -312,7 +274,7 @@ public class Drive extends Subsystem {
             }
         }
 
-        for(LazySparkMax leftFollower: mLeftFollowers){
+        for (LazySparkMax leftFollower : mLeftFollowers) {
             if (leftFollower.getStickyFault(CANSparkMax.FaultID.kHasReset)) {
                 System.out.println("Left Follower Reset! Id: " + leftFollower.getDeviceId());
                 leftFollower.follow(mLeftLeader);
@@ -358,7 +320,7 @@ public class Drive extends Subsystem {
             wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
             wheel = wheel / (denominator * denominator) * Math.abs(throttle);
         }
-        if(quickTurn){
+        if (quickTurn) {
             wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
             wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
             wheel = wheel / (denominator * denominator) * Math.abs(Math.max(throttle, .75));
@@ -371,7 +333,7 @@ public class Drive extends Subsystem {
     }
 
     public synchronized void autoSteer(double throttle, Optional<AimingParameters> aim_params) {
-        if(aim_params.isPresent()) {
+        if (aim_params.isPresent()) {
             double timestamp = Timer.getFPGATimestamp();
             final double kAutosteerAlignmentPointOffset = 15.0;  // Distance from wall
             boolean reverse = throttle < 0.0;
@@ -421,7 +383,7 @@ public class Drive extends Subsystem {
         if (wantsHighGear != mIsHighGear) {
             mIsHighGear = wantsHighGear;
             // Plumbed default high.
-            mShifter.set(wantsHighGear?DoubleSolenoid.Value.kForward:DoubleSolenoid.Value.kReverse);
+            mShifter.set(wantsHighGear ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
         }
     }
 
@@ -435,11 +397,11 @@ public class Drive extends Subsystem {
             IdleMode mode = shouldEnable ? IdleMode.kBrake : IdleMode.kCoast;
             mRightLeader.setIdleMode(mode);
 
-            for(LazySparkMax leftFollower: mLeftFollowers){
+            for (LazySparkMax leftFollower : mLeftFollowers) {
                 leftFollower.setIdleMode(mode);
             }
 
-            for(LazySparkMax rightFollower: mRightFollowers){
+            for (LazySparkMax rightFollower : mRightFollowers) {
                 rightFollower.setIdleMode(mode);
             }
 
@@ -486,6 +448,7 @@ public class Drive extends Subsystem {
 
     /**
      * Gets right drive velocity in inches per second.
+     *
      * @return gets right drive velocity.
      */
     public double getRightLinearVelocity() {
@@ -585,11 +548,11 @@ public class Drive extends Subsystem {
         mLeftLeader.setSmartCurrentLimit(amps);
 
 
-        for(LazySparkMax leftFollower: mLeftFollowers){
+        for (LazySparkMax leftFollower : mLeftFollowers) {
             leftFollower.setSmartCurrentLimit(amps);
         }
 
-        for(LazySparkMax rightFollower: mRightFollowers){
+        for (LazySparkMax rightFollower : mRightFollowers) {
             rightFollower.setSmartCurrentLimit(amps);
 
         }
@@ -621,21 +584,6 @@ public class Drive extends Subsystem {
         }
     }
 
-    public enum DriveControlState {
-        OPEN_LOOP, // open loop voltage control
-        PATH_FOLLOWING, // velocity PID control
-        DRIVE_TO_STALL,
-        PARKING_BRAKE,
-    }
-
-    public enum DriveCurrentLimitState {
-        UNTHROTTLED, THROTTLED
-    }
-
-//    public enum ShifterState {
-//        FORCE_LOW_GEAR, FORCE_HIGH_GEAR
-//    }
-
     @Override
     public void zeroSensors() {
         setHeading(Rotation2d.identity());
@@ -647,53 +595,57 @@ public class Drive extends Subsystem {
         setOpenLoop(DriveSignal.NEUTRAL);
     }
 
+//    public enum ShifterState {
+//        FORCE_LOW_GEAR, FORCE_HIGH_GEAR
+//    }
+
     @Override
     public boolean checkSystem() {
         setBrakeMode(false);
         setHighGear(true);
 
         boolean leftSide = SparkMaxChecker.checkMotors(this,
-            new ArrayList<MotorChecker.MotorConfig<CANSparkMax>>() {
-                private static final long serialVersionUID = 3643247888353037677L;
+                new ArrayList<MotorChecker.MotorConfig<CANSparkMax>>() {
+                    private static final long serialVersionUID = 3643247888353037677L;
 
-                {
-                    add(new MotorChecker.MotorConfig<>("left_leader", mLeftLeader));
+                    {
+                        add(new MotorChecker.MotorConfig<>("left_leader", mLeftLeader));
 
-                    for(LazySparkMax leftFollower: mLeftFollowers){
-                        add(new MotorChecker.MotorConfig<>("left_follower", leftFollower));
+                        for (LazySparkMax leftFollower : mLeftFollowers) {
+                            add(new MotorChecker.MotorConfig<>("left_follower", leftFollower));
+                        }
+
                     }
 
-                }
-
-            }, new MotorChecker.CheckerConfig() {
-                {
-                    mCurrentFloor = 3;
-                    mRPMFloor = 90;
-                    mCurrentEpsilon = 2.0;
-                    mRPMEpsilon = 200;
-                    mRPMSupplier = mLeftEncoder::getVelocity;
-                }
-            });
+                }, new MotorChecker.CheckerConfig() {
+                    {
+                        mCurrentFloor = 3;
+                        mRPMFloor = 90;
+                        mCurrentEpsilon = 2.0;
+                        mRPMEpsilon = 200;
+                        mRPMSupplier = mLeftEncoder::getVelocity;
+                    }
+                });
         boolean rightSide = SparkMaxChecker.checkMotors(this,
-            new ArrayList<MotorChecker.MotorConfig<CANSparkMax>>() {
-                private static final long serialVersionUID = -1212959188716158751L;
+                new ArrayList<MotorChecker.MotorConfig<CANSparkMax>>() {
+                    private static final long serialVersionUID = -1212959188716158751L;
 
-                {
-                    add(new MotorChecker.MotorConfig<>("right_leader", mRightLeader));
+                    {
+                        add(new MotorChecker.MotorConfig<>("right_leader", mRightLeader));
 
-                    for(LazySparkMax rightFollower: mRightFollowers){
-                        add(new MotorChecker.MotorConfig<>("right_follower", rightFollower));;
+                        for (LazySparkMax rightFollower : mRightFollowers) {
+                            add(new MotorChecker.MotorConfig<>("right_follower", rightFollower));
+                        }
                     }
-                }
-            }, new MotorChecker.CheckerConfig() {
-                {
-                    mCurrentFloor = 5;
-                    mRPMFloor = 90;
-                    mCurrentEpsilon = 2.0;
-                    mRPMEpsilon = 20;
-                    mRPMSupplier = mRightEncoder::getVelocity;
-                }
-            });
+                }, new MotorChecker.CheckerConfig() {
+                    {
+                        mCurrentFloor = 5;
+                        mRPMFloor = 90;
+                        mCurrentEpsilon = 2.0;
+                        mRPMEpsilon = 20;
+                        mRPMSupplier = mRightEncoder::getVelocity;
+                    }
+                });
 
         return leftSide && rightSide;
     }
@@ -704,14 +656,14 @@ public class Drive extends Subsystem {
         SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_ticks);
         SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_ticks);
         SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
-         SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
-         SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
+        SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
+        SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
 
         // SmartDashboard.putNumber("X Error", mPeriodicIO.error.getTranslation().x());
         // SmartDashboard.putNumber("Y error", mPeriodicIO.error.getTranslation().y());
         // SmartDashboard.putNumber("Theta Error", mPeriodicIO.error.getRotation().getDegrees());
         SmartDashboard.putNumber("Drive Left MAster NEO out", mLeftLeader.getAppliedOutput());
-        for(LazySparkMax tempFollower: mLeftFollowers){
+        for (LazySparkMax tempFollower : mLeftFollowers) {
             SmartDashboard.putNumber("Drive left follower NEO out " + tempFollower.getDeviceId(), tempFollower.getAppliedOutput());
         }
 
@@ -740,81 +692,78 @@ public class Drive extends Subsystem {
     }
 
     public synchronized boolean driveToStall(boolean pushReq, boolean stopReq) {
-		startingPush = pushReq && !wasPushing;
+        startingPush = pushReq && !wasPushing;
 
 
-		if(startingPush) {
-			System.out.println("starting push");
+        if (startingPush) {
+            System.out.println("starting push");
             mDriveControlState = DriveControlState.DRIVE_TO_STALL;
             mPeriodicIO.left_demand = Constants.kStallPower;
             mPeriodicIO.right_demand = Constants.kStallPower;
-			pushTimeStamp = currentTimeStamp;
+            pushTimeStamp = currentTimeStamp;
         }
         double leftVelocity = getLeftVelocityInchesPerSec();
         double rightVelocity = getRightVelocityInchesPerSec();
 
-		isTimedOut = (currentTimeStamp - pushTimeStamp > Constants.kStallTimeout);
-		finishingPush = (leftVelocity < Constants.kStallSpeed && rightVelocity < Constants.kStallSpeed && currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod) || isTimedOut || stopReq;
-		wasPushing = pushReq;
-		if(leftVelocity < Constants.kStallSpeed && mDriveControlState == DriveControlState.DRIVE_TO_STALL) {
-			System.out.println("time to stall " + (currentTimeStamp - pushTimeStamp));
-		}
+        isTimedOut = (currentTimeStamp - pushTimeStamp > Constants.kStallTimeout);
+        finishingPush = (leftVelocity < Constants.kStallSpeed && rightVelocity < Constants.kStallSpeed && currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod) || isTimedOut || stopReq;
+        wasPushing = pushReq;
+        if (leftVelocity < Constants.kStallSpeed && mDriveControlState == DriveControlState.DRIVE_TO_STALL) {
+            System.out.println("time to stall " + (currentTimeStamp - pushTimeStamp));
+        }
 
-		if(finishingPush && mDriveControlState == DriveControlState.DRIVE_TO_STALL) {
-			System.out.println("finishing push");
-			System.out.println("speed low? " + (leftVelocity < Constants.kStallSpeed ));
-			System.out.println("wait period? " + (currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod));
-			System.out.println("is timed out? " + isTimedOut);
-			mDriveControlState = DriveControlState.OPEN_LOOP;
-			pushTimeStamp = 0;
+        if (finishingPush && mDriveControlState == DriveControlState.DRIVE_TO_STALL) {
+            System.out.println("finishing push");
+            System.out.println("speed low? " + (leftVelocity < Constants.kStallSpeed));
+            System.out.println("wait period? " + (currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod));
+            System.out.println("is timed out? " + isTimedOut);
+            mDriveControlState = DriveControlState.OPEN_LOOP;
+            pushTimeStamp = 0;
             mPeriodicIO.left_demand = 0;
             mPeriodicIO.right_demand = 0;
-			return true;
-		}
-		return false;
+            return true;
+        }
+        return false;
 
-	}
+    }
 
-	public void setWantParkingBrake(){
-        if(mDriveControlState != DriveControlState.PARKING_BRAKE){
+    public void setWantParkingBrake() {
+        if (mDriveControlState != DriveControlState.PARKING_BRAKE) {
             mDriveControlState = DriveControlState.PARKING_BRAKE;
         }
     }
 
-
     public float getWorldLinearAccelX() {
-		return mNavx.getWorldLinearAccelX();
-	}
+        return mNavx.getWorldLinearAccelX();
+    }
 
-	public float getWorldLinearAccelY() {
-		return mNavx.getWorldLinearAccelY();
-	}
+    public float getWorldLinearAccelY() {
+        return mNavx.getWorldLinearAccelY();
+    }
 
-	public float getWorldLinearAccelZ() {
-		return mNavx.getWorldLinearAccelZ();
+    public float getWorldLinearAccelZ() {
+        return mNavx.getWorldLinearAccelZ();
     }
 
     public double convertInchesPerSecToNeoRPM(double speed) {
-        return ((speed  / (Constants.kDriveWheelDiameterInches * Math.PI) * (mIsHighGear?Constants.kDriveHighGearRatio:Constants.kDriveLowGearRatio) * 60.0));
+        return ((speed / (Constants.kDriveWheelDiameterInches * Math.PI) * (mIsHighGear ? Constants.kDriveHighGearRatio : Constants.kDriveLowGearRatio) * 60.0));
     }
 
-
     public double getLeftVelocityInchesPerSec() {
-        return ((mPeriodicIO.left_velocity / (mIsHighGear?Constants.kDriveHighGearRatio:Constants.kDriveLowGearRatio)) / 60.0) * Math.PI * Constants.kDriveWheelDiameterInches;
-	}
-    
+        return ((mPeriodicIO.left_velocity / (mIsHighGear ? Constants.kDriveHighGearRatio : Constants.kDriveLowGearRatio)) / 60.0) * Math.PI * Constants.kDriveWheelDiameterInches;
+    }
+
     public double getRightVelocityInchesPerSec() {
-		return ((mPeriodicIO.right_velocity / (mIsHighGear?Constants.kDriveHighGearRatio:Constants.kDriveLowGearRatio)) / 60.0) * Math.PI * Constants.kDriveWheelDiameterInches;
-	}
+        return ((mPeriodicIO.right_velocity / (mIsHighGear ? Constants.kDriveHighGearRatio : Constants.kDriveLowGearRatio)) / 60.0) * Math.PI * Constants.kDriveWheelDiameterInches;
+    }
 
     public synchronized void reloadGains() {
         reloadLowGearPositionGains();
         reloadHighGearVelocityGains();
     }
 
-
-
-    /** sets a pid on a motor controller position (high gear high speed)
+    /**
+     * sets a pid on a motor controller position (high gear high speed)
      *
      * @param motorController to set the pid values on
      */
@@ -830,7 +779,8 @@ public class Drive extends Subsystem {
          */
     }
 
-    /** sets a pid on a motor controller position (high gear low speed)
+    /**
+     * sets a pid on a motor controller position (high gear low speed)
      *
      * @param motorController to set the pid values on
      */
@@ -846,8 +796,8 @@ public class Drive extends Subsystem {
          */
     }
 
-    /** reloads the velocity pid based on whether or not the current wanted pid is high speed or low speed
-     *
+    /**
+     * reloads the velocity pid based on whether or not the current wanted pid is high speed or low speed
      */
     public synchronized void reloadHighGearVelocityGains() {
         if (false) {
@@ -861,24 +811,26 @@ public class Drive extends Subsystem {
         }
     }
 
-    /** Resets masterLeft and materRight low gear position gains
-     *
+    /**
+     * Resets masterLeft and materRight low gear position gains
      */
     public synchronized void reloadLowGearPositionGains() {
         reloadLowGearPositionGainsForController(mLeftLeader);
         reloadLowGearPositionGainsForController(mRightLeader);
     }
-    /** sets a pid on a motor controller position (low gear)
+
+    /**
+     * sets a pid on a motor controller position (low gear)
      *
      * @param motorController to set the pid values on
      */
     public synchronized void reloadLowGearPositionGainsForController(CANSparkMax motorController) {
-        motorController.getPIDController().setP(Constants.kDriveLowGearPositionKp,kLowGearPositionControlSlot);
-        motorController.getPIDController().setI(Constants.kDriveLowGearPositionKi,kLowGearPositionControlSlot);
-        motorController.getPIDController().setD(Constants.kDriveLowGearPositionKd,kLowGearPositionControlSlot);
-        motorController.getPIDController().setFF(Constants.kDriveLowGearPositionKf,kLowGearPositionControlSlot);
-        motorController.getPIDController().setIZone(Constants.kDriveLowGearPositionIZone,kLowGearPositionControlSlot);
-        motorController.getPIDController().setSmartMotionMaxVelocity(Constants.kDriveLowGearMaxVelocity,kLowGearPositionControlSlot);
+        motorController.getPIDController().setP(Constants.kDriveLowGearPositionKp, kLowGearPositionControlSlot);
+        motorController.getPIDController().setI(Constants.kDriveLowGearPositionKi, kLowGearPositionControlSlot);
+        motorController.getPIDController().setD(Constants.kDriveLowGearPositionKd, kLowGearPositionControlSlot);
+        motorController.getPIDController().setFF(Constants.kDriveLowGearPositionKf, kLowGearPositionControlSlot);
+        motorController.getPIDController().setIZone(Constants.kDriveLowGearPositionIZone, kLowGearPositionControlSlot);
+        motorController.getPIDController().setSmartMotionMaxVelocity(Constants.kDriveLowGearMaxVelocity, kLowGearPositionControlSlot);
         motorController.getPIDController().setSmartMotionMaxAccel(Constants.kDriveLowGearMaxAccel, kLowGearPositionControlSlot);
         /*TODO:DO we need this?
 		motorController.configClosedloopRamp(Constants.kDriveLowGearPositionRampRate, Constants.kDriveTrainPIDSetTimeout);
@@ -888,19 +840,55 @@ public class Drive extends Subsystem {
 
     /**
      * Update velocity setpoint is used to send over our desired velocity from pure pursuit control
-     *
      */
     private synchronized void updateVelocitySetpoint(Kinematics.DriveVelocity driveVelocityIn) {
-            final double max_desired = Math.max(Math.abs(driveVelocityIn.left), Math.abs(driveVelocityIn.right));
-            final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
-                    ? Constants.kDriveHighGearMaxSetpoint / max_desired : 1.0;
+        final double max_desired = Math.max(Math.abs(driveVelocityIn.left), Math.abs(driveVelocityIn.right));
+        final double scale = max_desired > Constants.kDriveHighGearMaxSetpoint
+                ? Constants.kDriveHighGearMaxSetpoint / max_desired : 1.0;
 
-            mPeriodicIO.left_velo = convertInchesPerSecToNeoRPM(driveVelocityIn.left * scale);
-            mPeriodicIO.right_velo = convertInchesPerSecToNeoRPM(driveVelocityIn.right * scale);
+        mPeriodicIO.left_velo = convertInchesPerSecToNeoRPM(driveVelocityIn.left * scale);
+        mPeriodicIO.right_velo = convertInchesPerSecToNeoRPM(driveVelocityIn.right * scale);
         System.out.println(mPeriodicIO.left_velo);
     }
 
-    private static double inchesPerSecondToRPM(double inches_per_second) {
-        return (inches_per_second / (1/ Constants.kDriveHighGearInchesPerCount)) * 60;
+    public enum DriveControlState {
+        OPEN_LOOP, // open loop voltage control
+        PATH_FOLLOWING, // velocity PID control
+        DRIVE_TO_STALL,
+        PARKING_BRAKE,
+    }
+
+    public enum DriveCurrentLimitState {
+        UNTHROTTLED, THROTTLED
+    }
+
+    public static class PeriodicIO {
+        // INPUTS
+        public double timestamp;
+        public double left_voltage;
+        public double right_voltage;
+        public double left_position_ticks;
+        public double right_position_ticks;
+        public double previous_left_position_ticks;
+        public double previous_right_position_ticks;
+        public double left_distance;
+        public double right_distance;
+        public double left_velocity;
+        public double right_velocity;
+        public Rotation2d gyro_heading = Rotation2d.identity();
+        public Pose2d error = Pose2d.identity();
+
+        // OUTPUTS
+        public double left_demand;
+        public double right_demand;
+        public double left_accel;
+        public double right_accel;
+        public double left_velo;
+        public double right_velo;
+        public double left_feedforward;
+        public double right_feedforward;
+
+        public double rightParkingBrakePower;
+        public double leftParkingBrakePower;
     }
 }

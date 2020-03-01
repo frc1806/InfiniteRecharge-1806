@@ -23,7 +23,7 @@ public class TimedMobilityAction implements Action {
 
     @Override
     public void update() {
-        driveTrain.setOpenLoop(new DriveSignal(.4,.4));
+        driveTrain.setOpenLoop(new DriveSignal(-.4, -.4));
     }
 
     @Override

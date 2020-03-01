@@ -5,14 +5,16 @@ import com.team1806.frc2020.RobotState;
 public class RunActionAtAngleRange implements Action {
     double minRange;
     double maxRange;
+    double currentAngle;
     private Action action = null;
     private boolean hasRunAction = false;
-    double currentAngle;
-    public RunActionAtAngleRange(double minAngle, double maxAngle, Action action){
+
+    public RunActionAtAngleRange(double minAngle, double maxAngle, Action action) {
         this.action = action;
         this.minRange = minAngle;
         this.maxRange = maxAngle;
     }
+
     @Override
     public boolean isFinished() {
         return action.isFinished();
@@ -21,11 +23,11 @@ public class RunActionAtAngleRange implements Action {
     @Override
     public void update() {
         currentAngle = RobotState.getInstance().getLatestFieldToVehicle().getValue().getRotation().getDegrees();
-        if(currentAngle >= minRange && currentAngle <= maxRange && !hasRunAction){
+        if (currentAngle >= minRange && currentAngle <= maxRange && !hasRunAction) {
             action.start();
             hasRunAction = true;
         }
-        if(hasRunAction){
+        if (hasRunAction) {
             action.update();
         }
     }

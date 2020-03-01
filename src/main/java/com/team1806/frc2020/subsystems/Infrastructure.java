@@ -14,7 +14,8 @@ public class Infrastructure extends Subsystem {
 
     private boolean mIsManualControl = false;
 
-    private Infrastructure() {}
+    private Infrastructure() {
+    }
 
     public static Infrastructure getInstance() {
         if (mInstance == null) {
@@ -28,7 +29,8 @@ public class Infrastructure extends Subsystem {
     public void registerEnabledLoops(ILooper mEnabledLooper) {
         mEnabledLooper.register(new Loop() {
             @Override
-            public void onStart(double timestamp) {}
+            public void onStart(double timestamp) {
+            }
 
             @Override
             public void onLoop(double timestamp) {
@@ -44,7 +46,8 @@ public class Infrastructure extends Subsystem {
             }
 
             @Override
-            public void onStop(double timestamp) {}
+            public void onStop(double timestamp) {
+            }
         });
     }
 
@@ -69,7 +72,8 @@ public class Infrastructure extends Subsystem {
     }
 
     @Override
-    public void stop() {}
+    public void stop() {
+    }
 
     @Override
     public boolean checkSystem() {
@@ -77,5 +81,6 @@ public class Infrastructure extends Subsystem {
     }
 
     @Override
-    public void outputTelemetry() {}
+    public void outputTelemetry() {
+    }
 }

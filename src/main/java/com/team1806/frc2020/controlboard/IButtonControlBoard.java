@@ -1,13 +1,14 @@
 package com.team1806.frc2020.controlboard;
 
-import com.team1806.lib.geometry.Rotation2d;
-
 public interface IButtonControlBoard {
     void reset();
 
     double getJogTurret();
+
     double getJogHood();
+
     double getManualLaunchControl();
+
     boolean getWantsFlashlight();
 
     //Preset Launcher
@@ -31,6 +32,7 @@ public interface IButtonControlBoard {
 
     //Conveyor
     boolean getWantsUnjam();
+
     boolean getWantIntakeSweep();
 
 }

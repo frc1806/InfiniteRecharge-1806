@@ -15,12 +15,10 @@ import java.util.List;
  */
 public class Looper implements ILooper {
     public final double kPeriod = Constants.kLooperDt;
-
-    private boolean mRunning;
-
     private final Notifier mNotifier;
     private final List<Loop> mLoops;
     private final Object mTaskRunningLock = new Object();
+    private boolean mRunning;
     private double mTimestamp = 0;
     private double mDT = 0;
 

@@ -2,10 +2,6 @@ package com.team1806.frc2020.auto.actions;
 
 public class LambdaAction implements Action {
 
-    public interface VoidInterace {
-        void f();
-    }
-
     VoidInterace mF;
 
     public LambdaAction(VoidInterace f) {
@@ -18,7 +14,8 @@ public class LambdaAction implements Action {
     }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     @Override
     public boolean isFinished() {
@@ -26,5 +23,10 @@ public class LambdaAction implements Action {
     }
 
     @Override
-    public void done() {}
+    public void done() {
+    }
+
+    public interface VoidInterace {
+        void f();
+    }
 }

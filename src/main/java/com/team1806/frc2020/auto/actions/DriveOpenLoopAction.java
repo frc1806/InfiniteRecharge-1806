@@ -6,9 +6,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class DriveOpenLoopAction implements Action {
     private static final Drive mDrive = Drive.getInstance();
-
-    private double mStartTime;
     private final double mDuration, mLeft, mRight;
+    private double mStartTime;
 
     public DriveOpenLoopAction(double left, double right, double duration) {
         mDuration = duration;
@@ -23,7 +22,8 @@ public class DriveOpenLoopAction implements Action {
     }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     @Override
     public boolean isFinished() {

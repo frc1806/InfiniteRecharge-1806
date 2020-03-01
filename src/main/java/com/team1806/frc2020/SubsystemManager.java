@@ -19,7 +19,8 @@ public class SubsystemManager implements ILooper {
     private List<Loop> mLoops = new ArrayList<>();
     private boolean pauseLoops = false;
 
-    private SubsystemManager() {}
+    private SubsystemManager() {
+    }
 
     public static SubsystemManager getInstance() {
         if (mInstance == null) {
@@ -55,6 +56,26 @@ public class SubsystemManager implements ILooper {
         mAllSubsystems = Arrays.asList(allSubsystems);
     }
 
+    public void registerEnabledLoops(Looper enabledLooper) {
+        mAllSubsystems.forEach(s -> s.registerEnabledLoops(this));
+        enabledLooper.register(new EnabledLoop());
+    }
+
+    public void registerDisabledLoops(Looper disabledLooper) {
+        disabledLooper.register(new DisabledLoop());
+    }
+
+    public void zeroSensors() {
+        pauseLoops = true;
+        mAllSubsystems.forEach(s -> s.zeroSensors());
+        pauseLoops = false;
+    }
+
+    @Override
+    public void register(Loop loop) {
+        mLoops.add(loop);
+    }
+
     private class EnabledLoop implements Loop {
         @Override
         public void onStart(double timestamp) {
@@ -63,7 +84,7 @@ public class SubsystemManager implements ILooper {
 
         @Override
         public void onLoop(double timestamp) {
-            if(!pauseLoops) {
+            if (!pauseLoops) {
 
                 mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
                 mLoops.forEach(l -> l.onLoop(timestamp));
@@ -79,34 +100,16 @@ public class SubsystemManager implements ILooper {
 
     private class DisabledLoop implements Loop {
         @Override
-        public void onStart(double timestamp) {}
-
-        @Override
-        public void onLoop(double timestamp) {
-            if(!pauseLoops) mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
+        public void onStart(double timestamp) {
         }
 
         @Override
-        public void onStop(double timestamp) {}
-    }
+        public void onLoop(double timestamp) {
+            if (!pauseLoops) mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
+        }
 
-    public void registerEnabledLoops(Looper enabledLooper) {
-        mAllSubsystems.forEach(s -> s.registerEnabledLoops(this));
-        enabledLooper.register(new EnabledLoop());
-    }
-
-    public void registerDisabledLoops(Looper disabledLooper) {
-        disabledLooper.register(new DisabledLoop());
-    }
-
-    public void zeroSensors(){
-        pauseLoops = true;
-        mAllSubsystems.forEach(s-> s.zeroSensors());
-        pauseLoops = false;
-    }
-
-    @Override
-    public void register(Loop loop) {
-        mLoops.add(loop);
+        @Override
+        public void onStop(double timestamp) {
+        }
     }
 }

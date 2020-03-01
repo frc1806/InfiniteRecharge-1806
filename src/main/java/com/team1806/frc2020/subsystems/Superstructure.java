@@ -1,17 +1,17 @@
 package com.team1806.frc2020.subsystems;
 
-        import com.team1806.frc2020.Robot;
-        import com.team1806.frc2020.RobotState;
-        import com.team1806.frc2020.controlboard.ControlBoard;
-        import com.team1806.frc2020.game.Shot;
-        import com.team1806.frc2020.loops.ILooper;
-        import com.team1806.frc2020.loops.Loop;
-        import com.team1806.lib.geometry.Pose2d;
-        import com.team1806.lib.geometry.Rotation2d;
-        import com.team1806.lib.vision.AimingParameters;
-        import edu.wpi.first.wpilibj.Timer;
+import com.team1806.frc2020.Robot;
+import com.team1806.frc2020.RobotState;
+import com.team1806.frc2020.controlboard.ControlBoard;
+import com.team1806.frc2020.game.Shot;
+import com.team1806.frc2020.loops.ILooper;
+import com.team1806.frc2020.loops.Loop;
+import com.team1806.lib.geometry.Pose2d;
+import com.team1806.lib.geometry.Rotation2d;
+import com.team1806.lib.vision.AimingParameters;
+import edu.wpi.first.wpilibj.Timer;
 
-        import java.util.Optional;
+import java.util.Optional;
 
 /**
  * The superstructure subsystem is the overarching class containing all components of the superstructure: the
@@ -43,15 +43,12 @@ public class Superstructure extends Subsystem {
     private SuperstructureState mSuperstructureState;
     private boolean mWantInnerGoal = false;
 
-    private enum SuperstructureState {
-        kIdle,
-        kLaunching,
-        kPreparingShot,
-        kVisionLaunching,
-        kFrontIntake,
-        kBackIntake,
-        kUnjamming,
-        kIntakeSweep,
+    private Superstructure() {
+        mSuperstructureState = SuperstructureState.kIdle;
+        mFlywheel = Flywheel.GetInstance();
+        mTurret = Turret.GetInstance();
+        mHood = Hood.GetInstance();
+        mConveyor = Conveyor.GetInstance();
     }
 
     public synchronized static Superstructure getInstance() {
@@ -60,14 +57,6 @@ public class Superstructure extends Subsystem {
         }
 
         return mInstance;
-    }
-
-    private Superstructure() {
-        mSuperstructureState = SuperstructureState.kIdle;
-        mFlywheel = Flywheel.GetInstance();
-        mTurret = Turret.GetInstance();
-        mHood = Hood.GetInstance();
-        mConveyor = Conveyor.GetInstance();
     }
 
     @Override
@@ -82,13 +71,15 @@ public class Superstructure extends Subsystem {
             @Override
             public void onLoop(double timestamp) {
                 synchronized (Superstructure.this) {
-                    switch(mSuperstructureState){
+                    switch (mSuperstructureState) {
                         case kIdle:
                         default:
-                            if(!ControlBoard.GetInstance().getWantManualHood()) {
-                                mHood.setWantedAngle(0);
+                            if (!ControlBoard.GetInstance().getWantManualHood()) {
+                                if (!mHood.isRetracting()) {
+                                    mHood.setWantedAngle(0);
+                                }
                             }
-                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                            if (!ControlBoard.GetInstance().getWantManualTurret()) {
                                 mTurret.stop();
                             }
                             mFlywheel.stop();
@@ -99,10 +90,10 @@ public class Superstructure extends Subsystem {
                             //intentional no break
                         case kLaunching:
                             mFlywheel.setSpeed(mCurrentShot.getFlywheelSpeed());
-                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                            if (!ControlBoard.GetInstance().getWantManualTurret()) {
                                 mTurret.setWantedAngle(mCurrentShot.getTurretAngle());
                             }
-                            if(!ControlBoard.GetInstance().getWantManualHood()) {
+                            if (!ControlBoard.GetInstance().getWantManualHood()) {
                                 mHood.setWantedAngle(mCurrentShot.getHoodAngle());
                             }
                             mConveyor.setWantLaunch(mFlywheel.isReadyForLaunch()); //&& mTurret.isOnTarget() && mHood.isOnTarget());
@@ -110,31 +101,35 @@ public class Superstructure extends Subsystem {
                             break;
                         case kPreparingShot:
                             mFlywheel.setSpeed(mCurrentShot.getFlywheelSpeed());
-                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                            if (!ControlBoard.GetInstance().getWantManualTurret()) {
                                 mTurret.setWantedAngle(mCurrentShot.getTurretAngle());
                             }
-                            if(!ControlBoard.GetInstance().getWantManualHood()) {
+                            if (!ControlBoard.GetInstance().getWantManualHood()) {
                                 mHood.setWantedAngle(mCurrentShot.getHoodAngle());
                             }
                             break;
                         case kFrontIntake:
                             mFlywheel.stop();
-                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                            if (!ControlBoard.GetInstance().getWantManualTurret()) {
                                 mTurret.stop();
                             }
-                            if(!ControlBoard.GetInstance().getWantManualHood()) {
-                                mHood.stop();
+                            if (!ControlBoard.GetInstance().getWantManualHood()) {
+                                if (!mHood.isRetracting()) {
+                                    mHood.setWantedAngle(0);
+                                }
                             }
 
                             mConveyor.intakeFromFront();
                             break;
                         case kBackIntake:
                             mFlywheel.stop();
-                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                            if (!ControlBoard.GetInstance().getWantManualTurret()) {
                                 mTurret.stop();
                             }
-                            if(!ControlBoard.GetInstance().getWantManualHood()) {
-                                mHood.stop();
+                            if (!ControlBoard.GetInstance().getWantManualHood()) {
+                                if (!mHood.isRetracting()) {
+                                    mHood.setWantedAngle(0);
+                                }
                             }
 
                             mConveyor.intakeFromBack();
@@ -142,21 +137,25 @@ public class Superstructure extends Subsystem {
                         case kUnjamming:
                             mConveyor.setWantUnjam();
                             mFlywheel.stop();
-                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                            if (!ControlBoard.GetInstance().getWantManualTurret()) {
                                 mTurret.stop();
                             }
-                            if(!ControlBoard.GetInstance().getWantManualHood()) {
-                                mHood.stop();
+                            if (!ControlBoard.GetInstance().getWantManualHood()) {
+                                if (!mHood.isRetracting()) {
+                                    mHood.setWantedAngle(0);
+                                }
                             }
                             break;
                         case kIntakeSweep:
                             mConveyor.wantSweep();
                             mFlywheel.stop();
-                            if(!ControlBoard.GetInstance().getWantManualTurret()) {
+                            if (!ControlBoard.GetInstance().getWantManualTurret()) {
                                 mTurret.stop();
                             }
-                            if(!ControlBoard.GetInstance().getWantManualHood()) {
-                                mHood.stop();
+                            if (!ControlBoard.GetInstance().getWantManualHood()) {
+                                if (!mHood.isRetracting()) {
+                                    mHood.setWantedAngle(0);
+                                }
                             }
                             break;
 
@@ -218,85 +217,88 @@ public class Superstructure extends Subsystem {
     }
 
     @Override
-    public synchronized void outputTelemetry() {}
+    public synchronized void outputTelemetry() {
+    }
 
-    public synchronized void setWantShot(Shot wantedShot){
+    public synchronized void setWantShot(Shot wantedShot) {
         mCurrentShot = wantedShot;
-        if(mSuperstructureState != SuperstructureState.kLaunching)
-        {
+        if (mSuperstructureState != SuperstructureState.kLaunching) {
             mSuperstructureState = SuperstructureState.kLaunching;
         }
     }
 
-    public synchronized void setPrepareShot(Shot wantedShot){
+    public synchronized void setPrepareShot(Shot wantedShot) {
         mCurrentShot = wantedShot;
-        if(mSuperstructureState != SuperstructureState.kPreparingShot)
-        {
+        if (mSuperstructureState != SuperstructureState.kPreparingShot) {
             mSuperstructureState = SuperstructureState.kPreparingShot;
         }
     }
 
-    public synchronized  void setWantVisionShot(boolean innerGoal){
-        mWantInnerGoal  = innerGoal;
-        if(mSuperstructureState != SuperstructureState.kVisionLaunching)
-        {
+    public synchronized void setWantVisionShot(boolean innerGoal) {
+        mWantInnerGoal = innerGoal;
+        if (mSuperstructureState != SuperstructureState.kVisionLaunching) {
             mSuperstructureState = SuperstructureState.kVisionLaunching;
         }
     }
 
-    public synchronized  void setStopShooting(){
-        if(mSuperstructureState != SuperstructureState.kIdle){
+    public synchronized void setStopShooting() {
+        if (mSuperstructureState != SuperstructureState.kIdle) {
             mSuperstructureState = SuperstructureState.kIdle;
         }
     }
 
-    private synchronized Shot getShotFromVision(boolean innerGoal){
+    private synchronized Shot getShotFromVision(boolean innerGoal) {
         Pose2d goalPose = RobotState.getInstance().getVehicleToVisionTarget(Timer.getFPGATimestamp(), innerGoal);
         Shot visionShot = new Shot(goalPose.getRotation().getDegrees(), getHoodAngleFromDistance(goalPose.getTranslation().norm()), getFlywheelSpeedFromDistance(goalPose.getTranslation().norm()));
         return visionShot;
     }
 
-    public void frontIntake(){
-        if(mSuperstructureState != SuperstructureState.kFrontIntake){
+    public void frontIntake() {
+        if (mSuperstructureState != SuperstructureState.kFrontIntake) {
             mSuperstructureState = SuperstructureState.kFrontIntake;
         }
     }
 
-    public void backIntake(){
-        if(mSuperstructureState != SuperstructureState.kBackIntake){
+    public void backIntake() {
+        if (mSuperstructureState != SuperstructureState.kBackIntake) {
             mSuperstructureState = SuperstructureState.kBackIntake;
         }
     }
 
-    public void unjam(){
-        if (mSuperstructureState != SuperstructureState.kUnjamming){
+    public void unjam() {
+        if (mSuperstructureState != SuperstructureState.kUnjamming) {
             mSuperstructureState = SuperstructureState.kUnjamming;
         }
     }
 
-    public void setWantSweep(){
-        if(mSuperstructureState != SuperstructureState.kIntakeSweep){
+    public void setWantSweep() {
+        if (mSuperstructureState != SuperstructureState.kIntakeSweep) {
             mSuperstructureState = SuperstructureState.kIntakeSweep;
         }
     }
 
-    public boolean isDoneShooting(){
-       return mConveyor.isDoneShooting();
+    public boolean isDoneShooting() {
+        return mConveyor.isDoneShooting();
     }
 
-
-
-
-
-
-    private double getHoodAngleFromDistance(double distance){
+    private double getHoodAngleFromDistance(double distance) {
         return 0;
     }
 
-    private double getFlywheelSpeedFromDistance(double distance){
+    private double getFlywheelSpeedFromDistance(double distance) {
         return 3500;
     }
 
+    private enum SuperstructureState {
+        kIdle,
+        kLaunching,
+        kPreparingShot,
+        kVisionLaunching,
+        kFrontIntake,
+        kBackIntake,
+        kUnjamming,
+        kIntakeSweep,
+    }
 
 
 }

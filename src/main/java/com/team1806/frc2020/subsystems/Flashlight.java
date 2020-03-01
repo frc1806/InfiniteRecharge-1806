@@ -5,34 +5,26 @@ import edu.wpi.first.wpilibj.Relay;
 
 public class Flashlight extends Subsystem {
 
-    enum FlashlightState{
-        kOff, kOn
-    }
-
-    private class PeriodicIO{
-        public FlashlightState flashlightState;
-    }
-
     public static Flashlight FLASHLIGHT = new Flashlight();
     private PeriodicIO mPeriodicIO;
     private FlashlightState mFlashlightState;
-
     private Relay mRelay;
-
-    private Flashlight(){
+    private Flashlight() {
         mRelay = new Relay(Constants.kFlashlightRelayChannel, Relay.Direction.kForward);
         mPeriodicIO = new PeriodicIO();
         setState(FlashlightState.kOff);
     }
 
-    public static Flashlight GetInstance(){return FLASHLIGHT;}
+    public static Flashlight GetInstance() {
+        return FLASHLIGHT;
+    }
 
-    private void setState(FlashlightState state){
+    private void setState(FlashlightState state) {
         mPeriodicIO.flashlightState = state;
         mFlashlightState = state;
     }
 
-    public void setFlashlightOn(boolean On){
+    public void setFlashlightOn(boolean On) {
         if (On) {
             setState(FlashlightState.kOn);
         } else {
@@ -40,12 +32,12 @@ public class Flashlight extends Subsystem {
         }
     }
 
-    public void readPeriodicInputs(){
+    public void readPeriodicInputs() {
 
     }
 
     public void writePeriodicOutputs() {
-        switch (mPeriodicIO.flashlightState){
+        switch (mPeriodicIO.flashlightState) {
             default:
             case kOff:
                 mRelay.set(Relay.Value.kOff);
@@ -54,10 +46,9 @@ public class Flashlight extends Subsystem {
         }
     }
 
-    public void stop(){
+    public void stop() {
         setState(FlashlightState.kOff);
     }
-
 
     public boolean checkSystem() {
         return true;
@@ -65,6 +56,15 @@ public class Flashlight extends Subsystem {
 
     @Override
     public void outputTelemetry() {
+    }
+
+
+    enum FlashlightState {
+        kOff, kOn
+    }
+
+    private class PeriodicIO {
+        public FlashlightState flashlightState;
     }
 
 }

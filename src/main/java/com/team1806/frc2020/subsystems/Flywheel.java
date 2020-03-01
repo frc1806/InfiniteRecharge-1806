@@ -1,11 +1,9 @@
 package com.team1806.frc2020.subsystems;
 
 
-import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.team1806.frc2020.Constants;
-import com.team1806.frc2020.loops.ILooper;
 import com.team1806.lib.drivers.LazySparkMax;
 import com.team1806.lib.util.ReflectingCSVWriter;
 import edu.wpi.first.wpilibj.Timer;
@@ -14,35 +12,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Flywheel extends Subsystem {
 
 
-    enum FlywheelControlState {
-        kIdle, kSpeedControlled, kManualControlled
-    }
-
-    private class PeriodicIO {
-        public double timestamp;
-
-        //inputs read from robot
-        public double leaderVoltage;
-        public double followerVoltage;
-        public double leaderCurrent;
-        public double followerCurrent;
-        public double launchWheelRPM;
-
-        //outputs set to robot
-        public double launchWheelAccel;
-        public double wantedDemand;
-        public double wantedRPM;
-        public FlywheelControlState currentMode;
-    }
-
     public static Flywheel FLYWHEEL = new Flywheel();
     private LazySparkMax mSparkMaxLeader;
     private LazySparkMax mSparkMaxFollower;
     private FlywheelControlState mFlywheelControlState;
     private PeriodicIO mPeriodicIO;
-    private ReflectingCSVWriter<PeriodicIO  > mCSVWriter;
-
-    private Flywheel(){
+    private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
+    private Flywheel() {
         mSparkMaxLeader = new LazySparkMax(Constants.kFlywheelSparkMaxLeader);
         mSparkMaxFollower = new LazySparkMax(Constants.kFlywheelSparkMaxFollower);
         mSparkMaxLeader.setIdleMode(CANSparkMax.IdleMode.kCoast);
@@ -88,7 +64,7 @@ public class Flywheel extends Subsystem {
         return NEORPM * Constants.kFlywheelGearScalingFactor;
     }
 
-    private double convertLauncherSpeedToNEOSpeed(double launcherRPM){
+    private double convertLauncherSpeedToNEOSpeed(double launcherRPM) {
         return launcherRPM / Constants.kFlywheelGearScalingFactor;
     }
 
@@ -98,15 +74,16 @@ public class Flywheel extends Subsystem {
 
     /**
      * Sets the control state both on mFlywheelControlState and periodic io so the states are logged.
+     *
      * @param state the desired control state
      */
-    private void setControlState(FlywheelControlState state){
+    private void setControlState(FlywheelControlState state) {
         mPeriodicIO.currentMode = state;
         mFlywheelControlState = state;
     }
 
-    private void reloadGains(){
-        if(mSparkMaxLeader!= null && mSparkMaxLeader.getPIDController() != null){
+    private void reloadGains() {
+        if (mSparkMaxLeader != null && mSparkMaxLeader.getPIDController() != null) {
             mSparkMaxLeader.getPIDController().setP(Constants.kFlywheelSpeedControlkp);
             mSparkMaxLeader.getPIDController().setI(Constants.kFlywheelSpeedControlki);
             mSparkMaxLeader.getPIDController().setD(Constants.kFlywheelSpeedControlkd);
@@ -115,39 +92,37 @@ public class Flywheel extends Subsystem {
         }
     }
 
-    public void writeToLog(){
+    public void writeToLog() {
 
 
     }
 
-    public void readPeriodicInputs(){
+    public void readPeriodicInputs() {
         double lastTimestamp = mPeriodicIO.timestamp;
-       mPeriodicIO.timestamp = Timer.getFPGATimestamp();
-       mPeriodicIO.leaderVoltage = mSparkMaxLeader.getBusVoltage() * mSparkMaxLeader.getAppliedOutput();
-       mPeriodicIO.followerVoltage = mSparkMaxFollower.getBusVoltage() * mSparkMaxFollower.getAppliedOutput();
-       mPeriodicIO.leaderCurrent = mSparkMaxLeader.getOutputCurrent();
-       mPeriodicIO.followerCurrent = mSparkMaxFollower.getOutputCurrent();
-       double lastVelocity = mPeriodicIO.launchWheelRPM;
-       mPeriodicIO.launchWheelRPM = convertNEOSpeedtoLauncherSpeed(mSparkMaxLeader.getEncoder().getVelocity());
+        mPeriodicIO.timestamp = Timer.getFPGATimestamp();
+        mPeriodicIO.leaderVoltage = mSparkMaxLeader.getBusVoltage() * mSparkMaxLeader.getAppliedOutput();
+        mPeriodicIO.followerVoltage = mSparkMaxFollower.getBusVoltage() * mSparkMaxFollower.getAppliedOutput();
+        mPeriodicIO.leaderCurrent = mSparkMaxLeader.getOutputCurrent();
+        mPeriodicIO.followerCurrent = mSparkMaxFollower.getOutputCurrent();
+        double lastVelocity = mPeriodicIO.launchWheelRPM;
+        mPeriodicIO.launchWheelRPM = convertNEOSpeedtoLauncherSpeed(mSparkMaxLeader.getEncoder().getVelocity());
 
 
+        mPeriodicIO.launchWheelAccel = (mPeriodicIO.launchWheelRPM - lastVelocity) / (mPeriodicIO.timestamp - lastTimestamp);
 
-
-       mPeriodicIO.launchWheelAccel = (mPeriodicIO.launchWheelRPM - lastVelocity)/(mPeriodicIO.timestamp - lastTimestamp );
-
-       if (mCSVWriter != null) {
-           mCSVWriter.add(mPeriodicIO);
-       }
+        if (mCSVWriter != null) {
+            mCSVWriter.add(mPeriodicIO);
+        }
 
     }
 
     public void writePeriodicOutputs() {
-        switch(mPeriodicIO.currentMode){
+        switch (mPeriodicIO.currentMode) {
             default:
             case kIdle:
                 mSparkMaxLeader.set(0);
 
-                    break;
+                break;
             case kSpeedControlled:
                 mSparkMaxLeader.getPIDController().setReference(convertLauncherSpeedToNEOSpeed(mPeriodicIO.wantedRPM), ControlType.kVelocity);
                 break;
@@ -167,7 +142,7 @@ public class Flywheel extends Subsystem {
 
     }
 
-    public boolean checkSystem(){
+    public boolean checkSystem() {
         return true;
 
     }
@@ -183,17 +158,38 @@ public class Flywheel extends Subsystem {
 
     }
 
-    public synchronized void startLogging(){
+    public synchronized void startLogging() {
         if (mCSVWriter == null) {
             mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/FLYWHEEL-LOGS.csv", PeriodicIO.class);
         }
     }
 
-    public synchronized void stopLogging(){
+    public synchronized void stopLogging() {
         if (mCSVWriter != null) {
             mCSVWriter.flush();
             mCSVWriter = null;
         }
+    }
+
+    enum FlywheelControlState {
+        kIdle, kSpeedControlled, kManualControlled
+    }
+
+    private class PeriodicIO {
+        public double timestamp;
+
+        //inputs read from robot
+        public double leaderVoltage;
+        public double followerVoltage;
+        public double leaderCurrent;
+        public double followerCurrent;
+        public double launchWheelRPM;
+
+        //outputs set to robot
+        public double launchWheelAccel;
+        public double wantedDemand;
+        public double wantedRPM;
+        public FlywheelControlState currentMode;
     }
 
 }

@@ -8,10 +8,12 @@ public class RunActionAtAngle implements Action {
     private double lastAngle;
     private Action action = null;
     private boolean hasRunAction = false;
-    public RunActionAtAngle(double angle, Action action){
+
+    public RunActionAtAngle(double angle, Action action) {
         this.triggerAngle = angle;
         this.action = action;
     }
+
     @Override
     public boolean isFinished() {
         return action.isFinished();
@@ -20,11 +22,11 @@ public class RunActionAtAngle implements Action {
     @Override
     public void update() {
         currentAngle = RobotState.getInstance().getLatestFieldToVehicle().getValue().getRotation().getDegrees();
-        if((lastAngle <= triggerAngle && currentAngle > triggerAngle) || (currentAngle <= triggerAngle && lastAngle > triggerAngle) && !hasRunAction){
+        if ((lastAngle <= triggerAngle && currentAngle > triggerAngle) || (currentAngle <= triggerAngle && lastAngle > triggerAngle) && !hasRunAction) {
             action.start();
             hasRunAction = true;
         }
-        if(hasRunAction){
+        if (hasRunAction) {
             action.update();
         }
         lastAngle = currentAngle;

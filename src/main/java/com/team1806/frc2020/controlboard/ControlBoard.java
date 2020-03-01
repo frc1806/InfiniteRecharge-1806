@@ -1,22 +1,20 @@
 package com.team1806.frc2020.controlboard;
 
-import com.team1806.frc2020.Constants;
-
-public class ControlBoard implements IControlBoard{
+public class ControlBoard implements IControlBoard {
 
     private static final ControlBoard CONTROL_BOARD = new ControlBoard();
     private final IDriveControlBoard mDriveControlBoard;
     private final IButtonControlBoard mButtonControlBoard;
     private final IDebugControlBoard mDebugControlBoard;
 
-    public static ControlBoard GetInstance(){
-        return CONTROL_BOARD;
-    }
-
     private ControlBoard() {
         mDriveControlBoard = GamepadDriveControlBoard.getInstance();
         mButtonControlBoard = GamepadButtonControlBoard.getInstance();
         mDebugControlBoard = GamepadDebugControlBoard.getInstance();
+    }
+
+    public static ControlBoard GetInstance() {
+        return CONTROL_BOARD;
     }
 
     @Override
@@ -56,7 +54,7 @@ public class ControlBoard implements IControlBoard{
 
     @Override
     public boolean getCloseShot() {
-        return mButtonControlBoard.getCloseShot();
+        return mButtonControlBoard.getCloseShot() || mDriveControlBoard.getCloseShot();
     }
 
     @Override
@@ -90,7 +88,9 @@ public class ControlBoard implements IControlBoard{
     }
 
     @Override
-    public boolean getWantsUnjam() { return mButtonControlBoard.getWantsUnjam(); }
+    public boolean getWantsUnjam() {
+        return mButtonControlBoard.getWantsUnjam();
+    }
 
     @Override
     public double getThrottle() {
@@ -128,7 +128,9 @@ public class ControlBoard implements IControlBoard{
     }
 
     @Override
-    public boolean getWantsPark(){return mDriveControlBoard.getWantsPark();}
+    public boolean getWantsPark() {
+        return mDriveControlBoard.getWantsPark();
+    }
 
     @Override
     public boolean getWantsAutoSteer() {
@@ -136,18 +138,29 @@ public class ControlBoard implements IControlBoard{
     }
 
     @Override
-    public boolean getWantVisionShot(){
+    public boolean getWantVisionShot() {
         return mDriveControlBoard.getWantVisionShot();
     }
 
     @Override
-    public boolean getWantsFlashlight(){ return mButtonControlBoard.getWantsFlashlight(); }
+    public boolean getWantsHighGear() {
+        return mDriveControlBoard.getWantsHighGear();
+    }
 
     @Override
-    public boolean getWantTrigger(){return mDebugControlBoard.getWantTrigger(); }
+    public boolean getWantsFlashlight() {
+        return mButtonControlBoard.getWantsFlashlight();
+    }
 
     @Override
-    public boolean getWantIntakeSweep(){return mButtonControlBoard.getWantIntakeSweep();}
+    public boolean getWantTrigger() {
+        return mDebugControlBoard.getWantTrigger();
+    }
+
+    @Override
+    public boolean getWantIntakeSweep() {
+        return mButtonControlBoard.getWantIntakeSweep();
+    }
 
     @Override
     public void setRumble(boolean on) {

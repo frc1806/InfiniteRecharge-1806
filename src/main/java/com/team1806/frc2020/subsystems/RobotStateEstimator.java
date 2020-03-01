@@ -18,6 +18,9 @@ public class RobotStateEstimator extends Subsystem {
     private double prev_timestamp_ = -1.0;
     private Rotation2d prev_heading_ = null;
 
+    private RobotStateEstimator() {
+    }
+
     public static RobotStateEstimator getInstance() {
         if (mInstance == null) {
             mInstance = new RobotStateEstimator();
@@ -26,11 +29,32 @@ public class RobotStateEstimator extends Subsystem {
         return mInstance;
     }
 
-    private RobotStateEstimator() {}
-
     @Override
     public void registerEnabledLoops(ILooper looper) {
         looper.register(new EnabledLoop());
+    }
+
+    @Override
+    public void stop() {
+    }
+
+    @Override
+    public boolean checkSystem() {
+        return true;
+    }
+
+    @Override
+    public void outputTelemetry() {
+        mRobotState.outputToSmartDashboard();
+    }
+
+    @Override
+    public void zeroSensors() {
+        mRobotState.reset();
+        left_encoder_prev_distance_ = 0;
+        right_encoder_prev_distance_ = 0;
+        prev_timestamp_ = Timer.getFPGATimestamp();
+        prev_heading_ = null;
     }
 
     private class EnabledLoop implements Loop {
@@ -71,28 +95,7 @@ public class RobotStateEstimator extends Subsystem {
         }
 
         @Override
-        public void onStop(double timestamp) {}
-    }
-
-    @Override
-    public void stop() {}
-
-    @Override
-    public boolean checkSystem() {
-        return true;
-    }
-
-    @Override
-    public void outputTelemetry() {
-        mRobotState.outputToSmartDashboard();
-    }
-
-    @Override
-    public void zeroSensors(){
-        mRobotState.reset();
-        left_encoder_prev_distance_ = 0;
-        right_encoder_prev_distance_ = 0;
-        prev_timestamp_ = Timer.getFPGATimestamp();
-        prev_heading_ = null;
+        public void onStop(double timestamp) {
+        }
     }
 }

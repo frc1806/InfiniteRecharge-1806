@@ -1,15 +1,12 @@
 package com.team1806.frc2020;
 
-import com.team1806.lib.drivers.LazySparkMax;
 import com.team1806.lib.geometry.Pose2d;
 import com.team1806.lib.geometry.Rotation2d;
 import com.team1806.lib.geometry.Translation2d;
-
 import edu.wpi.first.wpilibj.SPI;
 
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 
 /**
@@ -47,7 +44,7 @@ public class Constants {
     public static final double kBumperHeight = 6.6 + 2.0; // inches to ground + 2 in buffer
 
     public static final double kCollisionJerkThreshold = 1.0;
-    
+
     //driveToStall
     public final static double kStallTimeout = 2;
     public final static double kStallWaitPeriod = .3;
@@ -62,7 +59,7 @@ public class Constants {
     public static final double kMaxGoalTrackSmoothingTime = 2.0;
     public static final double kMaxGoalTrackAge = 1.0;
     public static final double kMaxTrackerDistance = 115.0;
-    public static final Rotation2d kHorizontalPlaneToCameraAngle = new Rotation2d(3.1415/4.0, false);
+    public static final Rotation2d kHorizontalPlaneToCameraAngle = new Rotation2d(3.1415 / 4.0, false);
     public static final Pose2d kCameraToRobotCenterOffset = new Pose2d(new Translation2d(8.0, 11.0), new Rotation2d(0, false));
     public static final double kCameraLensHeight = 23.0;
     public static final double kTrackStabilityWeight = 0.0;
@@ -89,7 +86,6 @@ public class Constants {
     public static final Integer[] kRightDriveFollowerIds = {6, 7, 8};
 
 
-
     public static final double kDriveEncoderPPR = 1000.0;
 
     public static final double kMinLookAhead = 12.0; // inches
@@ -100,15 +96,15 @@ public class Constants {
     public static final double kDeltaLookAheadSpeed = kMaxLookAheadSpeed - kMinLookAheadSpeed;
 
     public static final double kInertiaSteeringGain = 0.0; // angular velocity command is multiplied by this gain *
-                                                     // our speed
-                                                     // in inches per sec
-                                                     public final static double kSegmentCompletionTolerance = 0.5; // inches
+    // our speed
+    // in inches per sec
+    public final static double kSegmentCompletionTolerance = 0.5; // inches
     public final static double kPathFollowingMaxAccel = 30; // inches per second^2
     public final static double kPathFollowingMaxVel = 196; // inches per second
     public final static double kPathFollowingProfileKp = 0.25; //.99
     public final static double kPathFollowingProfileKi = 0.00; //.049
     public final static double kPathFollowingProfileKv = 0.00013; //0.000013
-    public final static double kPathFollowingProfileKffv =1.2; //1.2
+    public final static double kPathFollowingProfileKffv = 1.2; //1.2
     public final static double kPathFollowingProfileKffa = 0.05; //.05
     public final static double kPathFollowingProfileKs = 0.1801 / 12.0; //power to break static friction
     public final static double kPathFollowingGoalPosTolerance = 1.5;
@@ -135,7 +131,7 @@ public class Constants {
     // Units: setpoint, error, and output are in counts per tenth of a second
     public final static double kDriveHighGearVelocityKp = .0002; //.0004;//.08;//.16; //1.01;
     public final static double kDriveHighGearVelocityKi = 0.000000000;
-    public final static double kDriveHighGearVelocityKd =  0.002; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
+    public final static double kDriveHighGearVelocityKd = 0.002; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
     public final static double kDriveHighGearVelocityKf = 0.00004;//.0175; //.035; //0.21; //.025;
     public final static int kDriveHighGearVelocityIZone = 0;
     public final static double kDriveHighGearVelocityRampRate = .1;
@@ -184,7 +180,7 @@ public class Constants {
     // solenoids
     public static final int kPCMId = 0;
     public static final int kShifterHighSolenoidId = 4;
-    public static final int kShifterLowSolenoidId=3;
+    public static final int kShifterLowSolenoidId = 3;
     public static final int kFrontIntakeFowardChannel = 5;
     public static final int kFrontIntakeReverseChannel = 2;
     public static final int kBackIntakeFowardChannel = 6;
@@ -217,8 +213,8 @@ public class Constants {
     //hood
     public static final int kHoodMotorId = 61;
     public static final double kHoodDegreesPerCount = 1 / 22.9;
-    public static final double kHoodPositionControlKp = .75;
-    public static final double kHoodPositionControlKi = 0.001;
+    public static final double kHoodPositionControlKp = 4.0;
+    public static final double kHoodPositionControlKi = 0.000;
     public static final double kHoodPositionControlKd = 0;
     public static final double kHoodPositionControlKf = 0;
     public static final double kHoodPositionMin = 0;
@@ -252,12 +248,12 @@ public class Constants {
     public static final double kBottomConveyorVelocityControlKd = 0;
     public static final double kBottomConveyorVelocityControlKf = 0;
 
-    public static final double kOuterIntakeVelocityControlKp = 0;
+    public static final double kOuterIntakeVelocityControlKp = 3.0;
     public static final double kOuterIntakeVelocityControlKi = 0;
     public static final double kOuterIntakeVelocityControlKd = 0;
     public static final double kOuterIntakeVelocityControlKf = 0;
 
-    public static final double kOuterIntakeSpeed = 0.0;
+    public static final double kOuterIntakeSpeed = 1.0;
     public static final double kTriggerLaunchSpeed = 10000.0;
     public static final double kTopLaunchSpeed = 150.0;
     public static final double kBottomLaunchSpeed = 150.0;
@@ -278,28 +274,7 @@ public class Constants {
 
     //Flashlight
     public static final int kFlashlightRelayChannel = 0;
-
-
-    public enum DriveMotorsPerSide{
-
-        ONE(1),
-        TWO(2),
-        THREE(3),
-        FOUR(4),
-        FIVE(5);
-
-        private int mMotorsPerSide;
-
-        private DriveMotorsPerSide(int motorsPerSide){
-            mMotorsPerSide = motorsPerSide;
-        }
-        public int getMotorsPerSide(){
-            return mMotorsPerSide;
-        }
-    };
-
     public static final DriveMotorsPerSide kDriveMotorsPerSide = DriveMotorsPerSide.THREE;
-
 
     /*
      * @return the MAC address of the robot
@@ -329,5 +304,25 @@ public class Constants {
         }
 
         return "";
+    }
+
+
+    public enum DriveMotorsPerSide {
+
+        ONE(1),
+        TWO(2),
+        THREE(3),
+        FOUR(4),
+        FIVE(5);
+
+        private int mMotorsPerSide;
+
+        DriveMotorsPerSide(int motorsPerSide) {
+            mMotorsPerSide = motorsPerSide;
+        }
+
+        public int getMotorsPerSide() {
+            return mMotorsPerSide;
+        }
     }
 }

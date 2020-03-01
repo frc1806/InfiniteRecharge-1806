@@ -12,7 +12,8 @@ public class AutoModeExecutor {
     private AutoModeBase mAutoMode = null;
     private Thread mThread = null;
 
-    public AutoModeExecutor() {}
+    public AutoModeExecutor() {
+    }
 
     public static AutoModeExecutor getInstance() {
         if (mInstance == null) {
@@ -20,18 +21,6 @@ public class AutoModeExecutor {
         }
 
         return mInstance;
-    }
-
-    public void setAutoMode(AutoModeBase new_auto_mode) {
-        mAutoMode = new_auto_mode;
-        mThread = new Thread(new CrashTrackingRunnable() {
-            @Override
-            public void runCrashTracked() {
-                if (mAutoMode != null) {
-                    mAutoMode.run();
-                }
-            }
-        });
     }
 
     public void start() {
@@ -62,6 +51,18 @@ public class AutoModeExecutor {
 
     public AutoModeBase getAutoMode() {
         return mAutoMode;
+    }
+
+    public void setAutoMode(AutoModeBase new_auto_mode) {
+        mAutoMode = new_auto_mode;
+        mThread = new Thread(new CrashTrackingRunnable() {
+            @Override
+            public void runCrashTracked() {
+                if (mAutoMode != null) {
+                    mAutoMode.run();
+                }
+            }
+        });
     }
 
     public boolean isInterrupted() {

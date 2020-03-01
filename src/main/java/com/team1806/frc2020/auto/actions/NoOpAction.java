@@ -3,10 +3,12 @@ package com.team1806.frc2020.auto.actions;
 public class NoOpAction implements Action {
 
     @Override
-    public void start() {}
+    public void start() {
+    }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     @Override
     public boolean isFinished() {
@@ -14,5 +16,6 @@ public class NoOpAction implements Action {
     }
 
     @Override
-    public void done() {}
+    public void done() {
+    }
 }

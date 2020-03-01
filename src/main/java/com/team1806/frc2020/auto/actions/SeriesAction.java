@@ -8,8 +8,8 @@ import java.util.List;
  * Executes one action at a time. Useful as a member of {@link ParallelAction}
  */
 public class SeriesAction implements Action {
-    private Action mCurrentAction;
     private final ArrayList<Action> mRemainingActions;
+    private Action mCurrentAction;
 
     public SeriesAction(List<Action> actions) {
         mRemainingActions = new ArrayList<>(actions);
@@ -21,7 +21,8 @@ public class SeriesAction implements Action {
     }
 
     @Override
-    public void start() {}
+    public void start() {
+    }
 
     @Override
     public void update() {
@@ -48,5 +49,6 @@ public class SeriesAction implements Action {
     }
 
     @Override
-    public void done() {}
+    public void done() {
+    }
 }
