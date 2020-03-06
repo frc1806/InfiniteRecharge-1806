@@ -32,6 +32,7 @@ public class Conveyor extends Subsystem {
     private ColorWheelReader mColorWheelReader;
     private Rev2mDistanceSensor mDistanceSensor;
     private Drive mDrive = Drive.getInstance();
+
     private Conveyor() {
         mPeriodicIO = new PeriodicIO();
         mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kUnknown;
@@ -57,14 +58,17 @@ public class Conveyor extends Subsystem {
         mTopCANTalonSRX.setNeutralMode(NeutralMode.Brake);
         mBottomCANTalonSRX.setNeutralMode(NeutralMode.Brake);
 
-        mOuterIntakeSparkMAX.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        mOuterIntakeSparkMAX.setIdleMode(CANSparkMax.IdleMode.kCoast);
         mOuterIntakeSparkMAX.setSmartCurrentLimit(Constants.kOuterIntakeSmartCurrentLimit);
         mOuterIntakeSparkMAX.burnFlash();
+        mPeriodicIO.currentIntakingSpeed = mOuterIntakeSparkMAX.getEncoder().getVelocity();
+
 
         mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kUnknown;
 
         mTriggerCANTalonSRX.setInverted(false);
         mBottomCANTalonSRX.setInverted(true);
+        mOuterIntakeSparkMAX.setInverted(true);
 
 
         triggerReloadGains();
@@ -335,6 +339,7 @@ public class Conveyor extends Subsystem {
         SmartDashboard.putBoolean("Back Intake Is Extended", mPeriodicIO.backIsExtended);
         SmartDashboard.putNumber("Distance Sensor Reading (Inches)", mPeriodicIO.distance);
         SmartDashboard.putNumber("Conveyor Top Encoder Clicks", mPeriodicIO.currentTopEncoderClicks);
+        SmartDashboard.putNumber("Current Intaking Speed", mPeriodicIO.currentIntakingSpeed);
 
         if (mCSVWriter != null) {
             mCSVWriter.write();
@@ -466,6 +471,8 @@ public class Conveyor extends Subsystem {
         public boolean isReadyToLaunch;
 
         public int currentTopEncoderClicks;
+
+        public double currentIntakingSpeed;
 
     }
 

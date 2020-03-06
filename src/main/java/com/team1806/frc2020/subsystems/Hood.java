@@ -57,6 +57,9 @@ public class Hood extends Subsystem {
             mIsAngleValid = false;
             mPeriodicIO.wantedAngle = Constants.kHoodPositionMin;
         }
+        if(mPeriodicIO.currentAngle > 2.0 && mPeriodicIO.wantedAngle <=0.0 ){
+            setWantRetract();
+        }
     }
 
     public void setManualControl(double wantedPosition) {
@@ -85,7 +88,7 @@ public class Hood extends Subsystem {
     }
 
     public void writePeriodicOutputs() {
-        if (mPeriodicIO.currentAngle <= Constants.kHoodPositionMin - 5 && mHoodControlState != HoodControlState.kManualControl) {
+        if (mPeriodicIO.currentAngle <= Constants.kHoodPositionMin - 8 && mHoodControlState != HoodControlState.kManualControl) {
             mCANTalonSRX.set(ControlMode.PercentOutput, .2);
         } else if (mPeriodicIO.currentAngle >= Constants.kHoodPositionMax + 5 && mHoodControlState != HoodControlState.kManualControl) {
             mCANTalonSRX.set(ControlMode.PercentOutput, -.2);
@@ -119,8 +122,8 @@ public class Hood extends Subsystem {
                     break;
 
                 case kRetract:
-                    mCANTalonSRX.set(ControlMode.Position, ConvertAngleToEncoderClicks(-7.0));
-                    if (mPeriodicIO.currentAngle < -4.9) {
+                    mCANTalonSRX.set(ControlMode.Position, ConvertAngleToEncoderClicks(-9.0));
+                    if (mPeriodicIO.currentAngle < -7.5) {
                         setWantedAngle(0.0);
                     }
                     break;

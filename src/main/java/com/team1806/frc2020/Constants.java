@@ -189,9 +189,9 @@ public class Constants {
     // flywheel
     public static final int kFlywheelSparkMaxLeader = 30;
     public static final int kFlywheelSparkMaxFollower = 31;
-    public static final double kFlywheelSpeedControlkp = .009;
+    public static final double kFlywheelSpeedControlkp = .011;
     public static final double kFlywheelSpeedControlki = 0;
-    public static final double kFlywheelSpeedControlkd = 0;
+    public static final double kFlywheelSpeedControlkd = 0.001;
     public static final double kFlywheelSpeedControlkf = 0.01;
     public static final double kFlywheelAcceptableSpeedRange = 100;
     public static final double kFlywheelAcceptableAccleration = 100;
