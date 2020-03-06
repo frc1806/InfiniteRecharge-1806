@@ -308,7 +308,9 @@ public class Robot extends TimedRobot {
             mSuperstructure.unjam();
         } else if (mControlBoard.getWantIntakeSweep()) {
             mSuperstructure.setWantSweep();
-        } else {
+        } else if (mControlBoard.getWantsAgitate()){
+            mSuperstructure.setWantAgitate();
+        } else{
             mSuperstructure.stop();
         }
 

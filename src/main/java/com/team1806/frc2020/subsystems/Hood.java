@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team1806.frc2020.Constants;
 import com.team1806.frc2020.controlboard.ControlBoard;
+import com.team1806.lib.util.CircularBuffer;
 import com.team1806.lib.util.ReflectingCSVWriter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,6 +20,7 @@ public class Hood extends Subsystem {
     private PeriodicIO mPeriodicIO;
     private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
     private boolean mIsAngleValid;
+    private CircularBuffer ampsBuffer = new CircularBuffer(10);
     private Hood() {
         mHoodControlState = HoodControlState.kIdle;
 
@@ -141,6 +143,7 @@ public class Hood extends Subsystem {
         double lastTimestamp = mPeriodicIO.timestamp;
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
         mPeriodicIO.currentSpeed = mCANTalonSRX.getSelectedSensorVelocity();
+        ampsBuffer.addValue(mPeriodicIO.motorAmps);
 
         if (mCSVWriter != null) {
             mCSVWriter.add(mPeriodicIO);
@@ -171,6 +174,7 @@ public class Hood extends Subsystem {
         SmartDashboard.putNumber("Current Hood Encoder Clicks", mPeriodicIO.currentEncoderClicks);
         SmartDashboard.putString("Hood Control State", mPeriodicIO.HoodState.toString());
         SmartDashboard.putNumber("Current Hood Motor AMPS", mPeriodicIO.motorAmps);
+        SmartDashboard.putNumber("Smoothed Hood Motor AMPS", ampsBuffer.getAverage());
 
 
         if (mCSVWriter != null) {

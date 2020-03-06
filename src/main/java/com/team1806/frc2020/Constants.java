@@ -189,10 +189,10 @@ public class Constants {
     // flywheel
     public static final int kFlywheelSparkMaxLeader = 30;
     public static final int kFlywheelSparkMaxFollower = 31;
-    public static final double kFlywheelSpeedControlkp = .011;
+    public static final double kFlywheelSpeedControlkp = .01;
     public static final double kFlywheelSpeedControlki = 0;
     public static final double kFlywheelSpeedControlkd = 0.001;
-    public static final double kFlywheelSpeedControlkf = 0.01;
+    public static final double kFlywheelSpeedControlkf = 0.012;
     public static final double kFlywheelAcceptableSpeedRange = 100;
     public static final double kFlywheelAcceptableAccleration = 100;
     public static final double kFlywheelGearScalingFactor = 35.0 / 18.0;
@@ -233,10 +233,12 @@ public class Constants {
 
     public static final double kNEORPMToControlPanelRPMConversionFactor = 1.0;
 
-    public static final double kTriggerConveyorVelocityControlKp = 0;
+    public static final double kConveyorAgitationsPerSecond = 7;
+
+    public static final double kTriggerConveyorVelocityControlKp = 0.00016;
     public static final double kTriggerConveyorVelocityControlKi = 0;
     public static final double kTriggerConveyorVelocityControlKd = 0;
-    public static final double kTriggerConveyorVelocityControlKf = 0;
+    public static final double kTriggerConveyorVelocityControlKf = 0.09;
 
     public static final double kTopConveyorVelocityControlKp = 0;
     public static final double kTopConveyorVelocityControlKi = 0;

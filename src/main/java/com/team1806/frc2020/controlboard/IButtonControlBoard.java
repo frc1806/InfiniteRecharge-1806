@@ -35,4 +35,6 @@ public interface IButtonControlBoard {
 
     boolean getWantIntakeSweep();
 
+    boolean getWantsAgitate();
+
 }

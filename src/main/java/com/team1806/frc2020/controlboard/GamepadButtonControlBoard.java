@@ -111,4 +111,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
         return mController.getDPad() == 270;
     }
 
+    @Override
+    public boolean getWantsAgitate(){return mController.getDPad() == 90;}
+
 }

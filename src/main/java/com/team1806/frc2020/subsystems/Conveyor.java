@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Conveyor extends Subsystem {
 
     private static Conveyor CONVEYOR = new Conveyor();
-    private final boolean SPEED_CONTROL_TRIGGER = false;
+    private final boolean SPEED_CONTROL_TRIGGER = true;
     private final boolean SPEED_CONTROL_UPPER = false;
     private final boolean SPEED_CONTROL_BOTTOM = false;
     private boolean mWantManualTrigger;
@@ -67,6 +67,7 @@ public class Conveyor extends Subsystem {
         mPeriodicIO.wantedColor = ColorWheelReader.MatchedColor.kUnknown;
 
         mTriggerCANTalonSRX.setInverted(false);
+        mTriggerCANTalonSRX.setSensorPhase(true);
         mBottomCANTalonSRX.setInverted(true);
         mOuterIntakeSparkMAX.setInverted(true);
 
@@ -247,6 +248,12 @@ public class Conveyor extends Subsystem {
 
             case kSweepIntake:
                 mOuterIntakeSparkMAX.set(ControlType.kDutyCycle, ((mDrive.getLeftLinearVelocity() + mDrive.getRightLinearVelocity()) / 2 > 0 ? Constants.kOuterIntakeSpeed : -Constants.kOuterIntakeSpeed));
+                break;
+            case kAgitate:
+                double dAgitatePower = Math.sin(Constants.kConveyorAgitationsPerSecond * (2*Math.PI)* Timer.getFPGATimestamp());
+                mTopCANTalonSRX.set(ControlMode.PercentOutput, dAgitatePower);
+                mBottomCANTalonSRX.set(ControlMode.PercentOutput, -dAgitatePower);
+                break;
         }
     }
 
@@ -340,6 +347,7 @@ public class Conveyor extends Subsystem {
         SmartDashboard.putNumber("Distance Sensor Reading (Inches)", mPeriodicIO.distance);
         SmartDashboard.putNumber("Conveyor Top Encoder Clicks", mPeriodicIO.currentTopEncoderClicks);
         SmartDashboard.putNumber("Current Intaking Speed", mPeriodicIO.currentIntakingSpeed);
+        SmartDashboard.putNumber("Current Trigger Wheel Speed", mPeriodicIO.triggerCurrentVelocity);
 
         if (mCSVWriter != null) {
             mCSVWriter.write();
@@ -425,13 +433,15 @@ public class Conveyor extends Subsystem {
         setControlState(ConveyorControlState.kJammed);
     }
 
+    public void setWantAgitate(){setControlState(ConveyorControlState.kAgitate);}
+
     public boolean isDoneShooting() {
         return mPeriodicIO.isDoneShooting;
     }
 
     enum ConveyorControlState {
 
-        kIdle, kFront, kBack, kLaunching, kPositionalControl, kRotationalControl, kJammed, kSweepIntake,
+        kIdle, kFront, kBack, kLaunching, kPositionalControl, kRotationalControl, kJammed, kSweepIntake, kAgitate
     }
 
     private class PeriodicIO {

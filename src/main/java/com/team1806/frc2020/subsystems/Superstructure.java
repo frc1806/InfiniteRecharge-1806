@@ -158,7 +158,18 @@ public class Superstructure extends Subsystem {
                                 }
                             }
                             break;
-
+                        case kAgitate:
+                            mConveyor.setWantAgitate();
+                            mFlywheel.stop();
+                            if (!ControlBoard.GetInstance().getWantManualTurret()) {
+                                mTurret.stop();
+                            }
+                            if (!ControlBoard.GetInstance().getWantManualHood()) {
+                                if (!mHood.isRetracting()) {
+                                    mHood.setWantedAngle(0);
+                                }
+                            }
+                            break;
                     }
                 }
             }
@@ -276,6 +287,11 @@ public class Superstructure extends Subsystem {
             mSuperstructureState = SuperstructureState.kIntakeSweep;
         }
     }
+    public void setWantAgitate(){
+        if(mSuperstructureState != SuperstructureState.kAgitate){
+            mSuperstructureState = SuperstructureState.kAgitate;
+        }
+    }
 
     public boolean isDoneShooting() {
         return mConveyor.isDoneShooting();
@@ -298,6 +314,7 @@ public class Superstructure extends Subsystem {
         kBackIntake,
         kUnjamming,
         kIntakeSweep,
+        kAgitate
     }
 
 
