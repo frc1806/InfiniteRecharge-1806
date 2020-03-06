@@ -221,7 +221,7 @@ public class Constants {
     public static final double kHoodPositionMax = 54;
     public static final double kHoodAcceptableAngleDeviation = .4;
     public static final double kHoodAcceptableSpeed = 100;
-
+    public static final double kHoodMaxAmpLimit = 100;
 
     //Conveyor
     public static final int kTriggerConveyorMotorId = 10;

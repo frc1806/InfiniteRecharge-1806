@@ -37,4 +37,7 @@ public interface IButtonControlBoard {
 
     boolean getWantsAgitate();
 
+    //hood
+    boolean getWantsEnableHood();
+
 }

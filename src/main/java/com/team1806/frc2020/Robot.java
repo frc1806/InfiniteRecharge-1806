@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
     private final Drive mDrive = Drive.getInstance();
     private final Conveyor mConveyor = Conveyor.GetInstance();
     private final Superstructure mSuperstructure = Superstructure.getInstance();
+    private final Hood mHood = Hood.GetInstance();
     private final Jetson mJetson;
     // button placed on the robot to allow the drive team to zero the robot right
     // before the start of a match
@@ -310,7 +311,9 @@ public class Robot extends TimedRobot {
             mSuperstructure.setWantSweep();
         } else if (mControlBoard.getWantsAgitate()){
             mSuperstructure.setWantAgitate();
-        } else{
+        }else if(mControlBoard.getWantsEnableHood()){
+            mHood.enableHood();
+        }else{
             mSuperstructure.stop();
         }
 

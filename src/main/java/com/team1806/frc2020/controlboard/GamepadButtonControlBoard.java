@@ -114,4 +114,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     @Override
     public boolean getWantsAgitate(){return mController.getDPad() == 90;}
 
+    @Override
+    public boolean getWantsEnableHood() { return mController.getDigitalTrigger(XboxController.Side.RIGHT); }
+
 }

@@ -166,6 +166,9 @@ public class ControlBoard implements IControlBoard {
     public boolean getWantsAgitate() {return mButtonControlBoard.getWantsAgitate();}
 
     @Override
+    public boolean getWantsEnableHood(){return mButtonControlBoard.getWantsEnableHood();}
+
+    @Override
     public void setRumble(boolean on) {
         mDriveControlBoard.setRumble(on);
         mButtonControlBoard.setRumble(on);
