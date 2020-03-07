@@ -23,9 +23,8 @@ import java.util.Optional;
 public class RobotState {
     private static final int kObservationBufferSize = 100;
     private static RobotState mInstance;
-    // use known field target orientations to compensate for inaccuracy, assumes robot starts pointing directly away
-    // from and perpendicular to alliance wall
-    private final double[] kPossibleTargetNormals = {0.0};
+    // use known field target orientations to compensate for inaccuracy, assumes robot was started in a spot where the odometry was properly set in auto/startup
+    private final double[] kPossibleTargetNormals = {180.0};
 
     /*
      * RobotState keeps track of the poses of various coordinate frames throughout

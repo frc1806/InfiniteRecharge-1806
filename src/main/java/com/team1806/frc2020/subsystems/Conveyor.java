@@ -20,7 +20,7 @@ public class Conveyor extends Subsystem {
 
     private static Conveyor CONVEYOR = new Conveyor();
     private final boolean SPEED_CONTROL_TRIGGER = true;
-    private final boolean SPEED_CONTROL_UPPER = false;
+    private final boolean SPEED_CONTROL_UPPER = true;
     private final boolean SPEED_CONTROL_BOTTOM = false;
     private boolean mWantManualTrigger;
     private ConveyorControlState mConveyorControlState;

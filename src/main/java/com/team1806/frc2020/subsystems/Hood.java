@@ -94,12 +94,13 @@ public class Hood extends Subsystem {
             mCANTalonSRX.set(ControlMode.PercentOutput, .2);
         } else if (mPeriodicIO.currentAngle >= Constants.kHoodPositionMax + 5 && mHoodControlState != HoodControlState.kManualControl) {
             mCANTalonSRX.set(ControlMode.PercentOutput, -.2);
-        } else if(mPeriodicIO.motorAmps > Constants.kHoodMaxAmpLimit){
+        } else if(ampsBuffer.getAverage() > Constants.kHoodMaxAmpLimit) {
             setControlState(HoodControlState.kDisabled);
-
+        }else{
             switch (mPeriodicIO.HoodState) {
                 default:
                 case kIdle:
+                case kDisabled:
                     mCANTalonSRX.set(ControlMode.PercentOutput, 0);
                     break;
                 case kPositionControl:
@@ -130,10 +131,6 @@ public class Hood extends Subsystem {
                         setWantedAngle(0.0);
                     }
                     break;
-
-                case kDisabled:
-                    mCANTalonSRX.set(ControlMode.PercentOutput, 0);
-                    break;
             }
         }
 
@@ -160,9 +157,10 @@ public class Hood extends Subsystem {
     }
 
     public void setControlState(HoodControlState state) {
-        mPeriodicIO.HoodState = state;
-        mHoodControlState = state;
-
+        if(mHoodControlState != HoodControlState.kDisabled || state == HoodControlState.kIdle){
+            mPeriodicIO.HoodState = state;
+            mHoodControlState = state;
+        }
     }
 
     public void stop() {

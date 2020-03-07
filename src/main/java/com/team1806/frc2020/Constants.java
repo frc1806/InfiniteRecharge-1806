@@ -174,7 +174,7 @@ public class Constants {
     public static final int kDebugGamepadPort = 2;
     public static final int kMainThrottleJoystickPort = 0;
     public static final int kMainTurnJoystickPort = 1;
-    public static final double kJoystickThreshold = 0.2;
+    public static final double kJoystickThreshold = 0.15;
     public static final double kJoystickMinActualOutput = 0.02;
 
     // solenoids
@@ -240,15 +240,15 @@ public class Constants {
     public static final double kTriggerConveyorVelocityControlKd = 0;
     public static final double kTriggerConveyorVelocityControlKf = 0.09;
 
-    public static final double kTopConveyorVelocityControlKp = 0;
+    public static final double kTopConveyorVelocityControlKp = 0.00016;
     public static final double kTopConveyorVelocityControlKi = 0;
     public static final double kTopConveyorVelocityControlKd = 0;
-    public static final double kTopConveyorVelocityControlKf = 0;
+    public static final double kTopConveyorVelocityControlKf = 0.09;
 
-    public static final double kBottomConveyorVelocityControlKp = 0;
+    public static final double kBottomConveyorVelocityControlKp = 0.00016;
     public static final double kBottomConveyorVelocityControlKi = 0;
     public static final double kBottomConveyorVelocityControlKd = 0;
-    public static final double kBottomConveyorVelocityControlKf = 0;
+    public static final double kBottomConveyorVelocityControlKf = 0.09;
 
     public static final double kOuterIntakeVelocityControlKp = 3.0;
     public static final double kOuterIntakeVelocityControlKi = 0;
@@ -257,10 +257,10 @@ public class Constants {
 
     public static final double kOuterIntakeSpeed = 1.0;
     public static final double kTriggerLaunchSpeed = 10000.0;
-    public static final double kTopLaunchSpeed = 150.0;
-    public static final double kBottomLaunchSpeed = 150.0;
-    public static final double kBottomConveyorSpeed = 100.0;
-    public static final double kTopConveyorSpeed = 100.0;
+    public static final double kTopLaunchSpeed = 15000.0;
+    public static final double kBottomLaunchSpeed = 15000.0;
+    public static final double kBottomConveyorSpeed = 20000.0;
+    public static final double kTopConveyorSpeed = 20000.0;
     public static final double kTriggerDutyCycle = 1.0;
     public static final double kTopConveyorDutyCycle = .75;
     public static final double kBottomConveyorDutyCycle = .75;
