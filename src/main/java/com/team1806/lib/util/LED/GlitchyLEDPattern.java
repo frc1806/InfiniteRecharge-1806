@@ -8,7 +8,7 @@ import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
 /**
- * This class starts with a given pattern and corrupts it every 100 loops
+ * This class starts with a given pattern and corrupts it every 100 loops, and adds a 1 frame corruption if conditions are met.
  */
 public class GlitchyLEDPattern implements LEDPattern {
 
