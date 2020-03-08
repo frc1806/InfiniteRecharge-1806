@@ -84,7 +84,7 @@ public class Robot extends TimedRobot {
                     mConveyor,
                     mSuperstructure,
                     mFlashlight,
-                    new CameraLED(0, 24));
+                    new LEDStringSubsystem(0, 24));
             AutoModeSelector.registerDisabledLoop(mDisabledLooper);
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
