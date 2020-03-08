@@ -1,9 +1,9 @@
 package com.team1806.frc2020.subsystems;
 
-import com.team1806.frc2020.controlboard.ControlBoard;
 import com.team1806.frc2020.loops.ILooper;
 import com.team1806.frc2020.loops.Loop;
-import com.team1806.lib.util.LEDPattern;
+import com.team1806.lib.util.LED.LEDPattern;
+import com.team1806.lib.util.LED.ScrollingLEDPattern;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
@@ -23,7 +23,7 @@ public class LEDStringSubsystem extends Subsystem {
         this.mLEDBuffer = new AddressableLEDBuffer(mNumOfLEDs);
         mLED.setLength(mLEDBuffer.getLength());
         mLED.setData(mLEDBuffer);
-        currentPattern = LEDPattern.BLACK_AND_WHITE;
+        currentPattern = ScrollingLEDPattern.BLACK_AND_WHITE;
         StartLED();
     }
 
