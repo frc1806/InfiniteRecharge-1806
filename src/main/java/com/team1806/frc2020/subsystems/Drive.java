@@ -303,11 +303,11 @@ public class Drive extends Subsystem {
     }
 
     public synchronized void setCheesyishDrive(double throttle, double wheel, boolean quickTurn) {
-        if (Util.epsilonEquals(throttle, 0.0, 0.04)) {
+        if (Util.epsilonEquals(throttle, 0.0, 0.02)) {
             throttle = 0.0;
         }
 
-        if (Util.epsilonEquals(wheel, 0.0, 0.035)) {
+        if (Util.epsilonEquals(wheel, 0.0, 0.02)) {
             wheel = 0.0;
         }
 

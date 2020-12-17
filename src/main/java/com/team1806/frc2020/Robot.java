@@ -270,6 +270,8 @@ public class Robot extends TimedRobot {
         boolean wantsLowGear = mControlBoard.getWantsLowGear();
         // drive
 
+
+
         if (mControlBoard.getWantsAutoSteer()) {
             mDrive.autoSteer(throttle, drive_aim_params);
         } else if (mControlBoard.getWantsPark()) {
@@ -285,6 +287,7 @@ public class Robot extends TimedRobot {
             mDrive.setHighGear(true);
         }
 
+        mSuperstructure.setWantSingleShot(mControlBoard.getWantSingleShot());
 
         if (mControlBoard.getShoot()) {
             mSuperstructure.setWantShot(Shot.STRAIGHT_ON_AUTOLINE);

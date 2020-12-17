@@ -27,4 +27,5 @@ public interface IDriveControlBoard {
 
     boolean getCloseShot();
 
+    boolean getWantSingleShot();
 }
