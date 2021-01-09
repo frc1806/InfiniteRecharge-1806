@@ -7,17 +7,21 @@ import com.team1806.lib.util.LED.ScrollingLEDPattern;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
+import edu.wpi.first.wpilibj.util.Color;
+import java.util.stream.IntStream;
+
 public class LEDStringSubsystem extends Subsystem {
 
 
     private AddressableLED mLED;
     private AddressableLEDBuffer mLEDBuffer;
     private int mNumOfLEDs;
+    private boolean stopOnDisable;
 
     private LEDPattern currentPattern;
 
 
-    public LEDStringSubsystem(int port, int mNumOfLEDs) {
+    public LEDStringSubsystem(int port, int mNumOfLEDs, boolean stopOnDisable) {
         this.mLED = new AddressableLED(port);
         this.mNumOfLEDs = mNumOfLEDs;
         this.mLEDBuffer = new AddressableLEDBuffer(mNumOfLEDs);
@@ -25,6 +29,7 @@ public class LEDStringSubsystem extends Subsystem {
         mLED.setData(mLEDBuffer);
         currentPattern = ScrollingLEDPattern.BLACK_AND_WHITE;
         StartLED();
+        this.stopOnDisable = stopOnDisable;
     }
 
     @Override
@@ -32,22 +37,28 @@ public class LEDStringSubsystem extends Subsystem {
         mEnabledLooper.register(new Loop() {
             @Override
             public void onStart(double timestamp) {
-                synchronized (LEDStringSubsystem.this) {
-                }
+                StartLED();
             }
 
             @Override
             public void onLoop(double timestamp) {
-                synchronized (LEDStringSubsystem.this) {
+                //System.out.println("Running LED onLoop()");
                     currentPattern.updateAnimation();
-                    for(int i =0; i < mLEDBuffer.getLength(); i++){
-                        mLEDBuffer.setLED(i, currentPattern.getColorForPositionInString(i));
-                    }
-                }
+                   // System.out.println("Animation Updated");
+                    IntStream.range(0, mLEDBuffer.getLength()).forEach(i -> mLEDBuffer.setLED(i, currentPattern.getColorForPositionInString(i)));
+                    //System.out.println("LED buffer values updated");
+                    mLED.setData(mLEDBuffer);
+                    //System.out.println("Finished LED onLoop()");
             }
 
             @Override
             public void onStop(double timestamp) {
+                if(stopOnDisable)
+                {
+                    IntStream.range(0, mLEDBuffer.getLength()).forEach(i -> mLEDBuffer.setLED(i, Color.kBlack));
+                    mLED.setData(mLEDBuffer);
+                }
+                StopLED();
             }
         });
     }
