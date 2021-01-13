@@ -42,6 +42,7 @@ public class Superstructure extends Subsystem {
     private Shot mCurrentShot;
     private SuperstructureState mSuperstructureState;
     private boolean mWantInnerGoal = false;
+    private boolean mWantSingleShot = false;
 
     private Superstructure() {
         mSuperstructureState = SuperstructureState.kIdle;
@@ -57,6 +58,14 @@ public class Superstructure extends Subsystem {
         }
 
         return mInstance;
+    }
+
+    public boolean getWantSingleShot() {
+        return mWantSingleShot;
+    }
+
+    public void setWantSingleShot(boolean mWantSingleShot) {
+        this.mWantSingleShot = mWantSingleShot;
     }
 
     @Override
@@ -97,7 +106,7 @@ public class Superstructure extends Subsystem {
                                 mHood.setWantedAngle(mCurrentShot.getHoodAngle());
                             }
                             mConveyor.setWantLaunch(mFlywheel.isReadyForLaunch()); //&& mTurret.isOnTarget() && mHood.isOnTarget());
-
+                            mConveyor.setWantSingleShot(mWantSingleShot);
                             break;
                         case kPreparingShot:
                             mFlywheel.setSpeed(mCurrentShot.getFlywheelSpeed());

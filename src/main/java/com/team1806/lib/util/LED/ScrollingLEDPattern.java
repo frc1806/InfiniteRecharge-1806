@@ -20,7 +20,7 @@ public class ScrollingLEDPattern implements LEDPattern {
     }
 
     public Color getColorForPositionInString(int position){
-        return pattern.get((position-currentAnimationStep) % pattern.size());
+        return pattern.get(Math.abs(position-currentAnimationStep) % pattern.size());
     }
 
     public void updateAnimation(){

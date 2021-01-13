@@ -32,6 +32,7 @@ public class Conveyor extends Subsystem {
     private ColorWheelReader mColorWheelReader;
     private Rev2mDistanceSensor mDistanceSensor;
     private Drive mDrive = Drive.getInstance();
+    private boolean mWantSingleShot = false;
 
     private Conveyor() {
         mPeriodicIO = new PeriodicIO();
@@ -82,6 +83,14 @@ public class Conveyor extends Subsystem {
 
     public static Conveyor GetInstance() {
         return CONVEYOR;
+    }
+
+    public boolean getWantSingleShot() {
+        return mWantSingleShot;
+    }
+
+    public void setWantSingleShot(boolean mWantSingleShot) {
+        this.mWantSingleShot = mWantSingleShot;
     }
 
     private void triggerReloadGains() {
@@ -179,23 +188,29 @@ public class Conveyor extends Subsystem {
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger() ? Constants.kTriggerDutyCycle : 0);
                 break;
             case kLaunching:
-                if (SPEED_CONTROL_BOTTOM) {
-                    mBottomCANTalonSRX.set(ControlMode.Velocity, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomLaunchSpeed : -Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
+                if (!getWantSingleShot()) {
+                    if (SPEED_CONTROL_BOTTOM) {
+                        mBottomCANTalonSRX.set(ControlMode.Velocity, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomLaunchSpeed : -Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
 
-                } else {
-                    mBottomCANTalonSRX.set(ControlMode.PercentOutput, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomConveyorDutyCycle : -Constants.kBottomConveyorDutyCycle);
-                }
-                if (SPEED_CONTROL_UPPER) {
-                    mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopLaunchSpeed);
-                } else {
-                    mTopCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTopConveyorDutyCycle);
-                }
-                if (mPeriodicIO.isReadyToLaunch) {
-                    if (SPEED_CONTROL_TRIGGER) {
-                        mTriggerCANTalonSRX.set(ControlMode.Velocity, Constants.kTriggerLaunchSpeed);
                     } else {
-                        mTriggerCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTriggerDutyCycle);
+                        mBottomCANTalonSRX.set(ControlMode.PercentOutput, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomConveyorDutyCycle : -Constants.kBottomConveyorDutyCycle);
                     }
+                    if (SPEED_CONTROL_UPPER) {
+                        mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopLaunchSpeed);
+                    } else {
+                        mTopCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTopConveyorDutyCycle);
+                    }
+                }
+                else {
+                    mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0.0);
+                    mTopCANTalonSRX.set(ControlMode.PercentOutput, 0.0);
+                }
+                    if (mPeriodicIO.isReadyToLaunch) {
+                        if (SPEED_CONTROL_TRIGGER) {
+                         mTriggerCANTalonSRX.set(ControlMode.Velocity, Constants.kTriggerLaunchSpeed);
+                        } else {
+                           mTriggerCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTriggerDutyCycle);
+                        }
 
                 } else {
                     mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger() ? Constants.kTriggerDutyCycle : 0);

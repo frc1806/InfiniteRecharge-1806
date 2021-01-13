@@ -10,6 +10,8 @@ import com.team1806.frc2020.subsystems.*;
 import com.team1806.lib.geometry.Pose2d;
 import com.team1806.lib.geometry.Rotation2d;
 import com.team1806.lib.util.CrashTracker;
+import com.team1806.lib.util.LED.GlitchyLEDPattern;
+import com.team1806.lib.util.LED.ScrollingLEDPattern;
 import com.team1806.lib.util.LatchedBoolean;
 import com.team1806.lib.vision.AimingParameters;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -56,6 +58,7 @@ public class Robot extends TimedRobot {
     private Sendable mFlywheelSpeed;
     private Sendable mHoodAngle;
     private Sendable mTurretAngle;
+    private LEDStringSubsystem mCameraLEDs = new LEDStringSubsystem(0, 24, true);
 
     Robot() {
         CrashTracker.logRobotConstruction();
@@ -84,7 +87,8 @@ public class Robot extends TimedRobot {
                     mConveyor,
                     mSuperstructure,
                     mFlashlight,
-                    new LEDStringSubsystem(0, 24));
+                    mCameraLEDs
+                    );
             AutoModeSelector.registerDisabledLoop(mDisabledLooper);
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -95,6 +99,7 @@ public class Robot extends TimedRobot {
 
             AutoModeSelector.initAutoModeSelector();
             setupDashboardShot();
+            mCameraLEDs.setPattern(ScrollingLEDPattern.VISION_GREEN);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -270,6 +275,8 @@ public class Robot extends TimedRobot {
         boolean wantsLowGear = mControlBoard.getWantsLowGear();
         // drive
 
+
+
         if (mControlBoard.getWantsAutoSteer()) {
             mDrive.autoSteer(throttle, drive_aim_params);
         } else if (mControlBoard.getWantsPark()) {
@@ -285,6 +292,7 @@ public class Robot extends TimedRobot {
             mDrive.setHighGear(true);
         }
 
+        mSuperstructure.setWantSingleShot(mControlBoard.getWantSingleShot());
 
         if (mControlBoard.getShoot()) {
             mSuperstructure.setWantShot(Shot.STRAIGHT_ON_AUTOLINE);

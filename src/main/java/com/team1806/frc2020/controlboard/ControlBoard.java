@@ -57,6 +57,10 @@ public class ControlBoard implements IControlBoard {
         return mButtonControlBoard.getCloseShot() || mDriveControlBoard.getCloseShot();
     }
 
+    public boolean getWantSingleShot() {
+        return mDriveControlBoard.getWantSingleShot();
+    }
+
     @Override
     public boolean getAutoLineShot() {
         return mButtonControlBoard.getAutoLineShot();

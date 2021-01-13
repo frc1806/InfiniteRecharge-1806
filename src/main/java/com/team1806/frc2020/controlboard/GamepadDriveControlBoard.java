@@ -56,6 +56,9 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
     }
 
     @Override
+    public boolean getWantSingleShot() { return mController.getButton(XboxController.Button.A); }
+
+    @Override
     public boolean getWantsPark() {
         return mController.getButton(XboxController.Button.B);
     }
@@ -80,7 +83,6 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
         return mController.getDPad() == 0;
     }
 
-    @Override
     public boolean getCloseShot() {
         return mController.getDPad() == 270;
     }
