@@ -17,11 +17,13 @@ public class LEDStringSubsystem extends Subsystem {
     private AddressableLEDBuffer mLEDBuffer;
     private int mNumOfLEDs;
     private boolean stopOnDisable;
+    private double lastUpdateTime;
 
     private LEDPattern currentPattern;
 
 
     public LEDStringSubsystem(int port, int mNumOfLEDs, boolean stopOnDisable) {
+        lastUpdateTime = 0;
         this.mLED = new AddressableLED(port);
         this.mNumOfLEDs = mNumOfLEDs;
         this.mLEDBuffer = new AddressableLEDBuffer(mNumOfLEDs);
@@ -42,13 +44,16 @@ public class LEDStringSubsystem extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
-                //System.out.println("Running LED onLoop()");
+                if(currentPattern.getFPS() == 0)
+                {
+                    return;
+                }
+                if(timestamp - lastUpdateTime > 1.0 / currentPattern.getFPS()) {
                     currentPattern.updateAnimation();
-                   // System.out.println("Animation Updated");
                     IntStream.range(0, mLEDBuffer.getLength()).forEach(i -> mLEDBuffer.setLED(i, currentPattern.getColorForPositionInString(i)));
-                    //System.out.println("LED buffer values updated");
                     mLED.setData(mLEDBuffer);
-                    //System.out.println("Finished LED onLoop()");
+                    lastUpdateTime = timestamp;
+                }
             }
 
             @Override

@@ -1,6 +1,7 @@
 package com.team1806.frc2020.subsystems;
 
 
+import com.revrobotics.CANError;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.team1806.frc2020.Constants;
@@ -8,6 +9,8 @@ import com.team1806.lib.drivers.LazySparkMax;
 import com.team1806.lib.util.ReflectingCSVWriter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.ArrayList;
 
 public class Flywheel extends Subsystem {
 
@@ -84,11 +87,13 @@ public class Flywheel extends Subsystem {
 
     private void reloadGains() {
         if (mSparkMaxLeader != null && mSparkMaxLeader.getPIDController() != null) {
-            mSparkMaxLeader.getPIDController().setP(Constants.kFlywheelSpeedControlkp);
-            mSparkMaxLeader.getPIDController().setI(Constants.kFlywheelSpeedControlki);
-            mSparkMaxLeader.getPIDController().setD(Constants.kFlywheelSpeedControlkd);
-            mSparkMaxLeader.getPIDController().setFF(Constants.kFlywheelSpeedControlkf);
-            mSparkMaxLeader.getPIDController().setOutputRange(0, 1);
+            ArrayList<CANError> errors = new ArrayList<>();
+            errors.add(mSparkMaxLeader.getPIDController().setP(Constants.kFlywheelSpeedControlkp));
+            errors.add(mSparkMaxLeader.getPIDController().setI(Constants.kFlywheelSpeedControlki));
+            errors.add(mSparkMaxLeader.getPIDController().setD(Constants.kFlywheelSpeedControlkd));
+            errors.add(mSparkMaxLeader.getPIDController().setFF(Constants.kFlywheelSpeedControlkf, 0));
+            errors.add(mSparkMaxLeader.getPIDController().setOutputRange(0, 1));
+            System.out.println(errors);
         }
     }
 
