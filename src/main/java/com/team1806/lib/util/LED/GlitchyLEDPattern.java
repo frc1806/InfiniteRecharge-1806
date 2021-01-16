@@ -32,6 +32,9 @@ public class GlitchyLEDPattern implements LEDPattern {
     }
 
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public Color getColorForPositionInString(int position) {
         if(mIntsForFun.noneMatch(new IntPredicate() {
@@ -48,6 +51,9 @@ public class GlitchyLEDPattern implements LEDPattern {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateAnimation() {
         //choose your corruption
@@ -157,6 +163,14 @@ public class GlitchyLEDPattern implements LEDPattern {
                 return mLEDBuffer.getLED((position + mIntsForFun.toArray()[2]) % mLEDBuffer.getLength());
             case 13:
                 return Color.kDarkGray;
+
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getFPS(){
+        return 60;
     }
 }
