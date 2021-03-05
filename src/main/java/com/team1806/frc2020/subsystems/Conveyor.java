@@ -70,7 +70,7 @@ public class Conveyor extends Subsystem {
         mTriggerCANTalonSRX.setInverted(false);
         mTriggerCANTalonSRX.setSensorPhase(true);
         mBottomCANTalonSRX.setInverted(true);
-        mOuterIntakeSparkMAX.setInverted(true);
+        mOuterIntakeSparkMAX.setInverted(false);
 
 
         triggerReloadGains();
