@@ -94,10 +94,8 @@ public class Drive extends Subsystem {
         }
 
         // burn flash so that when spark resets they have the same config
-        // mLeftLeader.burnFlash();
-        // mLeftFollower.burnFlash();
-        // mRightLeader.burnFlash();
-        // mRightFollower.burnFlash();
+         mLeftLeader.burnFlash();
+         mRightLeader.burnFlash();
 
         /*
         mLeftEncoder = mLeftLeader.getAlternateEncoder(AlternateEncoderType.kQuadrature, 4096);
@@ -773,7 +771,6 @@ public class Drive extends Subsystem {
         motorController.getPIDController().setD(Constants.kDriveHighGearVelocityKd, kHighGearVelocityControlSlot);
         motorController.getPIDController().setFF(Constants.kDriveHighGearVelocityKf, kHighGearVelocityControlSlot);
         motorController.getPIDController().setIZone(Constants.kDriveHighGearVelocityIZone, kHighGearVelocityControlSlot);
-
         /*TODO: Do we need this?
 		motorController.configClosedloopRamp(Constants.kDriveHighGearVelocityRampRate, Constants.kDriveTrainPIDSetTimeout);
          */

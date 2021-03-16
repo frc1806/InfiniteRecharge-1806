@@ -255,7 +255,7 @@ public class Constants {
     public static final double kOuterIntakeVelocityControlKd = 0;
     public static final double kOuterIntakeVelocityControlKf = 0;
 
-    public static final double kOuterIntakeSpeed = -1.0;
+    public static final double kOuterIntakeSpeed = -.6;
     public static final double kTriggerLaunchSpeed = 10000.0;
     public static final double kTopLaunchSpeed = 15000.0;
     public static final double kBottomLaunchSpeed = 15000.0;

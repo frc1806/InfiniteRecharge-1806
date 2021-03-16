@@ -105,10 +105,10 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     public boolean getWantsFlashlight() {
         return mController.getDPad() == 180;
     }
-
+   
     @Override
     public boolean getWantIntakeSweep() {
-        return mController.getDPad() == 270;
+        return mController.getDPad() == 270;// LS thing
     }
 
     @Override
