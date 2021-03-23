@@ -38,3 +38,4 @@ public class SlalomPath implements PathContainer {
     public boolean isReversed() {
         return false;
     }
+}

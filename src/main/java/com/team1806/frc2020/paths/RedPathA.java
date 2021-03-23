@@ -1,11 +1,12 @@
-package com.team254.frc2017.paths;
+package com.team1806.frc2020.paths;
+
 import java.util.ArrayList;
-import com.team254.frc2017.paths.PathBuilder.Waypoint;
-import com.team254.lib.util.control.Path;
-import com.team254.lib.util.math.RigidTransform2d;
-import com.team254.lib.util.math.Rotation2d;
-import com.team254.lib.util.math.Translation2d;
-public class UntitledPath implements PathContainer {
+
+import com.team1806.frc2020.paths.PathBuilder.Waypoint;
+import com.team1806.lib.control.Path;
+import com.team1806.lib.geometry.Rotation2d;
+import com.team1806.lib.geometry.Translation2d;
+public class redPathA implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
@@ -18,10 +19,7 @@ public class UntitledPath implements PathContainer {
         sWaypoints.add(new Waypoint(250,115,0,60));
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
-    @Override
-    public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(106, 90), Rotation2d.fromDegrees(180.0));
-    }
+
     @Override
     public boolean isReversed() {
         return false;

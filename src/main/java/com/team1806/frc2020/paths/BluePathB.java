@@ -10,8 +10,7 @@ public class BluePathB implements PathContainer {
     public static final String kStartRaisingElevatorMarker = "START_RAISING_ELEVATOR";
 
 
-    public BluePathB(boolean left) {
-        mLeft = left;
+    public BluePathB() {
     }
 
     @Override
@@ -32,3 +31,4 @@ public class BluePathB implements PathContainer {
     public boolean isReversed() {
         return false;
     }
+}
