@@ -117,4 +117,17 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     @Override
     public boolean getWantsEnableHood() { return mController.getDigitalTrigger(XboxController.Side.RIGHT); }
 
+    @Override
+    public boolean getWantGreen() {return mController.getButton(XboxController.Button.R_JOYSTICK);
+
+    }
+
+    @Override
+    public boolean getWantBlue() {return mController.getButton(XboxController.Button.L_JOYSTICK);
+    }
+
+    @Override
+    public boolean getWantRed() {return mController.getButton(XboxController.Button.START);
+    }
+
 }

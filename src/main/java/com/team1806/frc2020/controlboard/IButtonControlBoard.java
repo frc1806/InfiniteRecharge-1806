@@ -40,4 +40,12 @@ public interface IButtonControlBoard {
     //hood
     boolean getWantsEnableHood();
 
+    //shots for IR@H
+
+    boolean getWantGreen();
+
+    boolean getWantBlue();
+
+    boolean getWantRed();
+
 }

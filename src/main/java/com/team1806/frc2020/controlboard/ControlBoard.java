@@ -173,6 +173,21 @@ public class ControlBoard implements IControlBoard {
     public boolean getWantsEnableHood(){return mButtonControlBoard.getWantsEnableHood();}
 
     @Override
+    public boolean getWantGreen() {
+        return mButtonControlBoard.getWantGreen();
+    }
+
+    @Override
+    public boolean getWantBlue() {
+        return mButtonControlBoard.getWantBlue();
+    }
+
+    @Override
+    public boolean getWantRed() {
+        return mButtonControlBoard.getWantRed();
+    }
+
+    @Override
     public void setRumble(boolean on) {
         mDriveControlBoard.setRumble(on);
         mButtonControlBoard.setRumble(on);
