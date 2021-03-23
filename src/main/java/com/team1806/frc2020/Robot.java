@@ -10,12 +10,10 @@ import com.team1806.frc2020.subsystems.*;
 import com.team1806.lib.geometry.Pose2d;
 import com.team1806.lib.geometry.Rotation2d;
 import com.team1806.lib.util.CrashTracker;
-import com.team1806.lib.util.LED.GlitchyLEDPattern;
 import com.team1806.lib.util.LED.ScrollingLEDPattern;
 import com.team1806.lib.util.LatchedBoolean;
 import com.team1806.lib.vision.AimingParameters;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,23 +39,16 @@ public class Robot extends TimedRobot {
     // before the start of a match
     DigitalInput resetRobotButton = new DigitalInput(Constants.kResetButtonChannel);
     private boolean mHasBeenEnabled = false;
-    private LatchedBoolean mShootPressed = new LatchedBoolean();
     private LatchedBoolean mThrustReleased = new LatchedBoolean();
-    private LatchedBoolean mThrustPressed = new LatchedBoolean();
     private LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
     private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
     private LatchedBoolean mAutoSteerPressed = new LatchedBoolean();
-    private boolean mStickyShoot;
     private boolean bAutoModeStale = false;
-    private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
     private AutoModeExecutor mAutoModeExecutor;
     private String selectedModeName;
     private String lastSelectedModeName;
     private boolean mDriveByCameraInAuto = false;
     private Flashlight mFlashlight = Flashlight.GetInstance();
-    private Sendable mFlywheelSpeed;
-    private Sendable mHoodAngle;
-    private Sendable mTurretAngle;
     private LEDStringSubsystem mCameraLEDs = new LEDStringSubsystem(0, 24, true);
 
     Robot() {
@@ -226,8 +217,9 @@ public class Robot extends TimedRobot {
                     AutoModeSelector.SELECTED_AUTO_MODE_DASHBOARD_KEY,
                     "com.team1806.frc2020.auto.modes.DoNothingMode");
             if (!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale) {
-                bAutoModeStale = false;
                 selectedAuto = AutoModeSelector.getSelectedAutoMode();
+                bAutoModeStale = false;
+                lastSelectedModeName = selectedModeName;
             }
 
         } catch (Throwable t) {

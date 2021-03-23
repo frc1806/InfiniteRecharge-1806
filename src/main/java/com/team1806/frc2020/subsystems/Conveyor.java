@@ -5,9 +5,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
-import com.revrobotics.Rev2mDistanceSensor;
-import com.revrobotics.Rev2mDistanceSensor.Port;
-import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
 import com.team1806.frc2020.Constants;
 import com.team1806.lib.drivers.LazySparkMax;
 import com.team1806.lib.util.ReflectingCSVWriter;
@@ -30,7 +27,6 @@ public class Conveyor extends Subsystem {
     private PeriodicIO mPeriodicIO;
     private ReflectingCSVWriter<PeriodicIO> mCSVWriter;
     private ColorWheelReader mColorWheelReader;
-    private Rev2mDistanceSensor mDistanceSensor;
     private Drive mDrive = Drive.getInstance();
     private boolean mWantSingleShot = false;
 
@@ -45,12 +41,6 @@ public class Conveyor extends Subsystem {
 
         mFrontSolenoid = new DoubleSolenoid(Constants.kFrontIntakeFowardChannel, Constants.kFrontIntakeReverseChannel);
         mBackSolenoid = new DoubleSolenoid(Constants.kBackIntakeFowardChannel, Constants.kBackIntakeReverseChannel);
-
-        mDistanceSensor = new Rev2mDistanceSensor(Port.kMXP);
-        mDistanceSensor.setAutomaticMode(true);
-        mDistanceSensor.setEnabled(true);
-        mDistanceSensor.setDistanceUnits(Rev2mDistanceSensor.Unit.kInches);
-        mDistanceSensor.setRangeProfile(RangeProfile.kHighSpeed);
 
         setControlState(ConveyorControlState.kIdle);
         mPeriodicIO.lastIntakeDirection = ConveyorControlState.kFront;
@@ -290,11 +280,6 @@ public class Conveyor extends Subsystem {
         mPeriodicIO.frontIsExtended = mFrontSolenoid.get() == DoubleSolenoid.Value.kForward;
         mPeriodicIO.backIsExtended = mBackSolenoid.get() == DoubleSolenoid.Value.kForward;
 
-        mPeriodicIO.distance = mDistanceSensor.getRange();
-        mPeriodicIO.wasEmpty = mPeriodicIO.isEmpty;
-        mPeriodicIO.isEmpty = mPeriodicIO.distance > Constants.kEmptyDistance && mDistanceSensor.isRangeValid();
-        mPeriodicIO.wasFull = mPeriodicIO.isFull;
-        mPeriodicIO.isFull = mPeriodicIO.distance < Constants.kFullDistance && mDistanceSensor.isRangeValid();
         mPeriodicIO.timeEmptied = timeEmptied(mPeriodicIO.currentTimestamp);
         mPeriodicIO.timeFilled = timeFilled(mPeriodicIO.currentTimestamp);
         mPeriodicIO.isDoneShooting = doneShooting();

@@ -22,7 +22,6 @@ public class VisionPath implements PathContainer {
 
     @Override
     public Path buildPath() {
-        double fps = 1;
         ArrayList<PathBuilder.Waypoint> sWaypoints = new ArrayList<PathBuilder.Waypoint>();
         if (false) {
             Pose2d roboPose = generateTemporaryVisionPose();
