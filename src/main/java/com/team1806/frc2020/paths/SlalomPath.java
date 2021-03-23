@@ -11,7 +11,7 @@ public class SlalomPath implements PathContainer {
 
     boolean mLeft;
 
-    public SlalomPath(boolean left) {
+    public SlalomPath() {
         mLeft = left;
     }
 

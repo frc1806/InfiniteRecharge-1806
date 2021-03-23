@@ -276,7 +276,6 @@ public class Robot extends TimedRobot {
         // drive
 
 
-
         if (mControlBoard.getWantsAutoSteer()) {
             mDrive.autoSteer(throttle, drive_aim_params);
         } else if (mControlBoard.getWantsPark()) {
@@ -317,11 +316,18 @@ public class Robot extends TimedRobot {
             mSuperstructure.unjam();
         } else if (mControlBoard.getWantIntakeSweep()) {
             mSuperstructure.setWantSweep();
-        } else if (mControlBoard.getWantsAgitate()){
+        } else if (mControlBoard.getWantsAgitate()) {
             mSuperstructure.setWantAgitate();
-        }else if(mControlBoard.getWantsEnableHood()){
+        } else if (mControlBoard.getWantsEnableHood()) {
             mHood.enableHood();
-        }else{
+        } else if (mControlBoard.getWantBlue()) {
+            mSuperstructure.setWantShot(Shot.BLUE_ZONE);
+        }else if (mControlBoard.getWantGreen()) {
+            mSuperstructure.setWantShot(Shot.GREEN_ZONE);
+        }else if (mControlBoard.getWantRed()) {
+            mSuperstructure.setWantShot(Shot.RED_ZONE);
+        }
+        else{
             mSuperstructure.stop();
         }
 
