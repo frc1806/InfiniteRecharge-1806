@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Robot extends TimedRobot {
     public static AutoModeBase selectedAuto;
