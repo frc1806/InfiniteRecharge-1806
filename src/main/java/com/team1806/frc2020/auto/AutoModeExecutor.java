@@ -1,5 +1,7 @@
 package com.team1806.frc2020.auto;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.team1806.frc2020.auto.modes.AutoModeBase;
 import com.team1806.lib.util.CrashTrackingRunnable;
 
@@ -8,12 +10,11 @@ import com.team1806.lib.util.CrashTrackingRunnable;
  */
 public class AutoModeExecutor {
     private static AutoModeExecutor mInstance = null;
-
+    public static AtomicBoolean autoRunning = new AtomicBoolean(false);
     private AutoModeBase mAutoMode = null;
     private Thread mThread = null;
 
-    public AutoModeExecutor() {
-    }
+    public AutoModeExecutor() {}
 
     public static AutoModeExecutor getInstance() {
         if (mInstance == null) {
@@ -27,6 +28,7 @@ public class AutoModeExecutor {
         if (mThread != null) {
             mThread.start();
         }
+        autoRunning.set(true);
     }
 
     public boolean isStarted() {
@@ -37,16 +39,16 @@ public class AutoModeExecutor {
         if (isStarted()) {
             stop();
         }
-
+        autoRunning.set(false);
         mAutoMode = null;
     }
 
     public void stop() {
         if (mAutoMode != null) {
             mAutoMode.stop();
-            mThread.stop();
         }
-        mThread = null;
+        autoRunning.set(false);
+        //mThread = null;
     }
 
     public AutoModeBase getAutoMode() {
@@ -76,6 +78,7 @@ public class AutoModeExecutor {
         if (mAutoMode == null) {
             return;
         }
+        autoRunning.set(false);
         mAutoMode.interrupt();
     }
 
@@ -83,6 +86,7 @@ public class AutoModeExecutor {
         if (mAutoMode == null) {
             return;
         }
+        autoRunning.set(true);
         mAutoMode.resume();
     }
 }

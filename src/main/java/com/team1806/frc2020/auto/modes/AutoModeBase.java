@@ -1,6 +1,7 @@
 package com.team1806.frc2020.auto.modes;
 
 import com.team1806.frc2020.auto.AutoModeEndedException;
+import com.team1806.frc2020.auto.AutoModeExecutor;
 import com.team1806.frc2020.auto.actions.Action;
 import com.team1806.frc2020.auto.actions.NoOpAction;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -42,10 +43,10 @@ public abstract class AutoModeBase {
     }
 
     public boolean isActiveWithThrow() throws AutoModeEndedException {
-        if (!isActive()) {
+        if (!isActive() || !AutoModeExecutor.autoRunning.get()) {
             throw new AutoModeEndedException();
         }
-
+        System.out.println("Running Auto");
         return isActive();
     }
 
