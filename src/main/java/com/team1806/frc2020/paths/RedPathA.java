@@ -6,7 +6,7 @@ import com.team1806.frc2020.paths.PathBuilder.Waypoint;
 import com.team1806.lib.control.Path;
 import com.team1806.lib.geometry.Rotation2d;
 import com.team1806.lib.geometry.Translation2d;
-public class redPathA implements PathContainer {
+public class RedPathA implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();

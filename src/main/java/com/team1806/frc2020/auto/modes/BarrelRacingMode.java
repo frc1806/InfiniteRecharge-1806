@@ -7,6 +7,6 @@ import com.team1806.frc2020.paths.PathBarrelRace;
 public class BarrelRacingMode extends AutoModeBase{
     @Override
     protected void routine() throws AutoModeEndedException {
-        runAction(new DrivePathAction(new PathBarrelRace));
+        runAction(new DrivePathAction(new PathBarrelRace()));
     }
 }

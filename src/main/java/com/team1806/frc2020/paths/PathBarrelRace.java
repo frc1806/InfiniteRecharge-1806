@@ -9,10 +9,8 @@ public class PathBarrelRace implements PathContainer {
     public static final String kStartAutoAimingMarker = "START_AUTO_AIMING";
     public static final String kStartRaisingElevatorMarker = "START_RAISING_ELEVATOR";
 
-    boolean mLeft;
+    public PathBarrelRace() {
 
-    public PathBarrelRace(boolean left) {
-        mLeft = left;
     }
 
     @Override

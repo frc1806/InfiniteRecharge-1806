@@ -1,5 +1,8 @@
 package com.team1806.frc2020.auto.actions;
 
+import com.team1806.frc2020.subsystems.Drive;
+import com.team1806.lib.util.DriveSignal;
+
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -20,6 +23,7 @@ public class WaitAction implements Action {
 
     @Override
     public void update() {
+        Drive.getInstance().setOpenLoop(new DriveSignal(0,0));
     }
 
     @Override

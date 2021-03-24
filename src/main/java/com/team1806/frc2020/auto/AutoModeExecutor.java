@@ -44,8 +44,8 @@ public class AutoModeExecutor {
     public void stop() {
         if (mAutoMode != null) {
             mAutoMode.stop();
+            mThread.stop();
         }
-
         mThread = null;
     }
 

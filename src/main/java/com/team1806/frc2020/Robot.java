@@ -10,6 +10,7 @@ import com.team1806.frc2020.subsystems.*;
 import com.team1806.lib.geometry.Pose2d;
 import com.team1806.lib.geometry.Rotation2d;
 import com.team1806.lib.util.CrashTracker;
+import com.team1806.lib.util.DriveSignal;
 import com.team1806.lib.util.LED.ScrollingLEDPattern;
 import com.team1806.lib.util.LatchedBoolean;
 import com.team1806.lib.vision.AimingParameters;
@@ -114,6 +115,7 @@ public class Robot extends TimedRobot {
             mDisabledLooper.start();
 
             mDrive.setBrakeMode(false);
+            mDrive.setOpenLoop(new DriveSignal(0,0));
             mThrustReleased.update(true);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -166,6 +168,8 @@ public class Robot extends TimedRobot {
 
             mInfrastructure.setIsManualControl(true);
             mControlBoard.reset();
+            mDrive.forceDoneWithPath();
+            mDrive.setOpenLoop(new DriveSignal(0,0));
 
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -221,6 +225,7 @@ public class Robot extends TimedRobot {
                 bAutoModeStale = false;
                 lastSelectedModeName = selectedModeName;
             }
+            manualControl();
 
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);

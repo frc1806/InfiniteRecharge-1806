@@ -196,9 +196,11 @@ public class Drive extends Subsystem {
     @Override
     public synchronized void writePeriodicOutputs() {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
+            System.out.println("Setting Left Power:" + mPeriodicIO.left_demand);
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
             mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
         } else if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
+            System.out.println("Setting Path Left Power:" + mPeriodicIO.left_velo);
             mLeftLeader.getPIDController().setReference(mPeriodicIO.left_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
             mRightLeader.getPIDController().setReference(mPeriodicIO.right_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
         } else if (mDriveControlState == DriveControlState.PARKING_BRAKE) {
@@ -206,6 +208,7 @@ public class Drive extends Subsystem {
             mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.rightParkingBrakePower);
 
         } else {
+            System.out.println("Setting Else Left Power:" + mPeriodicIO.left_demand);
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
             mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
         }
@@ -228,6 +231,7 @@ public class Drive extends Subsystem {
                     lastTimeStamp = currentTimeStamp;
                     currentTimeStamp = timestamp;
                     handleFaults();
+                    System.out.println("Drive Control State:" + mDriveControlState.name() + " Left Demand:" + mPeriodicIO.left_demand);
                     switch (mDriveControlState) {
                         case OPEN_LOOP:
                         case PARKING_BRAKE:
@@ -238,6 +242,7 @@ public class Drive extends Subsystem {
                             }
                             break;
                         case DRIVE_TO_STALL:
+                            System.out.println("DriveToStall");
                             mPeriodicIO.left_demand = Constants.kStallPower;
                             mPeriodicIO.right_demand = Constants.kStallPower;
                             mPeriodicIO.left_feedforward = 0.0;
@@ -331,6 +336,7 @@ public class Drive extends Subsystem {
     }
 
     public synchronized void autoSteer(double throttle, Optional<AimingParameters> aim_params) {
+        System.out.println("Autosteering");
         if (aim_params.isPresent()) {
             double timestamp = Timer.getFPGATimestamp();
             final double kAutosteerAlignmentPointOffset = 15.0;  // Distance from wall
@@ -476,6 +482,7 @@ public class Drive extends Subsystem {
      * @see Path
      */
     public synchronized void setWantDrivePath(Path path, boolean reversed) {
+        System.out.println("WantDrivePath");
         if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
             RobotState.getInstance().resetDistanceDriven();
             mPathFollower = new PathFollower(path, reversed, new PathFollower.Parameters(
@@ -512,6 +519,7 @@ public class Drive extends Subsystem {
     }
 
     private void updatePathFollower(double timestamp) {
+        System.out.println("Updating path follower");
         if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
             RobotState robot_state = RobotState.getInstance();
             Pose2d field_to_vehicle = robot_state.getLatestFieldToVehicle().getValue();
