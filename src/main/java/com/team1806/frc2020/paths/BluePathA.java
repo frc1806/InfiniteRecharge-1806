@@ -2,7 +2,7 @@ package com.team1806.frc2020.paths;
 
 import com.team1806.lib.control.Path;
 
-public class BlueA implements PathContainer {
+public class BluePathA implements PathContainer {
     @Override
     public Path buildPath() {
         

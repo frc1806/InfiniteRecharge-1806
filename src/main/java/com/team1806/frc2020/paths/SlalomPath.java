@@ -9,10 +9,7 @@ public class SlalomPath implements PathContainer {
     public static final String kStartAutoAimingMarker = "START_AUTO_AIMING";
     public static final String kStartRaisingElevatorMarker = "START_RAISING_ELEVATOR";
 
-    boolean mLeft;
-
     public SlalomPath() {
-        mLeft = left;
     }
 
     @Override

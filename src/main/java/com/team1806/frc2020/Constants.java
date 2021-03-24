@@ -129,9 +129,9 @@ public class Constants {
     //
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
-    public final static double kDriveHighGearVelocityKp = .0002; //.0004;//.08;//.16; //1.01;
+    public final static double kDriveHighGearVelocityKp = .0004; //.0004;//.08;//.16; //1.01;
     public final static double kDriveHighGearVelocityKi = 0.000000000;
-    public final static double kDriveHighGearVelocityKd = 0.002; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
+    public final static double kDriveHighGearVelocityKd = 0.000; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
     public final static double kDriveHighGearVelocityKf = 0.00004;//.0175; //.035; //0.21; //.025;
     public final static int kDriveHighGearVelocityIZone = 0;
     public final static double kDriveHighGearVelocityRampRate = .1;
@@ -189,10 +189,10 @@ public class Constants {
     // flywheel
     public static final int kFlywheelSparkMaxLeader = 30;
     public static final int kFlywheelSparkMaxFollower = 31;
-    public static final double kFlywheelSpeedControlkp = 0.001;//.0085;
+    public static final double kFlywheelSpeedControlkp = 0.00005;//.0085;
     public static final double kFlywheelSpeedControlki = 0;
     public static final double kFlywheelSpeedControlkd = 0.000;
-    public static final double kFlywheelSpeedControlkf = 0.0002001;
+    public static final double kFlywheelSpeedControlkf = 0.0000501;
     public static final double kFlywheelAcceptableSpeedRange = 100;
     public static final double kFlywheelAcceptableAccleration = 100;
     public static final double kFlywheelGearScalingFactor = 35.0 / 18.0;
