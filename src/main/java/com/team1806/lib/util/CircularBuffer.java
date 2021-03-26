@@ -35,13 +35,12 @@ public class CircularBuffer {
         for (Double val : mSamples) {
             mSum += val;
         }
-        mSum /= mWindowSize;
     }
 
     public void addValue(double val) {
         mSamples.addLast(val);
         mSum += val;
-        if (mSamples.size() > mWindowSize) {
+        while (mSamples.size() > mWindowSize) {
             mSum -= mSamples.removeFirst();
         }
     }
