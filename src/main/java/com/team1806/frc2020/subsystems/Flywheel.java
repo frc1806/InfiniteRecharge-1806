@@ -12,9 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
 
+import javax.lang.model.util.ElementScanner6;
+
 public class Flywheel extends Subsystem {
 
-
+    private static final Boolean FLYWHEEL_BANGBANG = true; //true for BANGBANG on rio, false for PID on SparkMax
     public static Flywheel FLYWHEEL = new Flywheel();
     private LazySparkMax mSparkMaxLeader;
     private LazySparkMax mSparkMaxFollower;
@@ -129,7 +131,14 @@ public class Flywheel extends Subsystem {
 
                 break;
             case kSpeedControlled:
-                mSparkMaxLeader.getPIDController().setReference(convertLauncherSpeedToNEOSpeed(mPeriodicIO.wantedRPM), ControlType.kVelocity);
+                if(FLYWHEEL_BANGBANG)
+                {
+                    mSparkMaxLeader.set(ControlType.kDutyCycle,getBangBangPower(mPeriodicIO.launchWheelRPM, mPeriodicIO.wantedRPM));
+                }
+                else{
+                    mSparkMaxLeader.getPIDController().setReference(convertLauncherSpeedToNEOSpeed(mPeriodicIO.wantedRPM), ControlType.kVelocity);
+                }
+                
                 break;
             case kManualControlled:
 
@@ -195,6 +204,27 @@ public class Flywheel extends Subsystem {
         public double wantedDemand;
         public double wantedRPM;
         public FlywheelControlState currentMode;
+    }
+
+    private double getBangBangPower(double launchWheelRPM, double wantedRPM)
+    {
+        double rpmDifferentialForSmoothing = (Constants.kFlywheelAcceptableSpeedRange) / 2;
+        if(launchWheelRPM >= wantedRPM + rpmDifferentialForSmoothing)
+        {
+            return Constants.kFlywheelMinimumBangBangPower;
+        }
+        else if (launchWheelRPM -wantedRPM < rpmDifferentialForSmoothing)
+        {
+            return Math.pow((wantedRPM/ Constants.kMaxExpectedFlywheelSpeed), 2);
+        }
+        else if (wantedRPM - launchWheelRPM <= rpmDifferentialForSmoothing)
+        {
+            return Math.sqrt(wantedRPM / Constants.kMaxExpectedFlywheelSpeed);
+        }
+        else 
+        {
+            return 1.0;
+        }
     }
 
 }
