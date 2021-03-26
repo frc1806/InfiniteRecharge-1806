@@ -215,7 +215,7 @@ public class Flywheel extends Subsystem {
         }
         else if (launchWheelRPM -wantedRPM < rpmDifferentialForSmoothing)
         {
-            return Math.pow((wantedRPM/ Constants.kMaxExpectedFlywheelSpeed), 2);
+            return Math.max(Constants.kFlywheelMinimumBangBangPower, Math.pow((wantedRPM/ Constants.kMaxExpectedFlywheelSpeed), 2));
         }
         else if (wantedRPM - launchWheelRPM <= rpmDifferentialForSmoothing)
         {
