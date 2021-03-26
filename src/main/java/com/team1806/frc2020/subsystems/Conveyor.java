@@ -29,6 +29,7 @@ public class Conveyor extends Subsystem {
     private ColorWheelReader mColorWheelReader;
     private Drive mDrive = Drive.getInstance();
     private boolean mWantSingleShot = false;
+    private boolean mTopConveyorLaunchCurrentLimitExceeded = false;
 
     private Conveyor() {
         mPeriodicIO = new PeriodicIO();
@@ -125,6 +126,7 @@ public class Conveyor extends Subsystem {
         switch (mPeriodicIO.ConveyorState) {
             default:
             case kIdle:
+                mTopConveyorLaunchCurrentLimitExceeded = false;
                 mColorWheelReader.stopSensing();
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger() ? Constants.kTriggerDutyCycle : 0);
                 mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
@@ -134,6 +136,7 @@ public class Conveyor extends Subsystem {
                 mOuterIntakeSparkMAX.stopMotor();
                 break;
             case kFront:
+                mTopConveyorLaunchCurrentLimitExceeded = false;
                 if (!mPeriodicIO.frontIsExtended) {
                     mFrontSolenoid.set(DoubleSolenoid.Value.kForward);
                 }
@@ -157,6 +160,7 @@ public class Conveyor extends Subsystem {
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger() ? Constants.kTriggerDutyCycle : 0);
                 break;
             case kBack:
+                mTopConveyorLaunchCurrentLimitExceeded = false;
                 if (!mPeriodicIO.backIsExtended) {
                     mBackSolenoid.set(DoubleSolenoid.Value.kForward);
                 }
@@ -179,20 +183,43 @@ public class Conveyor extends Subsystem {
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger() ? Constants.kTriggerDutyCycle : 0);
                 break;
             case kLaunching:
+                mTopConveyorLaunchCurrentLimitExceeded = false;
                 if (!getWantSingleShot()) {
+                    if (!mTopConveyorLaunchCurrentLimitExceeded) {
+                        mTopConveyorLaunchCurrentLimitExceeded = (mPeriodicIO.topMotorAmps > Constants.kTopConveyorLaunchCurrentLimit);
+                    }
                     if (SPEED_CONTROL_BOTTOM) {
-                        mBottomCANTalonSRX.set(ControlMode.Velocity, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomLaunchSpeed : -Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
+                        if (!mTopConveyorLaunchCurrentLimitExceeded) {
+                            mBottomCANTalonSRX.set(ControlMode.Velocity, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomLaunchSpeed : -Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
+                        }
+                        else {
+                            mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                        }
 
                     } else {
+                        if (!mTopConveyorLaunchCurrentLimitExceeded) {
                         mBottomCANTalonSRX.set(ControlMode.PercentOutput, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront ? Constants.kBottomConveyorDutyCycle : -Constants.kBottomConveyorDutyCycle);
+                        }
+                        else {
+                            mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                        }
                     }
                     if (SPEED_CONTROL_UPPER) {
+                        if (!mTopConveyorLaunchCurrentLimitExceeded) {
                         mTopCANTalonSRX.set(ControlMode.Velocity, Constants.kTopLaunchSpeed);
+                        } else {
+                            mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                        }
                     } else {
+                        if (!mTopConveyorLaunchCurrentLimitExceeded) {
                         mTopCANTalonSRX.set(ControlMode.PercentOutput, Constants.kTopConveyorDutyCycle);
+                    } else {
+                        mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
+                    }
                     }
                 }
                 else {
+                    mTopConveyorLaunchCurrentLimitExceeded = false;
                     mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0.0);
                     mTopCANTalonSRX.set(ControlMode.PercentOutput, 0.0);
                 }
@@ -209,6 +236,7 @@ public class Conveyor extends Subsystem {
 
                 break;
             case kPositionalControl:
+                mTopConveyorLaunchCurrentLimitExceeded = false;
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger() ? Constants.kTriggerDutyCycle : 0);
                 mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
@@ -223,6 +251,7 @@ public class Conveyor extends Subsystem {
 
                 break;
             case kRotationalControl:
+                mTopConveyorLaunchCurrentLimitExceeded = false;
                 mTriggerCANTalonSRX.set(ControlMode.PercentOutput, isWantManualTrigger() ? Constants.kTriggerDutyCycle : 0);
                 mTopCANTalonSRX.set(ControlMode.PercentOutput, 0);
                 mBottomCANTalonSRX.set(ControlMode.PercentOutput, 0);
@@ -238,6 +267,7 @@ public class Conveyor extends Subsystem {
 
                 break;
             case kJammed:
+                mTopConveyorLaunchCurrentLimitExceeded = false;
                 if (SPEED_CONTROL_BOTTOM) {
                     mBottomCANTalonSRX.set(ControlMode.Velocity, mPeriodicIO.lastIntakeDirection == ConveyorControlState.kFront ? -Constants.kBottomLaunchSpeed : Constants.kBottomLaunchSpeed);//Tells which direction to feed the intake while shooting
 
@@ -253,9 +283,11 @@ public class Conveyor extends Subsystem {
                 break;
 
             case kSweepIntake:
+                mTopConveyorLaunchCurrentLimitExceeded = false;
                 mOuterIntakeSparkMAX.set(ControlType.kDutyCycle, ((mDrive.getLeftLinearVelocity() + mDrive.getRightLinearVelocity()) / 2 > 0 ? Constants.kOuterIntakeSpeed : -Constants.kOuterIntakeSpeed));
                 break;
             case kAgitate:
+                mTopConveyorLaunchCurrentLimitExceeded = false;
                 double dAgitatePower = Math.sin(Constants.kConveyorAgitationsPerSecond * (2*Math.PI)* Timer.getFPGATimestamp());
                 mTopCANTalonSRX.set(ControlMode.PercentOutput, dAgitatePower);
                 mBottomCANTalonSRX.set(ControlMode.PercentOutput, -dAgitatePower);

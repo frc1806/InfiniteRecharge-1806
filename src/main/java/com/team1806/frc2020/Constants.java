@@ -263,7 +263,8 @@ public class Constants {
     public static final double kTopConveyorSpeed = 20000.0;
     public static final double kTriggerDutyCycle = 1.0;
     public static final double kTopConveyorDutyCycle = .75;
-    public static final double kBottomConveyorDutyCycle = 1;
+    public static final double kBottomConveyorDutyCycle = 1.0;
+    public static final double kTopConveyorLaunchCurrentLimit = 70.0;
 
     public static final double kTimeTillInPosition = 0.0;
     public static final double kTimeTillEmpty = 0.0;
