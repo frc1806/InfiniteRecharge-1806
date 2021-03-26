@@ -197,6 +197,8 @@ public class Constants {
     public static final double kFlywheelAcceptableAccleration = 100;
     public static final double kFlywheelGearScalingFactor = 35.0 / 18.0;
     public static final int kFlywheelSmartCurrentLimit = 55;
+    public static final double kMaxExpectedFlywheelSpeed = 7200;
+    public static final double kFlywheelMinimumBangBangPower = 0.07;
 
     // turret
     public static final int kTurretMotorId = 60;
