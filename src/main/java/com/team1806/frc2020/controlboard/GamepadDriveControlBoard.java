@@ -26,7 +26,7 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public double getTurn() {
-        return InputSmoother.smoothInput(mController.getJoystick(XboxController.Side.LEFT, XboxController.Axis.X));
+        return mController.getJoystick(XboxController.Side.LEFT, XboxController.Axis.X);
     }
 
     @Override

@@ -10,10 +10,10 @@ import com.team1806.frc2020.subsystems.Drive;
  */
 public class CheesyDriveHelper {
     private static final double kThrottleDeadband = 0.035;
-    private static final double kWheelDeadband = 0.02;
+    private static final double kWheelDeadband = 0.00;
 
     // These factor determine how fast the wheel traverses the "non linear" sine curve.
-    private static final double kHighWheelNonLinearity = 0.01;
+    private static final double kHighWheelNonLinearity = 0.3;
     private static final double kLowWheelNonLinearity = 0.5;
 
     private static final double kHighNegInertiaScalar = 0.0;
