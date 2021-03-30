@@ -16,7 +16,7 @@ public class GlobalSearchChallengeA extends AutoModeBase {
         // TODO Auto-generated method stub
         if(BallDetectorSubsystem.GetInstance().isBallDetected()){
             //red
-            runAction(new ParallelAction(Arrays.asList(new DrivePathAction(new RedPathA()), new BackIntakeAction(15))));
+            runAction(new ParallelAction(Arrays.asList(new DrivePathAction(new RedPathA()), new BackIntakeAction(0))));
         }
         //else{ runAction(new ParallelAction(Arrays.asList(new DrivePathAction(new bluePathA()), new BackIntakeAction(15))));
             //blue
