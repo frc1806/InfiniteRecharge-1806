@@ -192,4 +192,14 @@ public class ControlBoard implements IControlBoard {
         mDriveControlBoard.setRumble(on);
         mButtonControlBoard.setRumble(on);
     }
+
+    @Override
+    public double getLeftThrottle() {
+        return mDriveControlBoard.getLeftThrottle();
+    }
+
+    @Override
+    public double getRightThrottle() {
+        return mDriveControlBoard.getRightThrottle();
+    }
 }

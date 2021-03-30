@@ -10,11 +10,13 @@ public class PrepareShotAction implements Action {
     private double mTimeout;
     private double mStartTime;
     private Superstructure mSuperstructure;
+    private boolean stopOnFinish;
 
 
-    public PrepareShotAction(Shot shot) {
+    public PrepareShotAction(Shot shot, boolean stopOnFinish) {
         mShot = shot;
         mSuperstructure = Superstructure.getInstance();
+        this.stopOnFinish = stopOnFinish;
 
     }
 
@@ -38,6 +40,6 @@ public class PrepareShotAction implements Action {
 
     @Override
     public void done() {
-        mSuperstructure.stop();
+        if(stopOnFinish) mSuperstructure.stop();
     }
 }

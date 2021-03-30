@@ -20,9 +20,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Robot extends TimedRobot {
+    private static boolean SKID_STEER = false; //if true, use classic left and right drive
     public static AutoModeBase selectedAuto;
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
@@ -275,13 +275,27 @@ public class Robot extends TimedRobot {
 
 
         if (mControlBoard.getWantsAutoSteer()) {
-            mDrive.autoSteer(throttle, drive_aim_params);
+            if(SKID_STEER)
+            {
+                mDrive.autoSteer((mControlBoard.getRightThrottle() + mControlBoard.getLeftThrottle()) / 2, drive_aim_params);
+            }
+            else
+            {
+                mDrive.autoSteer(throttle, drive_aim_params);
+            }
         } else if (mControlBoard.getWantsPark()) {
             mDrive.setHighGear(false);
             mDrive.setWantParkingBrake();
         } else {
-
-            mDrive.setCheesyishDrive(throttle, -mControlBoard.getTurn(), mControlBoard.getQuickTurn());
+            if(SKID_STEER)
+            {
+                mDrive.setOpenLoop(new DriveSignal(mControlBoard.getLeftThrottle(), mControlBoard.getRightThrottle()));
+            }
+            else
+            {
+                mDrive.setCheesyishDrive(throttle, -mControlBoard.getTurn(), mControlBoard.getQuickTurn());
+            }
+            
         }
         if (mControlBoard.getWantsLowGear()) {
             mDrive.setHighGear(false);

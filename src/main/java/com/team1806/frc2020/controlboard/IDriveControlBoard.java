@@ -1,11 +1,17 @@
 package com.team1806.frc2020.controlboard;
 
 public interface IDriveControlBoard {
+    //Cheezy Drive
     double getThrottle();
 
     double getTurn();
 
     boolean getQuickTurn();
+    
+    //Skid Steer
+    double getLeftThrottle();
+
+    double getRightThrottle();
 
     boolean getShoot();
 

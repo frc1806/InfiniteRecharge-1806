@@ -1,6 +1,7 @@
 package com.team1806.frc2020.controlboard;
 
 import com.team1806.frc2020.Constants;
+import com.team1806.lib.InputSmoother;
 
 public class GamepadDriveControlBoard implements IDriveControlBoard {
     private static GamepadDriveControlBoard mInstance = null;
@@ -20,12 +21,12 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public double getThrottle() {
-        return mController.getJoystick(XboxController.Side.LEFT, XboxController.Axis.Y);
+        return InputSmoother.smoothInput(mController.getJoystick(XboxController.Side.RIGHT, XboxController.Axis.Y));
     }
 
     @Override
     public double getTurn() {
-        return mController.getJoystick(XboxController.Side.RIGHT, XboxController.Axis.X);
+        return InputSmoother.smoothInput(mController.getJoystick(XboxController.Side.LEFT, XboxController.Axis.X));
     }
 
     @Override
@@ -85,5 +86,15 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     public boolean getCloseShot() {
         return mController.getDPad() == 270;
+    }
+
+    @Override
+    public double getLeftThrottle() {
+        return InputSmoother.smoothInput(mController.getJoystick(XboxController.Side.LEFT, XboxController.Axis.Y));
+    }
+
+    @Override
+    public double getRightThrottle() {
+        return InputSmoother.smoothInput(mController.getJoystick(XboxController.Side.RIGHT, XboxController.Axis.Y));
     }
 }
