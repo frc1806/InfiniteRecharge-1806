@@ -99,20 +99,20 @@ public class Constants {
     // our speed
     // in inches per sec
     public final static double kSegmentCompletionTolerance = 0.5; // inches
-    public final static double kPathFollowingMaxAccel = 30; // inches per second^2
-    public final static double kPathFollowingMaxVel = 196; // inches per second
-    public final static double kPathFollowingProfileKp = 0.25; //.99
-    public final static double kPathFollowingProfileKi = 0.00; //.049
-    public final static double kPathFollowingProfileKv = 0.00013; //0.000013
-    public final static double kPathFollowingProfileKffv = 1.2; //1.2
-    public final static double kPathFollowingProfileKffa = 0.05; //.05
-    public final static double kPathFollowingProfileKs = 0.1801 / 12.0; //power to break static friction
-    public final static double kPathFollowingGoalPosTolerance = 1.5;
-    public final static double kPathFollowingGoalVelTolerance = 18.0;
-    public final static double kPathStopSteeringDistance = 6; //2.25
+    public final static double kPathFollowingMaxAccel = 80; // inches per second^2
+    public final static double kPathFollowingMaxVel = 180; // inches per second
+    public static final double kPathFollowingProfileKp = 0.3 / 12.0;  // % throttle per inch of error
+    public static final double kPathFollowingProfileKi = 0.0;
+    public static final double kPathFollowingProfileKv = 0.01 / 12.0;  // % throttle per inch/s of error
+    public static final double kPathFollowingProfileKffv = 0.003889;  // % throttle per inch/s
+    public static final double kPathFollowingProfileKffa = 0.001415;  // % throttle per inch/s^2
+    public static final double kPathFollowingProfileKs = 0.1801 / 12.0;  // % throttle
+    public static final double kPathFollowingGoalPosTolerance = 3.0;
+    public static final double kPathFollowingGoalVelTolerance = 12.0;
+    public static final double kPathStopSteeringDistance = 12.0;
     public static final double kDriveVoltageRampRate = 0.0;
-    public static final int kDriveCurrentThrottledLimit = 30; // amps
-    public static final int kDriveCurrentUnThrottledLimit = 60; // amps
+    public static final int kDriveCurrentThrottledLimit = 20; // amps
+    public static final int kDriveCurrentUnThrottledLimit = 45; // amps
 
     public static final double kFollowTargetSamplingDistance = 1.0;
     public static final double kFollowTargetLookahead = 30.0;

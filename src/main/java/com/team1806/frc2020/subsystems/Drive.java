@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class Drive extends Subsystem {
+    public static boolean PATH_NO_VELO_PID= true;
     //PID Slots
     private static final int kLowGearPositionControlSlot = 0;
     private static final int kHighGearVelocityControlSlot = 1;
@@ -200,9 +201,18 @@ public class Drive extends Subsystem {
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
             mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
         } else if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
-            System.out.println("Setting Path Left Power:" + mPeriodicIO.left_velo);
-            mLeftLeader.getPIDController().setReference(mPeriodicIO.left_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
-            mRightLeader.getPIDController().setReference(mPeriodicIO.right_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
+            if(PATH_NO_VELO_PID)
+            {
+                mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.left_demand);
+                mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.right_demand);
+            }
+            else
+            {
+                System.out.println("Setting Path Left Power:" + mPeriodicIO.left_velo);
+                mLeftLeader.getPIDController().setReference(mPeriodicIO.left_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
+                mRightLeader.getPIDController().setReference(mPeriodicIO.right_velo, ControlType.kVelocity, kHighGearVelocityControlSlot);
+            }
+            
         } else if (mDriveControlState == DriveControlState.PARKING_BRAKE) {
             mLeftLeader.set(ControlType.kDutyCycle, mPeriodicIO.leftParkingBrakePower);
             mRightLeader.set(ControlType.kDutyCycle, mPeriodicIO.rightParkingBrakePower);
@@ -379,6 +389,23 @@ public class Drive extends Subsystem {
         mPeriodicIO.right_velo = velocity.right;
     }
 
+    public synchronized void setVelocityDriveSignal(DriveSignal signal, DriveSignal feedforward) {
+        if (mDriveControlState != DriveControlState.PATH_FOLLOWING) {
+            setBrakeMode(true);
+            System.out.println("switching to path following");
+            mDriveControlState = DriveControlState.PATH_FOLLOWING;
+            // mLeftMaster.selectProfileSlot(kLowGearVelocityControlSlot, 0);
+            // mRightMaster.selectProfileSlot(kLowGearVelocityControlSlot, 0);
+            // mLeftMaster.configNeutralDeadband(0.0, 0);
+            // mRightMaster.configNeutralDeadband(0.0, 0);
+        }
+
+        mPeriodicIO.left_demand = signal.getLeft();
+        mPeriodicIO.right_demand = signal.getRight();
+        mPeriodicIO.left_feedforward = feedforward.getLeft();
+        mPeriodicIO.right_feedforward = feedforward.getRight();
+    }
+
     public boolean isHighGear() {
         return mIsHighGear;
     }
@@ -497,7 +524,14 @@ public class Drive extends Subsystem {
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
             mCurrentPath = path;
         } else {
-            setVelocity(new Kinematics.DriveVelocity(0, 0));
+            if(PATH_NO_VELO_PID)
+            {
+                setVelocityDriveSignal(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
+            }
+            else
+            {
+                setVelocity(new Kinematics.DriveVelocity(0, 0));
+            }
         }
     }
 
@@ -513,8 +547,16 @@ public class Drive extends Subsystem {
     public synchronized void forceDoneWithPath() {
         if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
             mPathFollower.forceFinish();
-            mLeftLeader.getPIDController().setReference(0.0, ControlType.kDutyCycle);
-            mRightLeader.getPIDController().setReference(0.0, ControlType.kDutyCycle);
+            if(PATH_NO_VELO_PID)
+            {
+                mLeftLeader.set(0);
+                mRightLeader.set(0);
+            }
+            else
+            {
+                mLeftLeader.getPIDController().setReference(0.0, ControlType.kDutyCycle);
+                mRightLeader.getPIDController().setReference(0.0, ControlType.kDutyCycle);
+            }
         } else {
             System.out.println("Robot is not in path following mode");
         }
@@ -528,9 +570,17 @@ public class Drive extends Subsystem {
             Twist2d command = mPathFollower.update(timestamp, field_to_vehicle, robot_state.getDistanceDriven(),
                     robot_state.getPredictedVelocity().dx);
             if (!mPathFollower.isFinished()) {
-
-                Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematicsVelo(command);
-                updateVelocitySetpoint(setpoint);
+                if(PATH_NO_VELO_PID)
+                {
+                    DriveSignal noPidSetpoint = Kinematics.inverseKinematicsDutyCycle(command);
+                    setVelocityDriveSignal(noPidSetpoint, DriveSignal.NEUTRAL);
+                }
+                else
+                {
+                    Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematicsVelo(command);
+                    updateVelocitySetpoint(setpoint);
+                }
+                
             } else {
                 if (!mPathFollower.isForceFinished()) {
                     mPeriodicIO.left_demand = 0;
