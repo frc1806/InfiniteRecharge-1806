@@ -277,6 +277,8 @@ public class Constants {
     public static final double kColorMatcherRequriedConfidance = 0;
     public static final double kColorWheelRPM = 4000;
 
+    public static final double kUnfoldTime = 1.0;
+
     //Flashlight
     public static final int kFlashlightRelayChannel = 0;
     public static final DriveMotorsPerSide kDriveMotorsPerSide = DriveMotorsPerSide.THREE;
